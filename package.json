@@ -1,0 +1,57 @@
+{
+    "name": "@vamship/build-utils",
+    "version": "0.0.1",
+    "description": "Utility library for build tooling",
+    "main": "src/index.js",
+    "scripts": {
+        "clean": "rm -rf .nyc_output coverage",
+        "monitor": "nodemon --exec npm run test",
+        "test": "nyc mocha -R spec --recursive test/unit/ && nyc report --reporter=html",
+        "lint": "eslint src/**/*.js test/**/*.js",
+        "format": "prettier --write \"{{src,test}/**/*.js,README.md}\"",
+        "docs": "jsdoc --readme README.md --package package.json --template node_modules/docdash --destination docs --recurse src",
+        "all": "npm run format && npm run lint && npm run test && npm run clean"
+    },
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/vamship/build-utils.git"
+    },
+    "keywords": [
+        "gulp",
+        "build",
+        "test",
+        "utilities"
+    ],
+    "author": "Vamshi K Ponnapalli <vamshi.ponnapalli@gmail.com>",
+    "license": "MIT",
+    "bugs": {
+        "url": "https://github.com/vamship/build-utils/issues"
+    },
+    "homepage": "https://github.com/vamship/build-utils#readme",
+    "devDependencies": {
+        "chai": "^4.2.0",
+        "chai-as-promised": "^7.1.1",
+        "docdash": "^1.1.1",
+        "eslint": "^6.3.0",
+        "jsdoc": "^3.6.3",
+        "nodemon": "^1.19.2",
+        "rewire": "^4.0.1",
+        "sinon": "^7.4.2",
+        "sinon-chai": "^3.3.0"
+    },
+    "dependencies": {
+        "ansi-colors": "^4.1.1",
+        "camelcase": "^5.3.1",
+        "delete": "^1.1.0",
+        "execa": "^2.0.4",
+        "gulp": "^4.0.2",
+        "gulp-eslint": "^6.0.0",
+        "gulp-prettier": "^2.1.0",
+        "gulp-typescript": "^5.0.1",
+        "gulp-zip": "^5.0.0",
+        "mocha": "^6.2.0",
+        "nyc": "^14.1.1",
+        "prettier": "^1.18.2",
+        "semver": "^6.3.0"
+    }
+}
