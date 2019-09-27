@@ -16,12 +16,7 @@
         "type": "git",
         "url": "https://github.com/vamship/build-utils.git"
     },
-    "keywords": [
-        "gulp",
-        "build",
-        "test",
-        "utilities"
-    ],
+    "keywords": ["gulp", "build", "test", "utilities"],
     "author": "Vamshi K Ponnapalli <vamshi.ponnapalli@gmail.com>",
     "license": "MIT",
     "bugs": {
@@ -45,7 +40,6 @@
         "camelcase": "^5.3.1",
         "delete": "^1.1.0",
         "execa": "^2.0.4",
-        "gulp": "^4.0.2",
         "gulp-eslint": "^6.0.0",
         "gulp-prettier": "^2.1.0",
         "gulp-typescript": "^5.0.1",
@@ -55,5 +49,8 @@
         "prettier": "^1.18.2",
         "semver": "^6.3.0",
         "typescript": "^3.6.3"
+    },
+    "peerDependencies": {
+        "gulp": "^4.0.2"
     }
 }
