@@ -24,14 +24,18 @@ module.exports = class Project {
             throw new Error('Invalid packageConfig (arg #1)');
         }
 
-        const config = Object.assign({}, packageConfig, { buildMetadata });
-        const { name, version, description, buildMetadata: metadata } = config;
+        const config = Object.assign({}, packageConfig);
+        config.buildMetadata = Object.assign(
+            {},
+            config.buildMetadata,
+            buildMetadata
+        );
 
-        this._name = name;
-        this._unscopedName = name.replace(/^@[^/]*\//, '');
-        this._version = version;
-        this._description = description;
-        this._initProjectProperties(metadata);
+        this._name = config.name;
+        this._unscopedName = config.name.replace(/^@[^/]*\//, '');
+        this._version = config.version;
+        this._description = config.description;
+        this._initProjectProperties(config.buildMetadata);
 
         this._rootDir = Directory.createTree('./', {
             src: null,
@@ -68,6 +72,7 @@ module.exports = class Project {
      *        properties.
      */
     _initProjectProperties(buildMetadata) {
+        console.log(buildMetadata);
         if (!buildMetadata || typeof buildMetadata !== 'object') {
             throw new Error('Invalid buildMetadata (arg #1)');
         }
