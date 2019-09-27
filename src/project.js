@@ -72,7 +72,6 @@ module.exports = class Project {
      *        properties.
      */
     _initProjectProperties(buildMetadata) {
-        console.log(buildMetadata);
         if (!buildMetadata || typeof buildMetadata !== 'object') {
             throw new Error('Invalid buildMetadata (arg #1)');
         }
