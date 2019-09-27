@@ -39,11 +39,11 @@ module.exports = (project, options) => {
     if (project.hasServer) {
         extras.push({
             name: 'logs',
-            path: rootDir.getChild('logs').getAllFilesPattern('log')
+            path: rootDir.getChild('logs').getAllFilesGlob('log')
         });
     }
 
-    const paths = dirs.map((dir) => rootDir.getChild(dir).absolutePath);
+    const paths = dirs.map((dir) => rootDir.getChild(dir).globPath);
     const task = () => _delete(paths);
 
     task.displayName = 'clean';

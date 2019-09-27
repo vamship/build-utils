@@ -28,7 +28,7 @@ module.exports = (project, options) => {
     const mochaBin = project.rootDir.getFilePath('node_modules/.bin/mocha');
     const nycBin = project.rootDir.getFilePath('node_modules/.bin/nyc');
 
-    const paths = rootDir.getChild(`test/${testType}`).getAllFilesPattern('js');
+    const paths = rootDir.getChild(`test/${testType}`).getAllFilesGlob('js');
 
     const args = [
         '--reporter',
@@ -54,7 +54,7 @@ module.exports = (project, options) => {
     if (watch) {
         const watchPaths = ['src', 'test']
             .map((dir) => rootDir.getChild(dir))
-            .map((dir) => dir.getAllFilesPattern('js'));
+            .map((dir) => dir.getAllFilesGlob('js'));
 
         const watchTask = () => _gulp.watch(watchPaths, task);
         watchTask.displayName = `watch-test-${testType}`;

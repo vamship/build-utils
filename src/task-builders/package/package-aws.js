@@ -45,12 +45,12 @@ module.exports = (project, options) => {
 
     const paths = dirs
         .map((dir) => workingDir.getChild(dir))
-        .map((dir) => dir.getAllFilesPattern())
+        .map((dir) => dir.getAllFilesGlob())
         .concat(extras.map((file) => workingDir.getFilePath(file)));
 
     const zipTask = () =>
         _gulp
-            .src(paths, { allowEmpty: true, base: workingDir.absolutePath })
+            .src(paths, { allowEmpty: true, base: workingDir.globPath })
             .pipe(_zip(packageName))
             .pipe(_gulp.dest(rootDir.getChild('dist').absolutePath));
 

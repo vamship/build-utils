@@ -28,13 +28,13 @@ module.exports = (project, options) => {
 
     const paths = dirs
         .map((dir) => rootDir.getChild(dir))
-        .map((dir) => [undefined].map((ext) => dir.getAllFilesPattern(ext)))
+        .map((dir) => [undefined].map((ext) => dir.getAllFilesGlob(ext)))
         .reduce((result, arr) => result.concat(arr), [])
         .concat(extras.map((file) => rootDir.getFilePath(file)));
 
     const task = () =>
         _gulp
-            .src(paths, { allowEmpty: true, base: rootDir.absolutePath })
+            .src(paths, { allowEmpty: true, base: rootDir.globPath })
             .pipe(_prettier())
             .pipe(_gulp.dest(rootDir.absolutePath));
 

@@ -31,7 +31,7 @@ module.exports = (project, options) => {
 
     const paths = dirs
         .map((dir) => rootDir.getChild(dir))
-        .map((dir) => extensions.map((ext) => dir.getAllFilesPattern(ext)))
+        .map((dir) => extensions.map((ext) => dir.getAllFilesGlob(ext)))
         .reduce((result, arr) => result.concat(arr), []);
 
     const task = () =>

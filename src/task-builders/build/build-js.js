@@ -38,13 +38,13 @@ module.exports = (project, options) => {
 
     const paths = dirs
         .map((dir) => rootDir.getChild(dir))
-        .map((dir) => ['js', 'json'].map((ext) => dir.getAllFilesPattern(ext)))
+        .map((dir) => ['js', 'json'].map((ext) => dir.getAllFilesGlob(ext)))
         .reduce((result, arr) => result.concat(arr), [])
         .concat(extras.map((item) => rootDir.getFilePath(item)));
 
     const task = () =>
         _gulp
-            .src(paths, { allowEmpty: true, base: rootDir.absolutePath })
+            .src(paths, { allowEmpty: true, base: rootDir.globPath })
             .pipe(_gulp.dest(workingDir.absolutePath));
 
     task.displayName = 'build-js';

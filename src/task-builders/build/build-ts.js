@@ -30,12 +30,12 @@ module.exports = (project, options) => {
 
     const paths = dirs
         .map((dir) => rootDir.getChild(dir))
-        .map((dir) => ['ts'].map((ext) => dir.getAllFilesPattern(ext)))
+        .map((dir) => ['ts'].map((ext) => dir.getAllFilesGlob(ext)))
         .reduce((result, arr) => result.concat(arr), []);
 
     const task = () =>
         _gulp
-            .src(paths, { base: rootDir.absolutePath })
+            .src(paths, { base: rootDir.globPath })
             .pipe(tsProject())
             .pipe(_gulp.dest(workingDir.absolutePath));
 
