@@ -16,8 +16,7 @@ const _execa = require('execa');
  * @returns {Function} A gulp task.
  */
 module.exports = (project, options) => {
-    const { name, version, rootDir } = project;
-    const { jsRootDir } = rootDir;
+    const { name, version, rootDir, jsRootDir } = project;
 
     const packageName = `${name.replace(/\//g, '-')}-${version}.tgz`;
 
