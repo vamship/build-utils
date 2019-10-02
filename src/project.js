@@ -108,7 +108,13 @@ module.exports = class Project {
         if (this._projectType === 'aws-microservice') {
             if (!aws || typeof aws !== 'object') {
                 throw new Error(
-                    'The project is an AWS microservice, but does not define aws configuration'
+                    'The project is an AWS microservice, but does not define AWS configuration'
+                );
+            }
+
+            if (!aws.stacks || typeof aws.stacks !== 'object') {
+                throw new Error(
+                    'The project is an AWS microservice, but does not define AWS stacks'
                 );
             }
 
@@ -118,7 +124,7 @@ module.exports = class Project {
         } else {
             this._awsRegion = undefined;
             this._awsProfile = undefined;
-            this._cdkStacks = [];
+            this._cdkStacks = {};
         }
 
         if (this._hasDocker) {
@@ -359,12 +365,26 @@ module.exports = class Project {
     }
 
     /**
-     * Returns a list of CDK stacks defined for the project. These stack names
-     * will be used to generate deploy tasks for each.
+     * Returns a list of CDK stack keys defined for the project. These stack
+     * keys will be used to generate deploy tasks for each. Each key maps to a
+     * specific CDK stack that can be deployed.
      *
-     * @return {Array}
+     * @return {Array} A list of stack keys
      */
     getCdkStacks() {
-        return this._cdkStacks.concat([]);
+        return Object.keys(this._cdkStacks);
+    }
+
+    /**
+     * Returns the name of the stack corresponding to the stack key.
+     *
+     * @param {String} key The CDK stack key to use when looking up the name.
+     * @return {String} The stack name that maps to the key.
+     */
+    getCdkStackName(key) {
+        if (typeof key !== 'string' || key.length <= 0) {
+            throw new Error('Invalid stack key (arg #1)');
+        }
+        return this._cdkStacks[key];
     }
 };

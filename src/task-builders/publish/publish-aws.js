@@ -25,10 +25,10 @@ module.exports = (project, options) => {
 
     const cdkBin = 'cdk';
 
-    const tasks = project.getCdkStacks().map((stack) => {
+    const tasks = project.getCdkStacks().map((key) => {
         const args = [
             'deploy',
-            stack,
+            project.getCdkStackName(key),
             '--app',
             `"node ${workingDir.absolutePath}/infra/index"`
         ];
@@ -40,8 +40,8 @@ module.exports = (project, options) => {
                     AWS_REGION: project.awsRegion
                 }
             });
-        task.displayName = `publish-${stack}`;
-        task.description = `Publishes the ${stack} stack to AWS using CDK`;
+        task.displayName = `publish-${key}`;
+        task.description = `Publishes the ${key} stack to AWS using CDK`;
 
         return task;
     });
