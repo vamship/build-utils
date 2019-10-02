@@ -1,6 +1,6 @@
 {
     "name": "@vamship/build-utils",
-    "version": "0.0.1",
+    "version": "0.0.2",
     "description": "Utility library for build tooling",
     "main": "src/index.js",
     "scripts": {
@@ -16,7 +16,12 @@
         "type": "git",
         "url": "https://github.com/vamship/build-utils.git"
     },
-    "keywords": ["gulp", "build", "test", "utilities"],
+    "keywords": [
+        "gulp",
+        "build",
+        "test",
+        "utilities"
+    ],
     "author": "Vamshi K Ponnapalli <vamshi.ponnapalli@gmail.com>",
     "license": "MIT",
     "bugs": {
