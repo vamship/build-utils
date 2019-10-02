@@ -30,7 +30,7 @@ module.exports = (project, options) => {
             'deploy',
             stack,
             '--app',
-            `"node ${workingDir}/infra/index"`
+            `"node ${workingDir.absolutePath}/infra/index"`
         ];
         const task = () =>
             _execa(cdkBin, args, {
