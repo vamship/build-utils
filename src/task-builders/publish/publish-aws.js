@@ -29,12 +29,16 @@ module.exports = (project, options) => {
         const args = [
             'deploy',
             stack,
-            '-a',
+            '--app',
             `"node ${workingDir}/infra/index"`
         ];
         const task = () =>
             _execa(cdkBin, args, {
-                stdio: 'inherit'
+                stdio: 'inherit',
+                env: {
+                    AWS_PROFILE: project.awsProfile,
+                    AWS_REGION: project.awsRegion
+                }
             });
         task.displayName = `publish-${stack}`;
         task.description = `Publishes the ${stack} stack to AWS using CDK`;
