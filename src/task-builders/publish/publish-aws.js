@@ -21,7 +21,7 @@ module.exports = (project, options) => {
     const { name, version, hasPrivateNpm, rootDir } = project;
     const workingDir = rootDir.getChild('working');
 
-    const packageName = `${name.replace(/\//g, '-')}-${version}.tgz`;
+    const packageName = `${name.replace(/\//g, '-')}-${version}.zip`;
 
     const cdkBin = 'cdk';
 
