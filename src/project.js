@@ -82,6 +82,7 @@ module.exports = class Project {
             docker,
             privateNpm,
             privateNpmParams,
+            exportedTypes,
             aws
         } = buildMetadata;
 
@@ -99,11 +100,15 @@ module.exports = class Project {
 
         this._projectType = projectType;
         this._language = language;
+        this._exportedTypes = exportedTypes;
+
         this._hasTypescript = this._language === 'ts';
         this._hasServer = this._projectType === 'api';
         this._hasDocker =
             this._projectType !== 'lib' && docker && typeof docker === 'object';
         this._hasPrivateNpm = privateNpm && typeof privateNpm === 'object';
+        this._hasExportedTypes =
+            typeof exportedTypes === 'string' && exportedTypes.length > 0;
 
         if (this._projectType === 'aws-microservice') {
             if (!aws || typeof aws !== 'object') {
@@ -291,6 +296,25 @@ module.exports = class Project {
     }
 
     /**
+     * The path to the docker repository for the project.
+     *
+     * @return {String}
+     */
+    get dockerRepo() {
+        return this._dockerRepo;
+    }
+
+    /**
+     * The path to the directory that contains the types exported by this
+     * project.
+     *
+     * @return {String}
+     */
+    get exportedTypes() {
+        return this._exportedTypes;
+    }
+
+    /**
      * Determines whether or not the project can be packaged up as a docker
      * image.
      *
@@ -298,15 +322,6 @@ module.exports = class Project {
      */
     get hasDocker() {
         return this._hasDocker;
-    }
-
-    /**
-     * The path to the docker repository for the project.
-     *
-     * @return {String}
-     */
-    get dockerRepo() {
-        return this._dockerRepo;
     }
 
     /**
@@ -336,6 +351,16 @@ module.exports = class Project {
      */
     get hasServer() {
         return this._hasServer;
+    }
+
+
+    /**
+     * Determines if the project has any types to export.
+     *
+     * @return {String}
+     */
+    get hasExportedTypes() {
+        return this._hasExportedTypes;
     }
 
     /**
