@@ -37,7 +37,7 @@ module.exports = class Project {
         this._description = config.description;
         this._initProjectProperties(config.buildMetadata);
 
-        this._rootDir = Directory.createTree('./', {
+        const tree = {
             src: null,
             test: {
                 unit: null,
@@ -61,7 +61,31 @@ module.exports = class Project {
             '.tscache': null,
             logs: null,
             'cdk.out': null
-        });
+        };
+
+        if (this._hasExportedTypes) {
+            let rootParentDir = tree;
+            let workingParentDir = tree.working;
+
+            const exportedTypesDirs = this._exportedTypes.split('/');
+            const lastIndex = exportedTypesDirs.length - 1;
+
+            exportedTypesDirs.forEach((dirName, index) => {
+                const isLastIndex = index === lastIndex;
+
+                if (!rootParentDir[dirName]) {
+                    rootParentDir[dirName] = isLastIndex ? null : {};
+                }
+                rootParentDir = rootParentDir[dirName];
+
+                if (!workingParentDir[dirName]) {
+                    workingParentDir[dirName] = isLastIndex ? null : {};
+                }
+                workingParentDir = workingParentDir[dirName];
+            });
+        }
+
+        this._rootDir = Directory.createTree('./', tree);
     }
 
     /**
@@ -352,7 +376,6 @@ module.exports = class Project {
     get hasServer() {
         return this._hasServer;
     }
-
 
     /**
      * Determines if the project has any types to export.
