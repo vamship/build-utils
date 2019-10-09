@@ -17,7 +17,7 @@ const _execa = require('execa');
 module.exports = (project, options) => {
     const { name, version, rootDir } = project;
 
-    const packageName = `${name.replace(/\//g, '-')}-${version}.tgz`;
+    const packageName = `${name.replace(/\//g, '-')}-types-${version}.tgz`;
 
     const npmBin = 'npm';
     const args = ['publish', packageName];
@@ -28,9 +28,9 @@ module.exports = (project, options) => {
             cwd: rootDir.getChild('dist').absolutePath
         });
 
-    publishTask.displayName = 'publish-npm';
+    publishTask.displayName = 'publish-npm-types';
     publishTask.description =
         'Publish an existing package to an npm repository';
 
-    return _gulp.parallel(publishTask);
+    return _gulp.parallel([publishTask]);
 };
