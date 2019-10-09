@@ -17,9 +17,15 @@ const _gulp = require('gulp');
  * @returns {Function} A gulp task.
  */
 module.exports = (project, options) => {
+    const { types } = options;
     let createTask = null;
 
-    if (project.projectType === 'aws-microservice') {
+    if (types) {
+        if (!project.hasExportedTypes) {
+            return;
+        }
+        createTask = require('./package-types');
+    } else if (project.projectType === 'aws-microservice') {
         createTask = require('./package-aws');
     } else if (project.hasDocker) {
         createTask = require('./package-docker');
@@ -28,8 +34,15 @@ module.exports = (project, options) => {
     }
 
     const task = createTask(project, options);
-    task.displayName = 'package';
-    task.description = 'Create a distribution package for the project';
+
+    if (types) {
+        task.displayName = 'package-types';
+        task.description =
+            'Create a distribution package for the types exported by the project';
+    } else {
+        task.displayName = 'package';
+        task.description = 'Create a distribution package for the project';
+    }
 
     return task;
 };
