@@ -19,7 +19,11 @@ module.exports = (project, options) => {
     const dirs = ['coverage'];
     const extras = [];
 
-    if (project.hasTypescript || project.projectType === 'aws-microservice') {
+    if (
+        project.hasExportedTypes ||
+        project.hasTypescript ||
+        project.projectType === 'aws-microservice'
+    ) {
         dirs.push('working');
         dirs.push('dist');
     }
