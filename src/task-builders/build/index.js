@@ -19,7 +19,11 @@ const _gulp = require('gulp');
 module.exports = (project, options) => {
     const { watch } = Object.assign({ watch: false }, options);
 
-    if (!project.hasTypescript && project.projectType !== 'aws-microservice') {
+    if (
+        !project.hasExportedTypes &&
+        !project.hasTypescript &&
+        project.projectType !== 'aws-microservice'
+    ) {
         return;
     }
 
@@ -29,6 +33,9 @@ module.exports = (project, options) => {
     if (project.hasTypescript) {
         const tsBuild = require('./build-ts');
         tasks.push(tsBuild(project, options));
+    } else if (project.hasExportedTypes) {
+        const typesBuild = require('./build-types');
+        tasks.push(typesBuild(project, options));
     }
 
     const task = _gulp.parallel(tasks);
