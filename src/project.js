@@ -32,6 +32,8 @@ module.exports = class Project {
         );
 
         this._name = config.name;
+        this._license = config.license;
+        this._keywords = (config.keywords || []).slice();
         this._unscopedName = config.name.replace(/^@[^/]*\//, '');
         this._version = config.version;
         this._description = config.description;
@@ -245,6 +247,24 @@ module.exports = class Project {
      */
     get name() {
         return this._name;
+    }
+
+    /**
+     * The license of the project as defined in package.json.
+     *
+     * @return {String}
+     */
+    get license() {
+        return this._license;
+    }
+
+    /**
+     * The keywords for the project as defined in package.json.
+     *
+     * @return {String}
+     */
+    get keywords() {
+        return this._keywords;
     }
 
     /**
