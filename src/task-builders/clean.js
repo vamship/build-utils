@@ -32,7 +32,7 @@ module.exports = (project, options) => {
         dirs.push('.tscache');
         extras.push({
             name: 'typescript-temp',
-            path: rootDir.getFilePath('tscommand-*.tmp.txt')
+            path: rootDir.getFileGlob('tscommand-*.tmp.txt')
         });
     }
 
