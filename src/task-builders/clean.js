@@ -16,7 +16,7 @@ const _delete = require('delete');
 module.exports = (project, options) => {
     const rootDir = project.rootDir;
 
-    const dirs = ['coverage'];
+    const dirs = ['coverage', 'dist'];
     const extras = [];
 
     if (
@@ -25,7 +25,6 @@ module.exports = (project, options) => {
         project.projectType === 'aws-microservice'
     ) {
         dirs.push('working');
-        dirs.push('dist');
     }
 
     if (project.hasTypescript) {
