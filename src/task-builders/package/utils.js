@@ -1,5 +1,6 @@
 'use strict';
 
+const _delete = require('delete');
 const _execa = require('execa');
 const _gulp = require('gulp');
 
@@ -22,6 +23,7 @@ module.exports.createNpmPackageTask = function(
 ) {
     const npmBin = 'npm';
     const args = ['pack'];
+    const packageFile = packageDir.getFileGlob(packageName);
 
     const packTask = () =>
         _execa(npmBin, args, {
@@ -33,13 +35,16 @@ module.exports.createNpmPackageTask = function(
     packTask.description = 'Create a project distribution using npm';
 
     const copyTask = () =>
-        _gulp
-            .src(packageDir.getFilePath(packageName))
-            .pipe(_gulp.dest(targetDir.absolutePath));
+        _gulp.src(packageFile).pipe(_gulp.dest(targetDir.absolutePath));
 
     copyTask.displayName = 'package-npm-copy';
     copyTask.description =
         'Copies the project package to the distribution directory';
 
-    return _gulp.series([packTask, copyTask]);
+    const deleteTask = () => _delete(packageFile);
+    deleteTask.displayName = 'package-npm-delete';
+    deleteTask.description =
+        'Deletes the original packge, leaving just the one in the distribution directory';
+
+    return _gulp.series([packTask, copyTask, deleteTask]);
 };
