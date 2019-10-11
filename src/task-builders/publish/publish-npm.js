@@ -15,9 +15,9 @@ const _execa = require('execa');
  * @returns {Function} A gulp task.
  */
 module.exports = (project, options) => {
-    const { name, version, rootDir } = project;
+    const { snakeCasedName, version, rootDir } = project;
 
-    const packageName = `${name.replace(/\//g, '-')}-${version}.tgz`;
+    const packageName = `${snakeCasedName}-${version}.tgz`;
 
     const npmBin = 'npm';
     const args = ['publish', packageName];
