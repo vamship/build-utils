@@ -46,7 +46,7 @@ module.exports = (project, options) => {
     const paths = dirs
         .map((dir) => workingDir.getChild(dir))
         .map((dir) => dir.getAllFilesGlob())
-        .concat(extras.map((file) => workingDir.getFilePath(file)));
+        .concat(extras.map((file) => workingDir.getFileGlob(file)));
 
     const zipTask = () =>
         _gulp

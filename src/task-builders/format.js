@@ -30,7 +30,7 @@ module.exports = (project, options) => {
         .map((dir) => rootDir.getChild(dir))
         .map((dir) => [undefined].map((ext) => dir.getAllFilesGlob(ext)))
         .reduce((result, arr) => result.concat(arr), [])
-        .concat(extras.map((file) => rootDir.getFilePath(file)));
+        .concat(extras.map((file) => rootDir.getFileGlob(file)));
 
     const task = () =>
         _gulp

@@ -40,7 +40,7 @@ module.exports = (project, options) => {
         .map((dir) => rootDir.getChild(dir))
         .map((dir) => ['js', 'json'].map((ext) => dir.getAllFilesGlob(ext)))
         .reduce((result, arr) => result.concat(arr), [])
-        .concat(extras.map((item) => rootDir.getFilePath(item)));
+        .concat(extras.map((item) => rootDir.getFileGlob(item)));
 
     const task = () =>
         _gulp
