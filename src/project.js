@@ -35,6 +35,9 @@ module.exports = class Project {
         this._license = config.license;
         this._keywords = (config.keywords || []).slice();
         this._unscopedName = config.name.replace(/^@[^/]*\//, '');
+        this._snakeCasedName = config.name
+            .replace(/^@/, '')
+            .replace(/\//g, '-');
         this._version = config.version;
         this._description = config.description;
         this._initProjectProperties(config.buildMetadata);
@@ -275,6 +278,15 @@ module.exports = class Project {
      */
     get unscopedName() {
         return this._unscopedName;
+    }
+
+    /**
+     * The name of the project formatted in snake case. Ideal for use when
+     * generating package names. This property does not include the file
+     * extension (.tgz).
+     */
+    get snakeCasedName() {
+        return this._snakeCasedName;
     }
 
     /**
