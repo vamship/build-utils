@@ -1,6 +1,6 @@
 {
     "name": "@vamship/build-utils",
-    "version": "0.0.13",
+    "version": "0.0.14",
     "description": "Utility library for build tooling",
     "main": "src/index.js",
     "scripts": {
