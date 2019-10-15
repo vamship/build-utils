@@ -21,7 +21,7 @@ module.exports = (project, options) => {
         description,
         configFileName,
         hasPrivateNpm,
-        rootDir
+        jsRootDir
     } = project;
 
     const packageTask = () => {
@@ -37,7 +37,7 @@ module.exports = (project, options) => {
             '--build-arg',
             `APP_VERSION=${version}`,
             '--build-arg',
-            `APP_DESCRIPTION=${description}`,
+            `APP_DESCRIPTION='${description}'`,
             '--build-arg',
             `CONFIG_FILE_NAME=${configFileName}`,
             '--build-arg',
@@ -56,7 +56,7 @@ module.exports = (project, options) => {
 
         return _execa(dockerBin, args, {
             stdio: 'inherit',
-            cwd: rootDir.getChild('working').absolutePath
+            cwd: jsRootDir.absolutePath
         });
     };
 
