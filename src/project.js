@@ -162,9 +162,13 @@ module.exports = class Project {
         }
 
         if (this._hasDocker) {
-            this._dockerRepo = docker.registry
-                ? `${docker.registry}/${this._unscopedName}`
-                : this._unscopedName;
+            if (docker.repo) {
+                this._dockerRepo = docker.repo;
+            } else {
+                this._dockerRepo = docker.registry
+                    ? `${docker.registry}/${this._unscopedName}`
+                    : this._unscopedName;
+            }
         } else {
             this._dockerRepo = undefined;
         }
