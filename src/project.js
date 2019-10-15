@@ -3,7 +3,13 @@
 const _camelcase = require('camelcase');
 const Directory = require('./directory');
 
-const SUPPORTED_PROJECT_TYPES = ['lib', 'cli', 'api', 'aws-microservice'];
+const SUPPORTED_PROJECT_TYPES = [
+    'lib',
+    'cli',
+    'api',
+    'aws-microservice',
+    'container'
+];
 const SUPPORTED_LANGUAGES = ['js', 'ts'];
 
 /**
