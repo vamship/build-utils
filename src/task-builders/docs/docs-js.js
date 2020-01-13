@@ -24,7 +24,7 @@ module.exports = (project, options) => {
                 readme: rootDir.getFilePath('README.md'),
                 destination: rootDir.getFilePath(`docs/${name}/${version}`),
                 template: rootDir.getFilePath('node_modules/docdash')
-            },
+            }
         },
         options
     );
@@ -35,9 +35,7 @@ module.exports = (project, options) => {
         .reduce((result, arr) => result.concat(arr), []);
 
     const task = () =>
-        _gulp
-            .src(paths, { allowEmpty: true })
-            .pipe(_gulpJsdoc(docOptions));
+        _gulp.src(paths, { allowEmpty: true }).pipe(_gulpJsdoc(docOptions));
 
     return task;
 };

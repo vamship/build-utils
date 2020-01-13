@@ -34,9 +34,7 @@ module.exports = (project, options) => {
         .reduce((result, arr) => result.concat(arr), []);
 
     const task = () =>
-        _gulp
-            .src(paths, { allowEmpty: true })
-            .pipe(_gulpTypedoc(docOptions));
+        _gulp.src(paths, { allowEmpty: true }).pipe(_gulpTypedoc(docOptions));
 
     return task;
 };
