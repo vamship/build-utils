@@ -10,6 +10,7 @@ module.exports = [
     'lint',
     'build',
     'test',
+    'docs',
     'package',
     'publish'
 ].reduce((tasks, task) => {
