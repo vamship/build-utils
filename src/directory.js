@@ -2,7 +2,7 @@
 
 const _path = require('path');
 
-const _sepRegexp = new RegExp(`${_path.sep}`, 'g');
+const _sepRegexp = new RegExp(_path.sep.replace(/\\/g, '\\\\'), 'g');
 
 /**
  * Abstract representation of a directory, with methods for traversal and
