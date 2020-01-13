@@ -20,8 +20,7 @@ module.exports = (project, options) => {
     if (project.hasTypescript) {
         createTask = require('./docs-ts');
     } else {
-        return;
-        // createTask = require('./docs-js');
+        createTask = require('./docs-js');
     }
 
     const task = createTask(project, options);
