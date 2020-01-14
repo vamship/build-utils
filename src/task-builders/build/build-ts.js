@@ -33,7 +33,10 @@ module.exports = (project, options) => {
         .map((dir) => ['ts'].map((ext) => dir.getAllFilesGlob(ext)))
         .reduce((result, arr) => result.concat(arr), []);
 
-    const distFiles = [rootDir.getFileGlob('LICENSE')];
+    const distFiles = [
+        rootDir.getFileGlob('LICENSE'),
+        rootDir.getFileGlob('README.md')
+    ];
 
     const buildTask = () =>
         _gulp
