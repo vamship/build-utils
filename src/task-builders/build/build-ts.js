@@ -33,11 +33,20 @@ module.exports = (project, options) => {
         .map((dir) => ['ts'].map((ext) => dir.getAllFilesGlob(ext)))
         .reduce((result, arr) => result.concat(arr), []);
 
-    const task = () =>
+    const distFiles = [rootDir.getFileGlob('LICENSE')];
+
+    const buildTask = () =>
         _gulp
             .src(paths, { base: rootDir.globPath })
             .pipe(tsProject())
             .pipe(_gulp.dest(workingDir.absolutePath));
+
+    const copyTask = () =>
+        _gulp
+            .src(distFiles, { allowEmpty: true })
+            .pipe(_gulp.dest(workingDir.absolutePath));
+
+    const task = _gulp.parallel([copyTask, buildTask]);
 
     task.displayName = 'build-ts';
     task.description = 'Build typescript source files to javascript files';
