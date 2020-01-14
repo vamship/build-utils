@@ -12,6 +12,12 @@
         "docs": "jsdoc --readme README.md --package package.json --template node_modules/docdash --destination docs --recurse src",
         "all": "npm run format && npm run lint && npm run test && npm run clean"
     },
+    "files": [
+        "package.json",
+        "LICENSE",
+        "README.md",
+        "src/**/*"
+    ],
     "repository": {
         "type": "git",
         "url": "https://github.com/vamship/build-utils.git"
