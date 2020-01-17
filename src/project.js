@@ -117,6 +117,7 @@ module.exports = class Project {
             docker,
             privateNpm,
             privateNpmParams,
+            requiredEnv,
             exportedTypes,
             aws
         } = buildMetadata;
@@ -131,6 +132,11 @@ module.exports = class Project {
             throw new Error(
                 `Invalid language (buildMetadata.language)\n\tMust be one of: [${SUPPORTED_LANGUAGES}]`
             );
+        }
+
+        this._requiredEnv = [];
+        if (!(requiredEnv instanceof Array)) {
+            this._requiredEnv = requiredEnv.concat([]);
         }
 
         this._projectType = projectType;
@@ -426,6 +432,32 @@ module.exports = class Project {
      */
     get hasExportedTypes() {
         return this._hasExportedTypes;
+    }
+
+    /**
+     * Returns a list of required environment variables. These parameters can
+     * be checked during build/package time to ensure that they exist, before
+     * performing any actions.
+     *
+     * @return {Array}
+     */
+    getRequiredEnv() {
+        return this._requiredEnv.concat([]);
+    }
+
+    /**
+     * Checks to see if all required variables have been defined in the
+     * environment. This is typically a runtime call, executed prior to
+     * building/packaging a project.
+     */
+    validateRequiredEnv() {
+        this._requiredEnv.forEach((param) => {
+            if (!process.env[param]) {
+                throw new Error(
+                    `Required variable ${param} not found in environment`
+                );
+            }
+        });
     }
 
     /**
