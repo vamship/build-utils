@@ -2,6 +2,9 @@
 
 const _camelcase = require('camelcase');
 const Directory = require('./directory');
+const _dotEnv = require('dotenv');
+const _dotEnvExpand = require('dotenv-expand');
+const _fs = require('fs');
 
 const SUPPORTED_PROJECT_TYPES = [
     'lib',
@@ -135,7 +138,7 @@ module.exports = class Project {
         }
 
         this._requiredEnv = [];
-        if (!(requiredEnv instanceof Array)) {
+        if (requiredEnv instanceof Array) {
             this._requiredEnv = requiredEnv.concat([]);
         }
 
@@ -435,6 +438,23 @@ module.exports = class Project {
     }
 
     /**
+     * Initializes a list of environment variables from the specified files.
+     * If environment variables are repeated in files, the declaration in the
+     * first file takes precedence over the others.
+     *
+     * @param {Array} [files=[]] A list of files to load environment variables
+     *        from.
+     */
+    initEnv(envFiles) {
+        if (!(envFiles instanceof Array)) {
+            envFiles = [];
+        }
+        envFiles
+            .filter((file) => _fs.existsSync(file))
+            .forEach((file) => _dotEnvExpand(_dotEnv.config({ path: file })));
+    }
+
+    /**
      * Returns a list of required environment variables. These parameters can
      * be checked during build/package time to ensure that they exist, before
      * performing any actions.
@@ -451,13 +471,17 @@ module.exports = class Project {
      * building/packaging a project.
      */
     validateRequiredEnv() {
+        const missingVars = [];
         this._requiredEnv.forEach((param) => {
             if (!process.env[param]) {
-                throw new Error(
-                    `Required variable ${param} not found in environment`
-                );
+                missingVars.push(param);
             }
         });
+        if (missingVars.length > 0) {
+            throw new Error(
+                `Required environment variables not defined: ${missingVars}`
+            );
+        }
     }
 
     /**

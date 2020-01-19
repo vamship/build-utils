@@ -19,6 +19,7 @@ const _execa = require('execa');
  */
 module.exports = (project, options) => {
     const { name, version, hasPrivateNpm, rootDir } = project;
+    const infraDir = rootDir.getChild('infra');
     const workingDir = rootDir.getChild('working');
 
     const packageName = `${name.replace(/\//g, '-')}-${version}.zip`;
@@ -26,20 +27,26 @@ module.exports = (project, options) => {
     const cdkBin = 'cdk';
 
     const tasks = project.getCdkStacks().map((key) => {
+        const envFiles = [
+            infraDir.getFileGlob(`.env.${process.env.NODE_ENV}`),
+            infraDir.getFileGlob('.env')
+        ];
         const args = [
             'deploy',
             project.getCdkStackName(key),
             '--app',
-            `"node ${workingDir.absolutePath}/infra/index"`
+            `"node ${workingDir.getFileGlob('infra/index')}"`
         ];
-        const task = () =>
-            _execa(cdkBin, args, {
-                stdio: 'inherit',
-                env: {
-                    AWS_PROFILE: project.awsProfile,
-                    AWS_REGION: project.awsRegion
-                }
+
+        const task = () => {
+            project.initEnv(envFiles);
+            project.validateRequiredEnv();
+
+            return _execa(cdkBin, args, {
+                stdio: 'inherit'
             });
+        };
+
         task.displayName = `publish-${key}`;
         task.description = `Publishes the ${key} stack to AWS using CDK`;
 
