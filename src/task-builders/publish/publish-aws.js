@@ -18,7 +18,7 @@ const _execa = require('execa');
  * @returns {Function} A gulp task.
  */
 module.exports = (project, options) => {
-    const { name, version, hasPrivateNpm, rootDir } = project;
+    const { name, version, rootDir } = project;
     const infraDir = rootDir.getChild('infra');
     const workingDir = rootDir.getChild('working');
 
