@@ -1,0 +1,14 @@
+{
+    "name": "example-lib-ts",
+    "version": "1.0.0",
+    "description": "Example package.json for a typescript library project.",
+    "main": "Gulpfile.js",
+    "keywords": [],
+    "author": "",
+    "license": "ISC",
+    "buildMetadata": {
+        "projectType": "lib",
+        "language": "ts",
+        "requiredEnv": ["MY_PRIVATE_NPM_KEY"]
+    }
+}

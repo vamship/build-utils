@@ -1,0 +1,21 @@
+{
+    "name": "example-api-js",
+    "version": "1.0.0",
+    "description": "Example package.json for a javascript api project.",
+    "main": "Gulpfile.js",
+    "keywords": [],
+    "author": "",
+    "license": "ISC",
+    "buildMetadata": {
+        "projectType": "api",
+        "language": "js",
+        "requiredEnv": ["MY_BUILD_VAR_1"],
+        "docker": {
+            "dockerRepo": "111111111111.dkr.ecr.us-east-1.amazonaws.com/my-aws-ecr-repo",
+            "buildArgs": {
+                "MY_BUILD_VAR_1": "__ENV__",
+                "MY_BUILD_VAR_2": "myvar"
+            }
+        }
+    }
+}

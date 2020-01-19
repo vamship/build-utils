@@ -1,0 +1,14 @@
+{
+    "name": "example-lib-js",
+    "version": "1.0.0",
+    "description": "Example package.json for a javascript library project.",
+    "main": "Gulpfile.js",
+    "keywords": [],
+    "author": "",
+    "license": "ISC",
+    "buildMetadata": {
+        "projectType": "lib",
+        "language": "js",
+        "requiredEnv": ["MY_PRIVATE_NPM_KEY"]
+    }
+}

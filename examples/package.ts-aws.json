@@ -1,0 +1,20 @@
+{
+    "name": "example-aws-ts",
+    "version": "1.0.0",
+    "description": "Example package.json for a typescript aws project.",
+    "main": "Gulpfile.js",
+    "keywords": [],
+    "author": "",
+    "license": "ISC",
+    "buildMetadata": {
+        "projectType": "aws-microservice",
+        "language": "ts",
+        "requiredEnv": ["MY_STACK_CONFIG_VAR_1"],
+        "aws": {
+            "stacks": {
+                "core": "example-core",
+                "api": "example-api"
+            }
+        }
+    }
+}
