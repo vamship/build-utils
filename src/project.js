@@ -118,8 +118,6 @@ module.exports = class Project {
             projectType,
             language,
             docker,
-            privateNpm,
-            privateNpmParams,
             requiredEnv,
             exportedTypes,
             aws
@@ -150,9 +148,9 @@ module.exports = class Project {
         this._hasServer = this._projectType === 'api';
         this._hasDocker =
             this._projectType !== 'lib' && docker && typeof docker === 'object';
-        this._hasPrivateNpm = privateNpm && typeof privateNpm === 'object';
         this._hasExportedTypes =
             typeof exportedTypes === 'string' && exportedTypes.length > 0;
+        this._dockerBuildArgs = [];
 
         if (this._projectType === 'aws-microservice') {
             if (!aws || typeof aws !== 'object') {
@@ -184,19 +182,20 @@ module.exports = class Project {
                     ? `${docker.registry}/${this._unscopedName}`
                     : this._unscopedName;
             }
+
+            const buildArgs = Object.assign({}, docker.buildArgs);
+            Object.keys(buildArgs).forEach((name) => {
+                let value = buildArgs(name);
+                if (value == '__ENV__') {
+                    value = process.env[name];
+                }
+                this._dockerBuildArgs.push({
+                    name,
+                    value
+                });
+            });
         } else {
             this._dockerRepo = undefined;
-        }
-
-        if (this._hasPrivateNpm) {
-            if (!(privateNpm.params instanceof Array)) {
-                throw new Error(
-                    'Project uses a private npm repository, but does not define any private npm params'
-                );
-            }
-            this._privateNpmParams = privateNpm.params;
-        } else {
-            this._privateNpmParams = [];
         }
     }
 
@@ -409,16 +408,6 @@ module.exports = class Project {
     }
 
     /**
-     * Determines whether or not the project uses libraries from a private NPM
-     * registry.
-     *
-     * @return {Boolean}
-     */
-    get hasPrivateNpm() {
-        return this._hasPrivateNpm;
-    }
-
-    /**
      * Determines whether or not the project has a server component that might
      * require API tests or the ability to host a local server.
      *
@@ -485,29 +474,15 @@ module.exports = class Project {
     }
 
     /**
-     * Returns a list of required private NPM parameters. These parameters can
-     * be checked during build/package time to ensure that they exist, before
-     * performing any actions.
+     * Returns a an array of docker build arguments and their values. Each
+     * element of the array will be an object containing two properties - name
+     * and value, that represent the docker build arg name and value
+     * respectively.
      *
      * @return {Array}
      */
-    getPrivateNpmParams() {
-        return this._privateNpmParams.concat([]);
-    }
-
-    /**
-     * Checks to see if all required private NPM parameters have been defined in
-     * the environment. This is typically a runtime call, executed prior to
-     * building/packaging a project.
-     */
-    validatePrivateNpmParams() {
-        this._privateNpmParams.forEach((param) => {
-            if (!process.env[param]) {
-                throw new Error(
-                    `Required npm parameter ${param} not found in environment`
-                );
-            }
-        });
+    getDockerBuildArgs() {
+        return this._dockerBuildArgs.concat([]);
     }
 
     /**

@@ -18,7 +18,7 @@ const _execa = require('execa');
  * @returns {Function} A gulp task.
  */
 module.exports = (project, options) => {
-    const { snakeCasedName, version, hasPrivateNpm, rootDir } = project;
+    const { snakeCasedName, version, rootDir } = project;
     const workingDir = rootDir.getChild('working');
 
     const packageName = `${snakeCasedName}-${version}.zip`;
@@ -27,9 +27,7 @@ module.exports = (project, options) => {
         const npmBin = 'npm';
         const args = ['install', '--production'];
 
-        if (hasPrivateNpm) {
-            project.validatePrivateNpmParams();
-        }
+        project.validateRequiredEnv();
 
         return _execa(npmBin, args, {
             stdio: 'inherit',

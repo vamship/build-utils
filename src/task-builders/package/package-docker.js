@@ -20,7 +20,6 @@ module.exports = (project, options) => {
         version,
         description,
         configFileName,
-        hasPrivateNpm,
         jsRootDir
     } = project;
 
@@ -44,13 +43,11 @@ module.exports = (project, options) => {
             `BUILD_TIMESTAMP=${Date.now()}`
         ];
 
-        if (hasPrivateNpm) {
-            project.validatePrivateNpmParams();
-            project.getPrivateNpmParams().forEach((param) => {
-                args.push('--build-arg');
-                args.push(`${param}=${process.env[param]}`);
-            });
-        }
+        project.validateRequiredEnv();
+        project.getDockerBuildArgs().forEach(({ name, value }) => {
+            args.push('--build-arg');
+            args.push(`${name}=${value}`);
+        });
 
         args.push('.');
 
