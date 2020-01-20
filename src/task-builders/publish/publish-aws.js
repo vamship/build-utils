@@ -28,7 +28,7 @@ module.exports = (project, options) => {
 
     const tasks = project.getCdkStacks().map((key) => {
         const envFiles = [
-            infraDir.getFileGlob(`.env.${process.env.NODE_ENV}`),
+            infraDir.getFileGlob(`.env.${process.env.INFRA_ENV}`),
             infraDir.getFileGlob('.env')
         ];
         const args = [
