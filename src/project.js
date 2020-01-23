@@ -185,7 +185,7 @@ module.exports = class Project {
 
             const buildArgs = Object.assign({}, docker.buildArgs);
             Object.keys(buildArgs).forEach((name) => {
-                let value = buildArgs(name);
+                let value = buildArgs[name];
                 if (value == '__ENV__') {
                     value = process.env[name];
                 }
