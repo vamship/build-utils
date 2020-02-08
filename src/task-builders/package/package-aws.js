@@ -27,8 +27,6 @@ module.exports = (project, options) => {
         const npmBin = 'npm';
         const args = ['install', '--production'];
 
-        project.validateRequiredEnv();
-
         return _execa(npmBin, args, {
             stdio: 'inherit',
             cwd: workingDir.absolutePath
