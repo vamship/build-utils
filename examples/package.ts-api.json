@@ -11,10 +11,13 @@
         "language": "ts",
         "requiredEnv": ["MY_BUILD_VAR_1"],
         "docker": {
-            "dockerRepo": "111111111111.dkr.ecr.us-east-1.amazonaws.com/my-aws-ecr-repo",
-            "buildArgs": {
-                "MY_BUILD_VAR_1": "__ENV__",
-                "MY_BUILD_VAR_2": "myvar"
+            "default": {
+                "repo": "111111111111.dkr.ecr.us-east-1.amazonaws.com/my-aws-ecr-repo",
+                "buildFile": "Dockerfile",
+                "buildArgs": {
+                    "MY_BUILD_VAR_1": "__ENV__",
+                    "MY_BUILD_VAR_2": "myvar"
+                }
             }
         }
     }
