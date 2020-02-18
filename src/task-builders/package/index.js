@@ -35,13 +35,15 @@ module.exports = (project, options) => {
 
     const task = createTask(project, options);
 
-    if (types) {
-        task.displayName = 'package-types';
-        task.description =
-            'Create a distribution package for the types exported by the project';
-    } else {
-        task.displayName = 'package';
-        task.description = 'Create a distribution package for the project';
+    if (!(task instanceof Array)) {
+        if (types) {
+            task.displayName = 'package-types';
+            task.description =
+                'Create a distribution package for the types exported by the project';
+        } else {
+            task.displayName = 'package';
+            task.description = 'Create a distribution package for the project';
+        }
     }
 
     return task;

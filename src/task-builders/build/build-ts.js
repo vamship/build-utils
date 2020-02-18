@@ -35,7 +35,7 @@ module.exports = (project, options) => {
 
     const distFiles = [
         rootDir.getFileGlob('package-lock.json'),
-        rootDir.getFileGlob('Dockerfile'),
+        rootDir.getFileGlob('Dockerfile*'),
         rootDir.getFileGlob('LICENSE'),
         rootDir.getFileGlob('README.md'),
         rootDir.getFileGlob(project.configFileName)

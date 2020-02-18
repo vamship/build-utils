@@ -2,6 +2,7 @@
 
 const _gulp = require('gulp');
 const _execa = require('execa');
+const _log = require('fancy-log');
 
 /**
  * Sub builder that builds a docker image based on a predefined dockerfile.
@@ -23,14 +24,37 @@ module.exports = (project, options) => {
         jsRootDir
     } = project;
 
-    const packageTask = () => {
-        const dockerBin = 'docker';
+    const dockerBin = 'docker';
+
+    const tasks = project.getDockerTargets().map((target) => {
+        const {
+            name,
+            repo,
+            buildFile,
+            buildArgs,
+            isDeprecated,
+            isDefault
+        } = target;
+
+        const suffix = isDefault ? '' : `-${name}`;
+        const targetName = isDefault ? '' : name;
+
+        if (isDeprecated) {
+            _log.warn(
+                '[WARNING] Docker package task configuration is deprecated. Please upgrade to the newer format'
+            );
+            _log.warn(
+                '[WARNING] See: https://github.com/vamship/build-utils#upgrading-to-v03x for more information'
+            );
+        }
 
         const args = [
             'build',
             '--rm',
+            '--file',
+            buildFile,
             '--tag',
-            `${project.dockerRepo}:latest`,
+            `${repo}:latest`,
             '--build-arg',
             `APP_NAME=${unscopedName}`,
             '--build-arg',
@@ -44,22 +68,23 @@ module.exports = (project, options) => {
         ];
 
         project.validateRequiredEnv();
-        project.getDockerBuildArgs().forEach(({ name, value }) => {
+        target.buildArgs.forEach(({ name, value }) => {
             args.push('--build-arg');
             args.push(`${name}=${value}`);
         });
 
         args.push('.');
+        const task = () =>
+            _execa(dockerBin, args, {
+                stdio: 'inherit',
+                cwd: jsRootDir.absolutePath
+            });
 
-        return _execa(dockerBin, args, {
-            stdio: 'inherit',
-            cwd: jsRootDir.absolutePath
-        });
-    };
+        task.displayName = `package${suffix}`;
+        task.description = `Builds a docker image (${targetName}) based on the Dockerfile contained in the project`;
 
-    packageTask.taskName = 'package-docker';
-    packageTask.description =
-        'Builds a docker image based on the Dockerfile contained in the project';
+        return task;
+    });
 
-    return packageTask;
+    return tasks;
 };

@@ -33,7 +33,7 @@ module.exports = (project, options) => {
     ];
 
     if (project.hasDocker) {
-        extras.push('Dockerfile');
+        extras.push('Dockerfile*');
     }
 
     const paths = dirs

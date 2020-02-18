@@ -146,11 +146,8 @@ module.exports = class Project {
 
         this._hasTypescript = this._language === 'ts';
         this._hasServer = this._projectType === 'api';
-        this._hasDocker =
-            this._projectType !== 'lib' && docker && typeof docker === 'object';
         this._hasExportedTypes =
             typeof exportedTypes === 'string' && exportedTypes.length > 0;
-        this._dockerBuildArgs = [];
 
         if (this._projectType === 'aws-microservice') {
             if (!aws || typeof aws !== 'object') {
@@ -174,29 +171,91 @@ module.exports = class Project {
             this._cdkStacks = {};
         }
 
-        if (this._hasDocker) {
-            if (docker.repo) {
-                this._dockerRepo = docker.repo;
-            } else {
-                this._dockerRepo = docker.registry
+        this._hasDocker =
+            this._projectType !== 'lib' &&
+            this._projectType !== 'aws-microservice' &&
+            docker &&
+            typeof docker === 'object';
+
+        this._dockerTargets = this._initDockerTargets(docker);
+    }
+
+    /**
+     * Initialize docker targets for the project.
+     *
+     * @param docker The docker configuration section for the project.
+     */
+    _initDockerTargets(docker) {
+        if (!this._hasDocker) return [];
+
+        if (docker.repo || docker.registry || docker.buildArgs) {
+            // Deprecated settings
+            let repo = docker.repo;
+            if (!repo) {
+                repo = docker.registry
                     ? `${docker.registry}/${this._unscopedName}`
                     : this._unscopedName;
             }
-
-            const buildArgs = Object.assign({}, docker.buildArgs);
-            Object.keys(buildArgs).forEach((name) => {
-                let value = buildArgs[name];
-                if (value == '__ENV__') {
-                    value = process.env[name];
+            return [
+                {
+                    repo,
+                    name: 'default',
+                    buildFile: 'Dockerfile',
+                    buildArgs: this._initializeFromEnv(docker.buildArgs),
+                    isDefault: true,
+                    isDeprecated: true
                 }
-                this._dockerBuildArgs.push({
-                    name,
-                    value
-                });
-            });
-        } else {
-            this._dockerRepo = undefined;
+            ];
         }
+
+        return Object.keys(docker).map((key) => {
+            const config = docker[key];
+            if (!config || typeof config !== 'object') {
+                throw new Error(
+                    `Docker target configuration is invalid for target: [${key}]`
+                );
+            }
+            if (typeof config.repo !== 'string' || config.repo.length <= 0) {
+                throw new Error(
+                    `Docker target does not define a valid repo: [${key}]`
+                );
+            }
+
+            const { repo, buildFile, buildArgs } = config;
+            return {
+                repo,
+                name: key,
+                buildFile: buildFile || 'Dockerfile',
+                buildArgs: this._initializeFromEnv(buildArgs),
+                isDefault: key === 'default',
+                isDeprecated: false
+            };
+        });
+    }
+
+    /**
+     * Loops through the specified object, and replaces specific values from
+     * those defined in the current environment. Returns a new object with the
+     * replaced values. Only properties whose values are '__ENV__' will be
+     * replaced with environment equivalents.
+     *
+     * @param map The initial set of key value mappings.
+     *
+     * @returns {Array} An array of objects containing "name" and "value"
+     *          properties that contain the key and the values (replaced from
+     *          environment if applicable)
+     */
+    _initializeFromEnv(map) {
+        if (!map || map instanceof Array || typeof map !== 'object') {
+            return [];
+        }
+        return Object.keys(map).map((name) => {
+            let value = map[name];
+            if (value == '__ENV__') {
+                value = process.env[name];
+            }
+            return { name, value };
+        });
     }
 
     /**
@@ -370,15 +429,6 @@ module.exports = class Project {
     }
 
     /**
-     * The path to the docker repository for the project.
-     *
-     * @return {String}
-     */
-    get dockerRepo() {
-        return this._dockerRepo;
-    }
-
-    /**
      * The path to the directory that contains the types exported by this
      * project.
      *
@@ -474,15 +524,18 @@ module.exports = class Project {
     }
 
     /**
-     * Returns a an array of docker build arguments and their values. Each
-     * element of the array will be an object containing two properties - name
-     * and value, that represent the docker build arg name and value
-     * respectively.
+     * Returns a list of docker targets defined for the project. Every target
+     * will define the following properties:
+     * - repo: The docker repo
+     * - buildFile: The name of the build file to use
+     * - buildArgs: Arguments to be passed to the docker build
+     * - isDefault: Determines if the current target is the default one
+     * - isDeprecated: Determines if the target uses a deprecated configuration.
      *
      * @return {Array}
      */
-    getDockerBuildArgs() {
-        return this._dockerBuildArgs.concat([]);
+    getDockerTargets() {
+        return this._dockerTargets.concat([]);
     }
 
     /**
