@@ -38,6 +38,7 @@ module.exports = (project, options) => {
         rootDir.getFileGlob('Dockerfile*'),
         rootDir.getFileGlob('LICENSE'),
         rootDir.getFileGlob('README.md'),
+        rootDir.getFileGlob('.env'),
         rootDir.getFileGlob(project.configFileName)
     ];
 
