@@ -29,7 +29,7 @@ module.exports = (project, options) => {
         project.configFileName,
         'package.json',
         '.npmignore',
-        '.npmrc'
+        '.npmrc',
     ];
 
     if (project.hasDocker) {

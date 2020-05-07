@@ -67,7 +67,7 @@ describe('[Directory]', () => {
                     true,
                     'test',
                     [],
-                    () => {}
+                    () => {},
                 ];
 
                 inputs.forEach((tree) => {
@@ -95,7 +95,7 @@ describe('[Directory]', () => {
                     bar: null,
                     baz: null,
                     chaz: null,
-                    faz: null
+                    faz: null,
                 };
                 const root = Directory.createTree(rootPath, tree);
                 _verifyLeaves(root, 'foo', 'bar', 'baz', 'chaz', 'faz');
@@ -107,18 +107,18 @@ describe('[Directory]', () => {
                     src: {
                         handlers: null,
                         devices: null,
-                        data: null
+                        data: null,
                     },
                     test: {
                         unit: {
                             handlers: null,
                             devices: null,
-                            data: null
-                        }
+                            data: null,
+                        },
                     },
                     working: null,
                     '.tmp': null,
-                    '.coverage': null
+                    '.coverage': null,
                 };
                 const root = Directory.createTree(rootPath, tree);
 
@@ -146,7 +146,7 @@ describe('[Directory]', () => {
                     chaz: [],
                     faz: () => {},
                     raz: null,
-                    zaz: undefined
+                    zaz: undefined,
                 };
                 const root = Directory.createTree(rootPath, tree);
                 _verifyLeaves(
@@ -173,7 +173,7 @@ describe('[Directory]', () => {
                     'foo',
                     {},
                     [],
-                    () => {}
+                    () => {},
                 ];
 
                 inputs.forEach((root) => {
@@ -222,72 +222,72 @@ describe('[Directory]', () => {
                     src: {
                         handlers: null,
                         devices: null,
-                        data: null
+                        data: null,
                     },
                     test: {
                         unit: {
                             foo: null,
                             bar: null,
-                            baz: null
-                        }
+                            baz: null,
+                        },
                     },
                     working: null,
                     '.tmp': null,
-                    '.coverage': null
+                    '.coverage': null,
                 };
                 const expectedSequence = [
                     {
                         name: dirName,
-                        level: 0
+                        level: 0,
                     },
                     {
                         name: 'src',
-                        level: 1
+                        level: 1,
                     },
                     {
                         name: 'handlers',
-                        level: 2
+                        level: 2,
                     },
                     {
                         name: 'devices',
-                        level: 2
+                        level: 2,
                     },
                     {
                         name: 'data',
-                        level: 2
+                        level: 2,
                     },
                     {
                         name: 'test',
-                        level: 1
+                        level: 1,
                     },
                     {
                         name: 'unit',
-                        level: 2
+                        level: 2,
                     },
                     {
                         name: 'foo',
-                        level: 3
+                        level: 3,
                     },
                     {
                         name: 'bar',
-                        level: 3
+                        level: 3,
                     },
                     {
                         name: 'baz',
-                        level: 3
+                        level: 3,
                     },
                     {
                         name: 'working',
-                        level: 1
+                        level: 1,
                     },
                     {
                         name: '.tmp',
-                        level: 1
+                        level: 1,
                     },
                     {
                         name: '.coverage',
-                        level: 1
-                    }
+                        level: 1,
+                    },
                 ];
 
                 const root = Directory.createTree(rootPath, tree);
@@ -373,7 +373,7 @@ describe('[Directory]', () => {
             const dirs = ['foo', 'bar', 'baz'];
             const inputs = [
                 _createPath('', ...dirs),
-                _createPath('', ...dirs, '')
+                _createPath('', ...dirs, ''),
             ];
 
             inputs.forEach((path) => {
@@ -414,7 +414,7 @@ describe('[Directory]', () => {
             const dirs = ['foo', 'bar', 'baz'];
             const inputs = [
                 _createPath('', ...dirs),
-                _createPath('', ...dirs, '')
+                _createPath('', ...dirs, ''),
             ];
 
             inputs.forEach((path) => {
@@ -456,7 +456,7 @@ describe('[Directory]', () => {
             const dirs = ['foo', 'bar', 'baz'];
             const inputs = [
                 _createPath('', ...dirs),
-                _createPath('', ...dirs, '')
+                _createPath('', ...dirs, ''),
             ];
 
             inputs.forEach((path) => {
@@ -502,7 +502,7 @@ describe('[Directory]', () => {
             const dirs = ['foo', 'bar', 'baz'];
             const inputs = [
                 _createPath('', ...dirs),
-                _createPath('', ...dirs, '')
+                _createPath('', ...dirs, ''),
             ];
 
             inputs.forEach((path) => {
@@ -538,7 +538,7 @@ describe('[Directory]', () => {
                 'child/',
                 'child\\',
                 '\\child',
-                'c:'
+                'c:',
             ];
 
             inputs.forEach((path) => {

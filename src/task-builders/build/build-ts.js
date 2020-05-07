@@ -39,7 +39,7 @@ module.exports = (project, options) => {
         rootDir.getFileGlob('LICENSE'),
         rootDir.getFileGlob('README.md'),
         rootDir.getFileGlob('.env'),
-        rootDir.getFileGlob(project.configFileName)
+        rootDir.getFileGlob(project.configFileName),
     ];
 
     const buildTask = () =>

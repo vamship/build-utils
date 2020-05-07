@@ -12,7 +12,7 @@ module.exports = [
     'test',
     'docs',
     'package',
-    'publish'
+    'publish',
 ].reduce((tasks, task) => {
     tasks[task] = require(`./${task}`);
     return tasks;

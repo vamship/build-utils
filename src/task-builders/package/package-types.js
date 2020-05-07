@@ -26,7 +26,7 @@ module.exports = (project, options) => {
         version,
         license,
         keywords,
-        rootDir
+        rootDir,
     } = project;
 
     const packageName = `${snakeCasedName}-types-${version}.tgz`;
@@ -43,7 +43,7 @@ module.exports = (project, options) => {
                 version,
                 description: `Types for project ${name}`,
                 license,
-                keywords
+                keywords,
             }),
             cb
         );

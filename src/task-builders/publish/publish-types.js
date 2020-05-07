@@ -25,7 +25,7 @@ module.exports = (project, options) => {
     const publishTask = () =>
         _execa(npmBin, args, {
             stdio: 'inherit',
-            cwd: rootDir.getChild('dist').absolutePath
+            cwd: rootDir.getChild('dist').absolutePath,
         });
 
     publishTask.displayName = 'publish-npm-types';

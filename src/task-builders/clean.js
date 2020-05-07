@@ -31,7 +31,7 @@ module.exports = (project, options) => {
         dirs.push('.tscache');
         extras.push({
             name: 'typescript-temp',
-            path: rootDir.getFileGlob('tscommand-*.tmp.txt')
+            path: rootDir.getFileGlob('tscommand-*.tmp.txt'),
         });
     }
 
@@ -42,7 +42,7 @@ module.exports = (project, options) => {
     if (project.hasServer) {
         extras.push({
             name: 'logs',
-            path: rootDir.getChild('logs').getAllFilesGlob('log')
+            path: rootDir.getChild('logs').getAllFilesGlob('log'),
         });
     }
 

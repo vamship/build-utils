@@ -11,7 +11,7 @@ const SUPPORTED_PROJECT_TYPES = [
     'cli',
     'api',
     'aws-microservice',
-    'container'
+    'container',
 ];
 const SUPPORTED_LANGUAGES = ['js', 'ts'];
 
@@ -55,17 +55,17 @@ module.exports = class Project {
             src: null,
             test: {
                 unit: null,
-                api: null
+                api: null,
             },
             infra: null,
             working: {
                 src: null,
                 test: {
                     unit: null,
-                    api: null
+                    api: null,
                 },
                 infra: null,
-                node_modules: null
+                node_modules: null,
             },
             dist: null,
             docs: null,
@@ -74,7 +74,7 @@ module.exports = class Project {
             '.gulp': null,
             '.tscache': null,
             logs: null,
-            'cdk.out': null
+            'cdk.out': null,
         };
 
         if (this._hasExportedTypes) {
@@ -120,7 +120,7 @@ module.exports = class Project {
             docker,
             requiredEnv,
             exportedTypes,
-            aws
+            aws,
         } = buildMetadata;
 
         if (SUPPORTED_PROJECT_TYPES.indexOf(projectType) < 0) {
@@ -203,8 +203,8 @@ module.exports = class Project {
                     buildFile: 'Dockerfile',
                     buildArgs: this._initializeFromEnv(docker.buildArgs),
                     isDefault: true,
-                    isDeprecated: true
-                }
+                    isDeprecated: true,
+                },
             ];
         }
 
@@ -228,7 +228,7 @@ module.exports = class Project {
                 buildFile: buildFile || 'Dockerfile',
                 buildArgs: this._initializeFromEnv(buildArgs),
                 isDefault: key === 'default',
-                isDeprecated: false
+                isDeprecated: false,
             };
         });
     }
@@ -268,17 +268,17 @@ module.exports = class Project {
             src: null,
             test: {
                 unit: null,
-                api: null
+                api: null,
             },
             infra: null,
             working: {
                 src: null,
                 test: {
                     unit: null,
-                    api: null
+                    api: null,
                 },
                 infra: null,
-                node_modules: null
+                node_modules: null,
             },
             dist: null,
             docs: null,
@@ -287,7 +287,7 @@ module.exports = class Project {
             '.gulp': null,
             '.tscache': null,
             logs: null,
-            'cdk.out': null
+            'cdk.out': null,
         };
 
         if (this._projectType === 'aws-microservice') {

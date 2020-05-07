@@ -23,8 +23,8 @@ module.exports = (project, options) => {
             opts: {
                 readme: rootDir.getFilePath('README.md'),
                 destination: rootDir.getFilePath(`docs/${name}/${version}`),
-                template: rootDir.getFilePath('node_modules/docdash')
-            }
+                template: rootDir.getFilePath('node_modules/docdash'),
+            },
         },
         options
     );

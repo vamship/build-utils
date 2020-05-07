@@ -21,7 +21,7 @@ module.exports = (project, options) => {
         version,
         description,
         configFileName,
-        jsRootDir
+        jsRootDir,
     } = project;
 
     const dockerBin = 'docker';
@@ -33,7 +33,7 @@ module.exports = (project, options) => {
             buildFile,
             buildArgs,
             isDeprecated,
-            isDefault
+            isDefault,
         } = target;
 
         const suffix = isDefault ? '' : `-${name}`;
@@ -64,7 +64,7 @@ module.exports = (project, options) => {
             '--build-arg',
             `CONFIG_FILE_NAME=${configFileName}`,
             '--build-arg',
-            `BUILD_TIMESTAMP=${Date.now()}`
+            `BUILD_TIMESTAMP=${Date.now()}`,
         ];
 
         project.validateRequiredEnv();
@@ -77,7 +77,7 @@ module.exports = (project, options) => {
         const task = () =>
             _execa(dockerBin, args, {
                 stdio: 'inherit',
-                cwd: jsRootDir.absolutePath
+                cwd: jsRootDir.absolutePath,
             });
 
         task.displayName = `package${suffix}`;

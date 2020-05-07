@@ -29,13 +29,13 @@ module.exports = (project, options) => {
     const tasks = project.getCdkStacks().map((key) => {
         const envFiles = [
             infraDir.getFileGlob(`.env.${process.env.INFRA_ENV}`),
-            infraDir.getFileGlob('.env')
+            infraDir.getFileGlob('.env'),
         ];
         const args = [
             'deploy',
             project.getCdkStackName(key),
             '--app',
-            `"node ${workingDir.getFileGlob('infra/index')}"`
+            `"node ${workingDir.getFileGlob('infra/index')}"`,
         ];
 
         const task = () => {
@@ -43,7 +43,7 @@ module.exports = (project, options) => {
             project.validateRequiredEnv();
 
             return _execa(cdkBin, args, {
-                stdio: 'inherit'
+                stdio: 'inherit',
             });
         };
 

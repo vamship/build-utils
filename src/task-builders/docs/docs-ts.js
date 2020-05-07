@@ -23,7 +23,7 @@ module.exports = (project, options) => {
             name: `${name} Documentation`,
             disableOutputCheck: true,
             readme: rootDir.getFilePath('README.md'),
-            out: rootDir.getFilePath(`docs/${name}/${version}`)
+            out: rootDir.getFilePath(`docs/${name}/${version}`),
         },
         options
     );

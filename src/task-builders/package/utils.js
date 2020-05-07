@@ -16,7 +16,7 @@ const _gulp = require('gulp');
  *
  * @returns {Function} A gulp task that creates the package.
  */
-module.exports.createNpmPackageTask = function(
+module.exports.createNpmPackageTask = function (
     packageDir,
     packageName,
     targetDir
@@ -28,7 +28,7 @@ module.exports.createNpmPackageTask = function(
     const packTask = () =>
         _execa(npmBin, args, {
             stdio: 'inherit',
-            cwd: packageDir.absolutePath
+            cwd: packageDir.absolutePath,
         });
 
     packTask.displayName = 'package-npm';

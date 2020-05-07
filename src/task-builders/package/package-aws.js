@@ -29,7 +29,7 @@ module.exports = (project, options) => {
 
         return _execa(npmBin, args, {
             stdio: 'inherit',
-            cwd: workingDir.absolutePath
+            cwd: workingDir.absolutePath,
         });
     };
 

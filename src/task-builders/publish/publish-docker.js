@@ -35,14 +35,14 @@ module.exports = (project, options) => {
         const tasks = tags.map((tag) => {
             const tagTask = () =>
                 _execa(dockerBin, ['tag', latestTag, tag], {
-                    stdio: 'inherit'
+                    stdio: 'inherit',
                 });
             tagTask.displayName = `publish-docker-tag-${tag}${suffix}`;
             tagTask.description = `Tag image with ${tag} (${name})`;
 
             const pushTask = () =>
                 _execa(dockerBin, ['push', tag], {
-                    stdio: 'inherit'
+                    stdio: 'inherit',
                 });
             pushTask.displayName = `publish-docker-push-${tag}${suffix}`;
             pushTask.description = `Publish docker image with ${tag} (${name}) to registry`;

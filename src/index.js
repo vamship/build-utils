@@ -18,5 +18,5 @@ module.exports = {
      * A collection of task builder functions that can be used to generate
      * commonly used gulp files for projects.
      */
-    taskBuilders: require('./task-builders')
+    taskBuilders: require('./task-builders'),
 };

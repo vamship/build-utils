@@ -36,7 +36,7 @@ module.exports = (project, options) => {
         '--reporter',
         'html',
         '--temp-dir',
-        rootDir.getFilePath('coverage')
+        rootDir.getFilePath('coverage'),
     ];
 
     if (project.hasTypescript) {
