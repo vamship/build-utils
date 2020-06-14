@@ -31,12 +31,17 @@ module.exports = (project, options) => {
             infraDir.getFileGlob(`.env.${process.env.INFRA_ENV}`),
             infraDir.getFileGlob('.env'),
         ];
+
         const args = [
             'deploy',
             project.getCdkStackName(key),
             '--app',
             `"node ${workingDir.getFileGlob('infra/index')}"`,
         ];
+
+        if(!process.env.INFRA_NO_PROMPT) {
+            args.push('--require-approval never');
+        }
 
         const task = () => {
             project.initEnv(envFiles);
