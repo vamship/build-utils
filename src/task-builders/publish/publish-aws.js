@@ -39,7 +39,7 @@ module.exports = (project, options) => {
             `"node ${workingDir.getFileGlob('infra/index')}"`,
         ];
 
-        if(!process.env.INFRA_NO_PROMPT) {
+        if (!process.env.INFRA_NO_PROMPT) {
             args.push('--require-approval never');
         }
 
