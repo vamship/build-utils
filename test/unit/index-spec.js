@@ -11,7 +11,8 @@ const Directory = require('../../src/directory');
 let _index = null;
 
 describe('[index]', () => {
-    beforeEach(() => {
+    beforeEach(function () {
+        this.timeout(5000);
         _index = _rewire('../../src/index');
     });
 
