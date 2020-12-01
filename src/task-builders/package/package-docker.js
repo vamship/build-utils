@@ -1,7 +1,7 @@
 'use strict';
 
-const _gulp = require('gulp');
 const _execa = require('execa');
+const _gulp = require('gulp');
 const _log = require('fancy-log');
 const _mkdirp = require('mkdirp');
 
@@ -23,18 +23,13 @@ module.exports = (project, options) => {
         description,
         configFileName,
         jsRootDir,
+        rootDir,
     } = project;
 
     const dockerBin = 'docker';
 
     const tasks = project.getDockerTargets().map((target) => {
-        const {
-            name,
-            buildFile,
-            buildArgs,
-            isDeprecated,
-            isDefault,
-        } = target;
+        const { name, buildFile, buildArgs, isDeprecated, isDefault } = target;
 
         const suffix = isDefault ? '' : `-${name}`;
         const targetName = isDefault ? '' : name;
@@ -54,7 +49,7 @@ module.exports = (project, options) => {
             );
         }
 
-        const buildArgs = [
+        const buildTaskArgs = [
             'build',
             '--rm',
             '--file',
@@ -74,15 +69,15 @@ module.exports = (project, options) => {
         ];
 
         project.validateRequiredEnv();
-        target.buildArgs.forEach(({ name, value }) => {
-            buildArgs.push('--build-arg');
-            buildArgs.push(`${name}=${value}`);
+        buildArgs.forEach(({ name, value }) => {
+            buildTaskArgs.push('--build-arg');
+            buildTaskArgs.push(`${name}=${value}`);
         });
 
-        buildArgs.push('.');
+        buildTaskArgs.push('.');
 
         const buildTask = () =>
-            _execa(dockerBin, buildArgs, {
+            _execa(dockerBin, buildTaskArgs, {
                 stdio: 'inherit',
                 cwd: jsRootDir.absolutePath,
             });
@@ -92,34 +87,33 @@ module.exports = (project, options) => {
         const tasks = [buildTask];
 
         if (process.env.BUILD_EXPORT_DOCKER_IMAGE === 'true') {
-            _log.info(`Docker export enabled.`);
+            _log.warn(`Docker save image enabled.`);
 
             const distDir = rootDir.getChild('dist');
-            const exportPath = repo
-                .split('/')
-                .reduce((result, item) => result.addChild(dir), distDir)
-                .absolutePath;
+            const savePath = distDir.getFilePath(`image${suffix}.tar`);
 
             const ensureDirTask = () => {
-                _log.info(`Ensuring that output path exists: ${exportPath}`);
-                _mkdirp(exportPath);
+                _log.info(
+                    `Ensuring that output path exists: ${distDir.absolutePath}`
+                );
+                return _mkdirp(distDir.absolutePath);
             };
-            ensureDirTask.displayName = `package-export${suffix}`;
-            ensureDirTask.description = `Ensures that destination directory (${exportPath}) exists.`;
+            ensureDirTask.displayName = `package-save${suffix}`;
+            ensureDirTask.description = `Ensures that destination directory (${savePath}) exists.`;
             tasks.push(ensureDirTask);
 
-            const exportTask = () => {
+            const saveTask = () => {
                 _log.info(
-                    `Docker export enabled. File will be created at: ${exportPath}`
+                    `Docker save enabled. File will be created at: ${savePath}`
                 );
-                return _execa(dockerBin, [], {
+                return _execa(dockerBin, ['save', '--output', savePath, repo], {
                     stdio: 'inherit',
                     cwd: jsRootDir.absolutePath,
                 });
             };
-            exportTask.displayName = `package-export${suffix}`;
-            ensureDirTask.description = `Exports a zip file that represents the docker image`;
-            tasks.push(exportTask);
+            saveTask.displayName = `package-save${suffix}`;
+            ensureDirTask.description = `Saves a tar file that represents the docker image`;
+            tasks.push(saveTask);
         }
 
         const task = _gulp.series(tasks);

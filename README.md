@@ -45,6 +45,18 @@ This library is intended to be used with a Gulpfile that imports the necessary
 tasks for the build system. The `examples` directory has a sample Gulpfile that
 can be used for any project.
 
+### Environment Variables
+
+Setting certain environment variables can alter the behavior of different build
+tasks. The environment variables and their effects are listed below:
+
+`BUILD_EXPORT_DOCKER_IMAGE`: When set to `true`, packaging a docker enabled
+project will result in the creation of a tar file called `image-<key>.tar`
+(using `docker save ...`) under the dist directory.
+
+`BUILD_DOCKER_REPO`: This environment variable can be used to override the
+docker repository name during package/publish operations.
+
 ### Configuring package.json
 
 The build system derives its configuration from buildMetadata that is explicitly
