@@ -1,7 +1,8 @@
 'use strict';
 
-const _gulp = require('gulp');
 const _execa = require('execa');
+const _gulp = require('gulp');
+const _log = require('fancy-log');
 const _semver = require('semver');
 
 /**
