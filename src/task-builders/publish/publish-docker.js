@@ -23,7 +23,13 @@ module.exports = (project, options) => {
     const minor = _semver.minor(version);
 
     const tasks = project.getDockerTargets().map((target) => {
-        const { name, isDefault, isDeprecated, repo } = target;
+        const { name, isDefault, isDeprecated } = target;
+
+        let repo = target.repo;
+        if (typeof process.env.BUILD_DOCKER_REPO !== 'undefined') {
+            repo = process.env.BUILD_DOCKER_REPO;
+            _log.warn(`Docker repo override specified: [${repo}]`);
+        }
 
         const suffix = isDefault ? '' : `-${name}`;
 
