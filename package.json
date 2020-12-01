@@ -63,6 +63,7 @@
         "gulp-typedoc": "^2.2.5",
         "gulp-typescript": "^5.0.1",
         "gulp-zip": "^5.0.2",
+        "mkdirp": "^1.0.4",
         "prettier": "^2.1.2",
         "semver": "^7.3.2"
     },
