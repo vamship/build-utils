@@ -1,6 +1,6 @@
 {
     "name": "@vamship/build-utils",
-    "version": "0.5.0",
+    "version": "0.6.0",
     "description": "Utility library for build tooling",
     "main": "src/index.js",
     "scripts": {
@@ -29,6 +29,12 @@
         "utilities"
     ],
     "author": "Vamshi K Ponnapalli <vamshi.ponnapalli@gmail.com>",
+    "contributors": [
+        {
+            "name": "Onaje Baxley",
+            "email": "onaje.baxley@gmail.com"
+        }
+    ],
     "license": "MIT",
     "bugs": {
         "url": "https://github.com/vamship/build-utils/issues"
