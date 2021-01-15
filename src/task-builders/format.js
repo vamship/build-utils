@@ -28,7 +28,9 @@ module.exports = (project, options) => {
 
     const paths = dirs
         .map((dir) => rootDir.getChild(dir))
-        .map((dir) => [undefined].map((ext) => dir.getAllFilesGlob(ext)))
+        .map((dir) =>
+            ['ts', 'js', 'json', 'py'].map((ext) => dir.getAllFilesGlob(ext))
+        )
         .reduce((result, arr) => result.concat(arr), [])
         .concat(extras.map((file) => rootDir.getFileGlob(file)));
 
