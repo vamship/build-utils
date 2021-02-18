@@ -29,7 +29,7 @@ module.exports = (project, options) => {
         createTask = require('./package-aws');
     } else if (project.hasDocker) {
         createTask = require('./package-docker');
-    } else if (project.projectType === 'lib') {
+    } else if (project.projectType === 'lib' || project.projectType === 'cli') {
         createTask = require('./package-npm');
     }
 
