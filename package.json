@@ -1,6 +1,6 @@
 {
     "name": "@vamship/build-utils",
-    "version": "0.7.0",
+    "version": "0.7.1",
     "description": "Utility library for build tooling",
     "main": "src/index.js",
     "scripts": {
@@ -71,7 +71,9 @@
         "gulp-zip": "^5.0.2",
         "mkdirp": "^1.0.4",
         "prettier": "^2.1.2",
-        "semver": "^7.3.2"
+        "semver": "^7.3.2",
+        "typedoc": "^0.19.2",
+        "typescript": "^4.0.5"
     },
     "peerDependencies": {
         "gulp": "^4.0.2",
