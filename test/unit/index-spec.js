@@ -12,7 +12,7 @@ let _index = null;
 
 describe('[index]', () => {
     beforeEach(function () {
-        this.timeout(5000);
+        this.timeout(10000);
         _index = _rewire('../../src/index');
     });
 
