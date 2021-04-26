@@ -55,7 +55,7 @@
     },
     "dependencies": {
         "@typescript-eslint/eslint-plugin": "^4.15.1",
-        "@typescript-eslint/parser": "^4.15.1",
+        "@typescript-eslint/parser": "^4.22.0",
         "camelcase": "^6.2.0",
         "delete": "^1.1.0",
         "docdash": "^1.2.0",
