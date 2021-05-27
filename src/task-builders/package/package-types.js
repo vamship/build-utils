@@ -20,14 +20,8 @@ const { createNpmPackageTask } = require('./utils');
  * @returns {Function} A gulp task.
  */
 module.exports = (project, options) => {
-    const {
-        name,
-        snakeCasedName,
-        version,
-        license,
-        keywords,
-        rootDir,
-    } = project;
+    const { name, snakeCasedName, version, license, keywords, rootDir } =
+        project;
 
     const packageName = `${snakeCasedName}-types-${version}.tgz`;
     const packageDir = rootDir
