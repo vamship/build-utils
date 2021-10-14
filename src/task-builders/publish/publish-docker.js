@@ -32,16 +32,19 @@ module.exports = (project, options) => {
             _log.warn(`Docker repo override specified: [${repo}]`);
         }
 
-        const suffix = isDefault ? '' : `-${name}`;
+        let suffix = `${isDefault ? '' : '-name'}${
+            options.latestOnly ? '-latest' : ''
+        }`;
 
-        const tags = [version, major, `${major}.${minor}`, 'latest'].map(
-            (tag) => `${repo}:${tag}`
-        );
-        const latestTag = tags[tags.length - 1];
+        const tagList = options.latestOnly
+            ? ['latest']
+            : [version, major, `${major}.${minor}`];
+
+        const tags = tagList.map((tag) => `${repo}:${tag}`);
 
         const tasks = tags.map((tag) => {
             const tagTask = () =>
-                _execa(dockerBin, ['tag', latestTag, tag], {
+                _execa(dockerBin, ['tag', tag], {
                     stdio: 'inherit',
                 });
             tagTask.displayName = `publish-docker-tag-${tag}${suffix}`;
