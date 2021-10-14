@@ -25,6 +25,7 @@ module.exports = (project, options) => {
 
     const tasks = project.getDockerTargets().map((target) => {
         const { name, isDefault, isDeprecated } = target;
+        const { latestOnly } = options;
 
         let repo = target.repo;
         if (typeof process.env.BUILD_DOCKER_REPO !== 'undefined') {
@@ -33,10 +34,10 @@ module.exports = (project, options) => {
         }
 
         let suffix = `${isDefault ? '' : '-name'}${
-            options.latestOnly ? '-latest' : ''
+            latestOnly ? '-latest' : ''
         }`;
 
-        const tagList = options.latestOnly
+        const tagList = latestOnly
             ? ['latest']
             : [version, major, `${major}.${minor}`];
 
@@ -66,7 +67,9 @@ module.exports = (project, options) => {
 
         const task = _gulp.parallel(tasks);
         task.displayName = `publish${suffix}`;
-        task.description = `Tags image ${name} with version tags, and pushes to registry`;
+        task.description = latestOnly
+            ? `Tags image ${name} with latest tag and pushes to registry`
+            : `Tags image ${name} with version tags, and pushes to registry`;
 
         return task;
     });
