@@ -42,10 +42,11 @@ module.exports = (project, options) => {
             : [version, major, `${major}.${minor}`];
 
         const tags = tagList.map((tag) => `${repo}:${tag}`);
+        const latestTag = `${repo}:latest`;
 
         const tasks = tags.map((tag) => {
             const tagTask = () =>
-                _execa(dockerBin, ['tag', tag], {
+                _execa(dockerBin, ['tag', latestTag, tag], {
                     stdio: 'inherit',
                 });
             tagTask.displayName = `publish-docker-tag-${tag}${suffix}`;
