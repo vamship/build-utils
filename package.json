@@ -41,24 +41,24 @@
     },
     "homepage": "https://github.com/vamship/build-utils#readme",
     "devDependencies": {
-        "chai": "^4.3.4",
+        "chai": "^4.3.6",
         "chai-as-promised": "^7.1.1",
-        "eslint": "^8.7.0",
-        "jsdoc": "^3.6.7",
-        "mocha": "^9.1.4",
+        "eslint": "^8.10.0",
+        "jsdoc": "^3.6.10",
+        "mocha": "^9.2.2",
         "nodemon": "^2.0.15",
         "nyc": "^15.1.0",
         "prettier": "^2.5.1",
         "rewire": "^6.0.0",
-        "sinon": "^12.0.1",
+        "sinon": "^13.0.1",
         "sinon-chai": "^3.7.0"
     },
     "dependencies": {
         "camelcase": "^6.3.0",
         "delete": "^1.1.0",
         "docdash": "^1.2.0",
-        "dotenv": "^14.2.0",
-        "dotenv-expand": "^6.0.1",
+        "dotenv": "^16.0.0",
+        "dotenv-expand": "^8.0.2",
         "execa": "^5.1.1",
         "fancy-log": "^2.0.0",
         "mkdirp": "^1.0.4",
@@ -82,8 +82,8 @@
     },
     "optionalDependencies": {
         "gulp-jsdoc3": "= 3.0.0",
-        "typedoc": ">=0.22.11",
-        "typescript": ">=4.5.4"
+        "typedoc": ">=0.22.13",
+        "typescript": ">=4.6.2"
     },
     "engines": {
         "node": ">= 14.18.1",

@@ -5,8 +5,8 @@ const _typescript = require('gulp-typescript');
 const _execa = require('execa');
 
 /**
- * Sub builder that creates a task that will transpile typescript files into
- * javascript files. This method will return a watcher if the watch option
+ * Sub builder that creates a task that will build UI project
+ *  using vite. This method will return a watcher if the watch option
  * is set to true.
  *
  * @private
@@ -43,8 +43,8 @@ module.exports = (project, options) => {
 
     const args = ['build'];
     const buildTask = () => _execa(viteBin, args, { stdio: 'inherit' });
-    buildTask.displayName = 'build-ts';
-    buildTask.description = 'Build typescript source files to javascript files';
+    buildTask.displayName = 'build-ui';
+    buildTask.description = 'Build the UI project';
 
     const task = _gulp.series([buildTask, copyTask]);
 
@@ -58,9 +58,8 @@ module.exports = (project, options) => {
         const buildTask = () => _execa(viteBin, args, { stdio: 'inherit' });
         const task = _gulp.series([buildTask, copyTask]);
         const watchTask = () => _gulp.watch(paths, task);
-        watchTask.displayName = 'watch-build-ts';
-        watchTask.description =
-            'Automatically build typescript files on change';
+        watchTask.displayName = 'watch-build-ui';
+        watchTask.description = 'Automatically build the UI project on change';
         return watchTask;
     }
 
