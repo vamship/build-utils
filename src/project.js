@@ -12,6 +12,7 @@ const SUPPORTED_PROJECT_TYPES = [
     'api',
     'aws-microservice',
     'container',
+    'ui',
 ];
 const SUPPORTED_LANGUAGES = ['js', 'ts'];
 

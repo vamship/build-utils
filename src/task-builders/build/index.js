@@ -27,18 +27,26 @@ module.exports = (project, options) => {
         return;
     }
 
-    const jsBuild = require('./build-js');
-    const tasks = [jsBuild(project, options)];
+    let task;
+    let tasks;
 
-    if (project.hasTypescript) {
-        const tsBuild = require('./build-ts');
-        tasks.push(tsBuild(project, options));
-    } else if (project.hasExportedTypes) {
-        const typesBuild = require('./build-types');
-        tasks.push(typesBuild(project, options));
+    if (project.projectType !== 'ui') {
+        const jsBuild = require('./build-js');
+        tasks = [jsBuild(project, options)];
+
+        if (project.hasTypescript) {
+            const tsBuild = require('./build-ts');
+            tasks.push(tsBuild(project, options));
+        } else if (project.hasExportedTypes) {
+            const typesBuild = require('./build-types');
+            tasks.push(typesBuild(project, options));
+        }
+    } else {
+        const tsBuild = require('./build-ui');
+        tasks = [tsBuild(project, options)];
     }
 
-    const task = _gulp.parallel(tasks);
+    task = _gulp.parallel(tasks);
     if (!watch) {
         task.displayName = 'build';
         task.description = 'Transpile/copy source files into working directory';
