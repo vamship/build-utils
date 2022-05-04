@@ -36,10 +36,14 @@ module.exports = (project, options) => {
         extras.push('Dockerfile*');
     }
 
+    const staticFilePatterns = ['js', 'json'].concat(
+        project.staticFilePatterns
+    );
+
     const paths = dirs
         .map((dir) => rootDir.getChild(dir))
-        .map((dir) => ['js', 'json'].map((ext) => dir.getAllFilesGlob(ext)))
-        .reduce((result, arr) => result.concat(arr), [])
+        .map((dir) => staticFilePatterns.map((ext) => dir.getAllFilesGlob(ext)))
+        .append.reduce((result, arr) => result.concat(arr), [])
         .concat(extras.map((item) => rootDir.getFileGlob(item)));
 
     const task = () =>

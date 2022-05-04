@@ -122,6 +122,7 @@ module.exports = class Project {
             requiredEnv,
             exportedTypes,
             aws,
+            staticFilePatterns,
         } = buildMetadata;
 
         if (SUPPORTED_PROJECT_TYPES.indexOf(projectType) < 0) {
@@ -144,6 +145,8 @@ module.exports = class Project {
         this._projectType = projectType;
         this._language = language;
         this._exportedTypes = exportedTypes;
+        this._staticFilePatterns =
+            staticFilePatterns instanceof Array ? staticFilePatterns : [];
 
         this._hasTypescript = this._language === 'ts';
         this._hasServer = this._projectType === 'api';
@@ -437,6 +440,16 @@ module.exports = class Project {
      */
     get exportedTypes() {
         return this._exportedTypes;
+    }
+
+    /**
+     * Additional files to copy from the source directory to the build
+     * directory.
+     *
+     * @return {String}
+     */
+    get staticFilePatterns() {
+        return this._staticFilePatterns;
     }
 
     /**
