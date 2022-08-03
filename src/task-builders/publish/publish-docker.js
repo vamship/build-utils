@@ -1,9 +1,9 @@
 'use strict';
 
-const _execa = require('execa');
-const _gulp = require('gulp');
-const _log = require('fancy-log');
-const _semver = require('semver');
+import _gulp from 'gulp';
+import _log from 'fancy-log';
+import _semver from 'semver';
+import { execa as _execa } from 'execa';
 
 /**
  * Sub builder that builds a docker image based on a predefined dockerfile.
@@ -16,7 +16,7 @@ const _semver = require('semver');
  *
  * @returns {Function} A gulp task.
  */
-module.exports = (project, options) => {
+export default (project, options) => {
     const { version } = project;
 
     const dockerBin = 'docker';

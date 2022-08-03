@@ -1,6 +1,10 @@
 'use strict';
 
-const _gulp = require('gulp');
+import _gulp from 'gulp';
+import createTypesTask from './package-types.js';
+import createAwsTask from './package-aws.js';
+import createDockerTask from './package-docker.js';
+import createNpmTask from './package-npm.js';
 
 /**
  * Builder function that can be used to generate a gulp task to package a
@@ -16,7 +20,7 @@ const _gulp = require('gulp');
  *
  * @returns {Function} A gulp task.
  */
-module.exports = (project, options) => {
+export default (project, options) => {
     const { types } = options;
     let createTask = null;
 

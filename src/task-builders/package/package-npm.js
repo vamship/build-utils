@@ -1,6 +1,6 @@
 'use strict';
 
-const { createNpmPackageTask } = require('./utils');
+import { createNpmPackageTask } from './utils.js';
 
 /**
  * Sub builder that packages a project using npm pack, from source files or
@@ -14,7 +14,7 @@ const { createNpmPackageTask } = require('./utils');
  *
  * @returns {Function} A gulp task.
  */
-module.exports = (project, options) => {
+export default (project, options) => {
     const { snakeCasedName, version, rootDir, jsRootDir } = project;
 
     const packageName = `${snakeCasedName}-${version}.tgz`;

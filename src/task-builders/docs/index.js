@@ -1,6 +1,8 @@
 'use strict';
 
-const _gulp = require('gulp');
+import _gulp from 'gulp';
+import createJsDocsTask from './docs-js.js';
+import createTsDocsTask from './docs-ts.js';
 
 /**
  * Builder function that can be used to generate a gulp task that generates
@@ -14,13 +16,13 @@ const _gulp = require('gulp');
  *
  * @returns {Function} A gulp task.
  */
-module.exports = (project, options) => {
+export default (project, options) => {
     let createTask = null;
 
     if (project.hasTypescript) {
-        createTask = require('./docs-ts');
+        createTask = createTsDocsTask;
     } else {
-        createTask = require('./docs-js');
+        createTask = createJsDocsTask;
     }
 
     const task = createTask(project, options);

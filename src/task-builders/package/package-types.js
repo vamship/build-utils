@@ -1,11 +1,11 @@
 'use strict';
 
-const _gulp = require('gulp');
-const _execa = require('execa');
-const _path = require('path');
-const _fs = require('fs');
+import _gulp from 'gulp';
+import _path from 'path';
+import _fs from 'fs';
+import { execa as _execa } from 'execa';
 
-const { createNpmPackageTask } = require('./utils');
+import { createNpmPackageTask } from './utils.js';
 
 /**
  * Sub builder that packages the types exported by a project using npm pack. A
@@ -19,7 +19,7 @@ const { createNpmPackageTask } = require('./utils');
  *
  * @returns {Function} A gulp task.
  */
-module.exports = (project, options) => {
+export default (project, options) => {
     const { name, snakeCasedName, version, license, keywords, rootDir } =
         project;
 

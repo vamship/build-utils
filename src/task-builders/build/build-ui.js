@@ -1,8 +1,8 @@
 'use strict';
 
-const _gulp = require('gulp');
-const _typescript = require('gulp-typescript');
-const _execa = require('execa');
+import _gulp from 'gulp';
+import _typescript from 'gulp-typescript';
+import { execa as _execa } from 'execa';
 
 /**
  * Sub builder that creates a task that will build UI project
@@ -17,7 +17,7 @@ const _execa = require('execa');
  *
  * @returns {Function} A gulp task.
  */
-module.exports = (project, options) => {
+export default (project, options) => {
     const { watch } = Object.assign({ watch: false }, options);
     const rootDir = project.rootDir;
     const workingDir = rootDir.getChild('working');

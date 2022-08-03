@@ -1,6 +1,8 @@
 'use strict';
 
-const _gulp = require('gulp');
+import _gulp from 'gulp';
+import nonUiTests from './test.js';
+import uiTests from './test-ui.js';
 
 /**
  * Builder function that can be used to generate a gulp task to execute
@@ -13,17 +15,15 @@ const _gulp = require('gulp');
  *
  * @returns {Function} A gulp task.
  */
-module.exports = (project, options) => {
+export default (project, options) => {
     const { testType, watch } = Object.assign(
         { testType: 'unit', watch: false },
         options
     );
     const tasks = [];
     if (project.projectType !== 'ui') {
-        const nonUiTests = require('./test');
         tasks.push(nonUiTests(project, options));
     } else {
-        const uiTests = require('./test-ui');
         tasks.push(uiTests(project, options));
     }
     const task = _gulp.parallel(tasks);

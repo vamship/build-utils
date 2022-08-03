@@ -1,6 +1,10 @@
 'use strict';
 
-const _gulp = require('gulp');
+import _gulp from 'gulp';
+import jsBuild from './build-js.js';
+import typesBuild from './build-types.js';
+import tsBuild from './build-ts.js';
+import uiTsBuild from './build-ui.js';
 
 /**
  * Builder function that can be used to generate a gulp task to build source
@@ -16,7 +20,7 @@ const _gulp = require('gulp');
  *
  * @returns {Function} A gulp task.
  */
-module.exports = (project, options) => {
+export default (project, options) => {
     const { watch } = Object.assign({ watch: false }, options);
 
     if (
@@ -31,19 +35,15 @@ module.exports = (project, options) => {
     let tasks;
 
     if (project.projectType !== 'ui') {
-        const jsBuild = require('./build-js');
         tasks = [jsBuild(project, options)];
 
         if (project.hasTypescript) {
-            const tsBuild = require('./build-ts');
             tasks.push(tsBuild(project, options));
         } else if (project.hasExportedTypes) {
-            const typesBuild = require('./build-types');
             tasks.push(typesBuild(project, options));
         }
     } else {
-        const tsBuild = require('./build-ui');
-        tasks = [tsBuild(project, options)];
+        tasks = [uiTsBuild(project, options)];
     }
 
     task = _gulp.parallel(tasks);

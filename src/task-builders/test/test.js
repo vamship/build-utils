@@ -1,7 +1,7 @@
 'use strict';
 
-const _gulp = require('gulp');
-const _execa = require('execa');
+import _gulp from 'gulp';
+import { execa as _execa } from 'execa';
 
 /**
  * Builder function that can be used to generate a gulp task to execute
@@ -14,7 +14,7 @@ const _execa = require('execa');
  *
  * @returns {Function} A gulp task.
  */
-module.exports = (project, options) => {
+export default (project, options) => {
     const { testType, watch } = Object.assign(
         { testType: 'unit', watch: false },
         options

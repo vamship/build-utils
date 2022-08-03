@@ -1,19 +1,10 @@
 'use strict';
 
-/**
- * A collection of task builder functions that can be used to generate gulp
- * tasks based on project configuration.
- */
-module.exports = [
-    'clean',
-    'format',
-    'lint',
-    'build',
-    'test',
-    'docs',
-    'package',
-    'publish',
-].reduce((tasks, task) => {
-    tasks[task] = require(`./${task}`);
-    return tasks;
-}, {});
+export { default as clean } from './clean.js';
+export { default as format } from './format.js';
+export { default as lint } from './lint.js';
+export { default as build } from './build/index.js';
+export { default as test } from './test/index.js';
+export { default as docs } from './docs/index.js';
+export { default as package } from './package/index.js';
+export { default as publish } from './publish/index.js';

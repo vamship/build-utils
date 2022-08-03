@@ -1,8 +1,8 @@
 'use strict';
 
-const _gulp = require('gulp');
-const _zip = require('gulp-zip');
-const _execa = require('execa');
+import _gulp from 'gulp';
+import _zip from 'gulp-zip';
+import { execa as _execa } from 'execa';
 
 /**
  * Sub builder that packages an aws-microservice project for deployment. This
@@ -17,7 +17,7 @@ const _execa = require('execa');
  *
  * @returns {Function} A gulp task.
  */
-module.exports = (project, options) => {
+export default (project, options) => {
     const { name, version, rootDir } = project;
     const infraDir = rootDir.getChild('infra');
     const workingDir = rootDir.getChild('working');

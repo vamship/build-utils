@@ -1,7 +1,7 @@
 'use strict';
 
-const _gulp = require('gulp');
-const _gulpTypedoc = require('gulp-typedoc');
+import _gulp from 'gulp';
+import _gulpTypedoc from 'gulp-typedoc';
 
 /**
  * Sub builder that creates a task that will generate documentation from
@@ -15,7 +15,7 @@ const _gulpTypedoc = require('gulp-typedoc');
  *
  * @returns {Function} A gulp task.
  */
-module.exports = (project, options) => {
+export default (project, options) => {
     const { rootDir, name, version } = project;
 
     const docOptions = Object.assign(

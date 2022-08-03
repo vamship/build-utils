@@ -1,6 +1,6 @@
 'use strict';
 
-const _path = require('path');
+import _path from 'path';
 
 const _sepRegexp = new RegExp(_path.sep.replace(/\\/g, '\\\\'), 'g');
 
@@ -8,7 +8,7 @@ const _sepRegexp = new RegExp(_path.sep.replace(/\\/g, '\\\\'), 'g');
  * Abstract representation of a directory, with methods for traversal and
  * glob pattern generation.
  */
-class Directory {
+export class Directory {
     /**
      * @param {String} path The path represented by this directory.
      */
@@ -230,5 +230,3 @@ class Directory {
         return `${this.globPath}**/${extension}`;
     }
 }
-
-module.exports = Directory;

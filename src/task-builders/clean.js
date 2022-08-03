@@ -1,6 +1,6 @@
 'use strict';
 
-const _delete = require('delete');
+import _delete from 'delete';
 
 /**
  * Builder function that can be used to generate a gulp task to clean temporary
@@ -13,7 +13,7 @@ const _delete = require('delete');
  *
  * @returns {Function} A gulp task.
  */
-module.exports = (project, options) => {
+export default (project, options) => {
     const rootDir = project.rootDir;
 
     const dirs = ['coverage', 'dist'];

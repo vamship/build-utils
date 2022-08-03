@@ -1,10 +1,10 @@
 'use strict';
 
-const _camelcase = require('camelcase');
-const Directory = require('./directory');
-const _dotEnv = require('dotenv');
-const _dotEnvExpand = require('dotenv-expand');
-const _fs = require('fs');
+import _camelcase from 'camelcase';
+import _dotEnv from 'dotenv';
+import _dotEnvExpand from 'dotenv-expand';
+import _fs from 'fs';
+import { Directory } from './directory.js';
 
 const SUPPORTED_PROJECT_TYPES = [
     'lib',
@@ -21,7 +21,7 @@ const SUPPORTED_LANGUAGES = ['js', 'ts'];
  * about projects that should help automate the build/test/deploy toolchain for
  * a project.
  */
-module.exports = class Project {
+export class Project {
     /**
      * @param {Object} packageConfig Reference to the project configuration.
      *        This is typically the contents of package.json, with an additional
@@ -575,4 +575,4 @@ module.exports = class Project {
         }
         return this._cdkStacks[key];
     }
-};
+}

@@ -1,7 +1,7 @@
 'use strict';
 
-const _gulp = require('gulp');
-const _prettier = require('gulp-prettier');
+import _gulp from 'gulp';
+import _prettier from 'gulp-prettier';
 
 /**
  * Builder function that can be used to generate a gulp task to format source
@@ -14,7 +14,7 @@ const _prettier = require('gulp-prettier');
  *
  * @returns {Function} A gulp task.
  */
-module.exports = (project, options) => {
+export default (project, options) => {
     const { watch } = Object.assign({ watch: false }, options);
 
     const rootDir = project.rootDir;

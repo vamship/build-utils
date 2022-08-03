@@ -1,6 +1,11 @@
 'use strict';
 
-const _gulp = require('gulp');
+import _gulp from 'gulp';
+
+import createTypesTask from './publish-types.js';
+import createNpmTask from './publish-npm.js';
+import createAwsTask from './publish-aws.js';
+import createDockerTask from './publish-docker.js';
 
 /**
  * Builder function that can be used to generate a gulp task to publish a
@@ -16,7 +21,7 @@ const _gulp = require('gulp');
  *
  * @returns {Function} A gulp task.
  */
-module.exports = (project, options) => {
+export default (project, options) => {
     const { types } = options;
     let createTask = null;
 
@@ -24,13 +29,13 @@ module.exports = (project, options) => {
         if (!project.hasExportedTypes) {
             return;
         }
-        createTask = require('./publish-types');
+        createTask = createTypesTask;
     } else if (project.projectType === 'aws-microservice') {
-        createTask = require('./publish-aws');
+        createTask = createAwsTask;
     } else if (project.hasDocker) {
-        createTask = require('./publish-docker');
+        createTask = createDockerTask;
     } else if (project.projectType === 'lib' || project.projectType === 'cli') {
-        createTask = require('./publish-npm');
+        createTask = createNpmTask;
     }
 
     const task = createTask(project, options);

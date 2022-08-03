@@ -1,7 +1,7 @@
 'use strict';
 
-const _gulp = require('gulp');
-const _typescript = require('gulp-typescript');
+import _gulp from 'gulp';
+import _typescript from 'gulp-typescript';
 
 /**
  * Sub builder that creates a task that will transpile typescript files into
@@ -16,7 +16,7 @@ const _typescript = require('gulp-typescript');
  *
  * @returns {Function} A gulp task.
  */
-module.exports = (project, options) => {
+export default (project, options) => {
     const { watch } = Object.assign({ watch: false }, options);
     const rootDir = project.rootDir;
     const workingDir = rootDir.getChild('working');

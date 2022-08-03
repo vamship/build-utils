@@ -1,6 +1,6 @@
 'use strict';
 
-const _gulp = require('gulp');
+import _gulp from 'gulp';
 
 /**
  * Sub builder that creates a task that will copy type declaration files that
@@ -15,7 +15,7 @@ const _gulp = require('gulp');
  *
  * @returns {Function} A gulp task.
  */
-module.exports = (project, options) => {
+export default (project, options) => {
     const { watch } = Object.assign({ watch: false }, options);
     const rootDir = project.rootDir;
     const workingDir = rootDir.getChild('working');

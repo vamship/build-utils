@@ -1,9 +1,9 @@
 'use strict';
 
-const _execa = require('execa');
-const _gulp = require('gulp');
-const _log = require('fancy-log');
-const _mkdirp = require('mkdirp');
+import _gulp from 'gulp';
+import _log from 'fancy-log';
+import _mkdirp from 'mkdirp';
+import { execa as _execa } from 'execa';
 
 /**
  * Sub builder that builds a docker image based on a predefined dockerfile.
@@ -16,7 +16,7 @@ const _mkdirp = require('mkdirp');
  *
  * @returns {Function} A gulp task.
  */
-module.exports = (project, options) => {
+export default (project, options) => {
     const {
         unscopedName,
         version,

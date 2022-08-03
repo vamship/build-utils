@@ -1,7 +1,7 @@
 'use strict';
 
-const _gulp = require('gulp');
-const _execa = require('execa');
+import _gulp from 'gulp';
+import { execa as _execa } from 'execa';
 
 /**
  * Sub builder that publishes a project using npm publish.
@@ -14,7 +14,7 @@ const _execa = require('execa');
  *
  * @returns {Function} A gulp task.
  */
-module.exports = (project, options) => {
+export default (project, options) => {
     const { snakeCasedName, version, rootDir } = project;
 
     const packageName = `${snakeCasedName}-${version}.tgz`;

@@ -1,22 +1,16 @@
 'use strict';
 
-// const _sinon = require('sinon');
-const _chai = require('chai');
-_chai.use(require('sinon-chai'));
-_chai.use(require('chai-as-promised'));
+import _chai from 'chai';
+import _sinonChai from 'sinon-chai';
+import _chaiAsPromised from 'chai-as-promised';
+_chai.use(_sinonChai);
+_chai.use(_chaiAsPromised);
 
 const expect = _chai.expect;
-// const _path = require('path');
-// const _process = require('process');
-const _rewire = require('rewire');
 
-let Project = null;
+import { Project } from '../../src/project.js';
 
 describe('[Project]', () => {
-    beforeEach(() => {
-        Project = _rewire('../../src/project');
-    });
-
     describe('ctor()', () => {
         it('should throw an error if invoked without a valid package config', () => {
             const error = 'Invalid packageConfig (arg #1)';

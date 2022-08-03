@@ -1,8 +1,8 @@
 'use strict';
 
-const _delete = require('delete');
-const _execa = require('execa');
-const _gulp = require('gulp');
+import _delete from 'delete';
+import { execa as _execa } from 'execa';
+import _gulp from 'gulp';
 
 /**
  * Utility function that initializes and returns an array of tasks for npm
@@ -16,7 +16,7 @@ const _gulp = require('gulp');
  *
  * @returns {Function} A gulp task that creates the package.
  */
-module.exports.createNpmPackageTask = function (
+export const createNpmPackageTask = function (
     packageDir,
     packageName,
     targetDir
