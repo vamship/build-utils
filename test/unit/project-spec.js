@@ -1,13 +1,5 @@
 'use strict';
 
-import _chai from 'chai';
-import _sinonChai from 'sinon-chai';
-import _chaiAsPromised from 'chai-as-promised';
-_chai.use(_sinonChai);
-_chai.use(_chaiAsPromised);
-
-const expect = _chai.expect;
-
 import { Project } from '../../src/project.js';
 
 describe('[Project]', () => {
@@ -18,7 +10,7 @@ describe('[Project]', () => {
 
             inputs.forEach((tree) => {
                 const wrapper = () => new Project();
-                expect(wrapper).to.throw(error);
+                expect(wrapper).toThrow(error);
             });
         });
     });
