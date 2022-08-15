@@ -18,10 +18,10 @@ import { execa as _execa } from 'execa';
  * @returns {Function} A gulp task.
  */
 export default (project, options) => {
-    const { snakeCasedName, version, rootDir } = project;
+    const { kebabCasedName, version, rootDir } = project;
     const workingDir = rootDir.getChild('working');
 
-    const packageName = `${snakeCasedName}-${version}.zip`;
+    const packageName = `${kebabCasedName}-${version}.zip`;
 
     const installTask = () => {
         const npmBin = 'npm';

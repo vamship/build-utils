@@ -15,9 +15,9 @@ import { createNpmPackageTask } from './utils.js';
  * @returns {Function} A gulp task.
  */
 export default (project, options) => {
-    const { snakeCasedName, version, rootDir, jsRootDir } = project;
+    const { kebabCasedName, version, rootDir, jsRootDir } = project;
 
-    const packageName = `${snakeCasedName}-${version}.tgz`;
+    const packageName = `${kebabCasedName}-${version}.tgz`;
     const packageDir = jsRootDir;
     const distDir = rootDir.getChild('dist');
 

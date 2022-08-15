@@ -20,10 +20,10 @@ import { createNpmPackageTask } from './utils.js';
  * @returns {Function} A gulp task.
  */
 export default (project, options) => {
-    const { name, snakeCasedName, version, license, keywords, rootDir } =
+    const { name, kebabCasedName, version, license, keywords, rootDir } =
         project;
 
-    const packageName = `${snakeCasedName}-types-${version}.tgz`;
+    const packageName = `${kebabCasedName}-types-${version}.tgz`;
     const packageDir = rootDir
         .getChild('working')
         .getChild(project.exportedTypes);

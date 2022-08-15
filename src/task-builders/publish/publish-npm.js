@@ -15,9 +15,9 @@ import { execa as _execa } from 'execa';
  * @returns {Function} A gulp task.
  */
 export default (project, options) => {
-    const { snakeCasedName, version, rootDir } = project;
+    const { kebabCasedName, version, rootDir } = project;
 
-    const packageName = `${snakeCasedName}-${version}.tgz`;
+    const packageName = `${kebabCasedName}-${version}.tgz`;
 
     const npmBin = 'npm';
     const args = ['publish', packageName];

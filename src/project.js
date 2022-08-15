@@ -30,7 +30,11 @@ export class Project {
      *        will override the build metadata defined within packageConfig.
      */
     constructor(packageConfig, buildMetadata) {
-        if (!packageConfig || typeof packageConfig !== 'object') {
+        if (
+            !packageConfig ||
+            packageConfig instanceof Array ||
+            typeof packageConfig !== 'object'
+        ) {
             throw new Error('Invalid packageConfig (arg #1)');
         }
 
@@ -42,65 +46,65 @@ export class Project {
         );
 
         this._name = config.name;
+        this._description = config.description;
+        this._version = config.version;
         this._license = config.license;
         this._keywords = (config.keywords || []).slice();
         this._unscopedName = config.name.replace(/^@[^/]*\//, '');
-        this._snakeCasedName = config.name
+        this._kebabCasedName = config.name
             .replace(/^@/, '')
             .replace(/\//g, '-');
-        this._version = config.version;
-        this._description = config.description;
         this._initProjectProperties(config.buildMetadata);
 
-        const tree = {
-            src: null,
-            test: {
-                unit: null,
-                api: null,
-            },
-            infra: null,
-            working: {
-                src: null,
-                test: {
-                    unit: null,
-                    api: null,
-                },
-                infra: null,
-                node_modules: null,
-            },
-            dist: null,
-            docs: null,
-            node_modules: null,
-            coverage: null,
-            '.gulp': null,
-            '.tscache': null,
-            logs: null,
-            'cdk.out': null,
-        };
+        // const tree = {
+        //     src: null,
+        //     test: {
+        //         unit: null,
+        //         api: null,
+        //     },
+        //     infra: null,
+        //     working: {
+        //         src: null,
+        //         test: {
+        //             unit: null,
+        //             api: null,
+        //         },
+        //         infra: null,
+        //         node_modules: null,
+        //     },
+        //     dist: null,
+        //     docs: null,
+        //     node_modules: null,
+        //     coverage: null,
+        //     '.gulp': null,
+        //     '.tscache': null,
+        //     logs: null,
+        //     'cdk.out': null,
+        // };
 
-        if (this._hasExportedTypes) {
-            let rootParentDir = tree;
-            let workingParentDir = tree.working;
+        // if (this._hasExportedTypes) {
+        //     let rootParentDir = tree;
+        //     let workingParentDir = tree.working;
 
-            const exportedTypesDirs = this._exportedTypes.split('/');
-            const lastIndex = exportedTypesDirs.length - 1;
+        //     const exportedTypesDirs = this._exportedTypes.split('/');
+        //     const lastIndex = exportedTypesDirs.length - 1;
 
-            exportedTypesDirs.forEach((dirName, index) => {
-                const isLastIndex = index === lastIndex;
+        //     exportedTypesDirs.forEach((dirName, index) => {
+        //         const isLastIndex = index === lastIndex;
 
-                if (!rootParentDir[dirName]) {
-                    rootParentDir[dirName] = isLastIndex ? null : {};
-                }
-                rootParentDir = rootParentDir[dirName];
+        //         if (!rootParentDir[dirName]) {
+        //             rootParentDir[dirName] = isLastIndex ? null : {};
+        //         }
+        //         rootParentDir = rootParentDir[dirName];
 
-                if (!workingParentDir[dirName]) {
-                    workingParentDir[dirName] = isLastIndex ? null : {};
-                }
-                workingParentDir = workingParentDir[dirName];
-            });
-        }
+        //         if (!workingParentDir[dirName]) {
+        //             workingParentDir[dirName] = isLastIndex ? null : {};
+        //         }
+        //         workingParentDir = workingParentDir[dirName];
+        //     });
+        // }
 
-        this._rootDir = Directory.createTree('./', tree);
+        // this._rootDir = Directory.createTree('./', tree);
     }
 
     /**
@@ -133,7 +137,7 @@ export class Project {
 
         if (SUPPORTED_LANGUAGES.indexOf(language) < 0) {
             throw new Error(
-                `Invalid language (buildMetadata.language)\n\tMust be one of: [${SUPPORTED_LANGUAGES}]`
+                `Invalid language (buildMetadata.language).\n\tMust be one of: [${SUPPORTED_LANGUAGES}]`
             );
         }
 
@@ -144,14 +148,16 @@ export class Project {
 
         this._projectType = projectType;
         this._language = language;
-        this._exportedTypes = exportedTypes;
+        this._exportedTypes =
+            typeof exportedTypes === 'string' && exportedTypes.length > 0
+                ? exportedTypes
+                : '';
         this._staticFilePatterns =
             staticFilePatterns instanceof Array ? staticFilePatterns : [];
 
         this._hasTypescript = this._language === 'ts';
         this._hasServer = this._projectType === 'api';
-        this._hasExportedTypes =
-            typeof exportedTypes === 'string' && exportedTypes.length > 0;
+        this._hasExportedTypes = this._exportedTypes.length > 0;
 
         if (this._projectType === 'aws-microservice') {
             if (!aws || typeof aws !== 'object') {
@@ -362,12 +368,12 @@ export class Project {
     }
 
     /**
-     * The name of the project formatted in snake case. Ideal for use when
+     * The name of the project formatted in kebab case. Ideal for use when
      * generating package names. This property does not include the file
      * extension (.tgz).
      */
-    get snakeCasedName() {
-        return this._snakeCasedName;
+    get kebabCasedName() {
+        return this._kebabCasedName;
     }
 
     /**
