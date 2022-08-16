@@ -19,11 +19,7 @@ export default (project, options) => {
     const dirs = ['coverage', 'dist'];
     const extras = [];
 
-    if (
-        project.hasExportedTypes ||
-        project.hasTypescript ||
-        project.projectType === 'aws-microservice'
-    ) {
+    if (project.hasTypescript || project.projectType === 'aws-microservice') {
         dirs.push('working');
     }
 

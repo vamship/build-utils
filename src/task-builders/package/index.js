@@ -1,7 +1,6 @@
 'use strict';
 
 import _gulp from 'gulp';
-import createTypesTask from './package-types.js';
 import createAwsTask from './package-aws.js';
 import createDockerTask from './package-docker.js';
 import createNpmTask from './package-npm.js';
@@ -21,15 +20,9 @@ import createNpmTask from './package-npm.js';
  * @returns {Function} A gulp task.
  */
 export default (project, options) => {
-    const { types } = options;
     let createTask = null;
 
-    if (types) {
-        if (!project.hasExportedTypes) {
-            return;
-        }
-        createTask = require('./package-types');
-    } else if (project.projectType === 'aws-microservice') {
+    if (project.projectType === 'aws-microservice') {
         createTask = require('./package-aws');
     } else if (project.hasDocker) {
         createTask = require('./package-docker');
@@ -40,14 +33,8 @@ export default (project, options) => {
     const task = createTask(project, options);
 
     if (!(task instanceof Array)) {
-        if (types) {
-            task.displayName = 'package-types';
-            task.description =
-                'Create a distribution package for the types exported by the project';
-        } else {
-            task.displayName = 'package';
-            task.description = 'Create a distribution package for the project';
-        }
+        task.displayName = 'package';
+        task.description = 'Create a distribution package for the project';
     }
 
     return task;

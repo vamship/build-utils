@@ -82,28 +82,6 @@ export class Project {
         //     'cdk.out': null,
         // };
 
-        // if (this._hasExportedTypes) {
-        //     let rootParentDir = tree;
-        //     let workingParentDir = tree.working;
-
-        //     const exportedTypesDirs = this._exportedTypes.split('/');
-        //     const lastIndex = exportedTypesDirs.length - 1;
-
-        //     exportedTypesDirs.forEach((dirName, index) => {
-        //         const isLastIndex = index === lastIndex;
-
-        //         if (!rootParentDir[dirName]) {
-        //             rootParentDir[dirName] = isLastIndex ? null : {};
-        //         }
-        //         rootParentDir = rootParentDir[dirName];
-
-        //         if (!workingParentDir[dirName]) {
-        //             workingParentDir[dirName] = isLastIndex ? null : {};
-        //         }
-        //         workingParentDir = workingParentDir[dirName];
-        //     });
-        // }
-
         // this._rootDir = Directory.createTree('./', tree);
     }
 
@@ -124,7 +102,6 @@ export class Project {
             language,
             docker,
             requiredEnv,
-            exportedTypes,
             aws,
             staticFilePatterns,
         } = buildMetadata;
@@ -148,16 +125,11 @@ export class Project {
 
         this._projectType = projectType;
         this._language = language;
-        this._exportedTypes =
-            typeof exportedTypes === 'string' && exportedTypes.length > 0
-                ? exportedTypes
-                : '';
         this._staticFilePatterns =
             staticFilePatterns instanceof Array ? staticFilePatterns : [];
 
         this._hasTypescript = this._language === 'ts';
         this._hasServer = this._projectType === 'api';
-        this._hasExportedTypes = this._exportedTypes.length > 0;
 
         if (this._projectType === 'aws-microservice') {
             if (!aws || typeof aws !== 'object') {
@@ -439,16 +411,6 @@ export class Project {
     }
 
     /**
-     * The path to the directory that contains the types exported by this
-     * project.
-     *
-     * @return {String}
-     */
-    get exportedTypes() {
-        return this._exportedTypes;
-    }
-
-    /**
      * Additional files to copy from the source directory to the build
      * directory.
      *
@@ -485,15 +447,6 @@ export class Project {
      */
     get hasServer() {
         return this._hasServer;
-    }
-
-    /**
-     * Determines if the project has any types to export.
-     *
-     * @return {String}
-     */
-    get hasExportedTypes() {
-        return this._hasExportedTypes;
     }
 
     /**

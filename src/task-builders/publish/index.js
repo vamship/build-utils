@@ -2,7 +2,6 @@
 
 import _gulp from 'gulp';
 
-import createTypesTask from './publish-types.js';
 import createNpmTask from './publish-npm.js';
 import createAwsTask from './publish-aws.js';
 import createDockerTask from './publish-docker.js';
@@ -22,15 +21,9 @@ import createDockerTask from './publish-docker.js';
  * @returns {Function} A gulp task.
  */
 export default (project, options) => {
-    const { types } = options;
     let createTask = null;
 
-    if (types) {
-        if (!project.hasExportedTypes) {
-            return;
-        }
-        createTask = createTypesTask;
-    } else if (project.projectType === 'aws-microservice') {
+    if (project.projectType === 'aws-microservice') {
         createTask = createAwsTask;
     } else if (project.hasDocker) {
         createTask = createDockerTask;
@@ -41,14 +34,8 @@ export default (project, options) => {
     const task = createTask(project, options);
 
     if (!(task instanceof Array)) {
-        if (types) {
-            task.displayName = 'publish-types';
-            task.description =
-                'Publish the types exported by this project to a repository';
-        } else {
-            task.displayName = 'publish';
-            task.description = 'Publish the package to a repository';
-        }
+        task.displayName = 'publish';
+        task.description = 'Publish the package to a repository';
     }
 
     return task;

@@ -13,7 +13,6 @@ describe('[Project]', () => {
             buildMetadata: {
                 projectType: 'lib',
                 language: 'ts',
-                exportedTypes: 'types',
                 requiredEnv: ['ENV_1', 'ENV_2'],
                 aws: {
                     stacks: {},
@@ -71,7 +70,6 @@ describe('[Project]', () => {
             expect(instance.projectType).toEqual(buildMetadata.projectType);
             expect(instance.language).toEqual(buildMetadata.language);
             expect(instance.requiredEnv).toEqual(buildMetadata.getRequiredEnv);
-            expect(instance.exportedTypes).toEqual(buildMetadata.exportedTypes);
             expect(instance.staticFilePatterns).toEqual(
                 buildMetadata.staticFilePatterns
             );
@@ -87,7 +85,6 @@ describe('[Project]', () => {
             const buildMetadata = {
                 projectType: 'api',
                 language: 'js',
-                exportedTypes: 'types1',
                 requiredEnv: ['ENV_3', 'ENV_4'],
                 aws: {},
                 staticFilePatterns: ['bar'],
@@ -100,7 +97,6 @@ describe('[Project]', () => {
             expect(instance.getRequiredEnv()).toEqual(
                 buildMetadata.requiredEnv
             );
-            expect(instance.exportedTypes).toEqual(buildMetadata.exportedTypes);
             expect(instance.staticFilePatterns).toEqual(
                 buildMetadata.staticFilePatterns
             );
@@ -257,33 +253,6 @@ describe('[Project]', () => {
                     expect(instance.staticFilePatterns).toEqual(
                         staticFilePatterns
                     );
-                });
-            });
-        });
-
-        describe('[exportedTypes]', () => {
-            [null, undefined, 123, true, {}, [], () => {}, ''].forEach(
-                (exportedTypes) => {
-                    it(`should set the hasExportedTypes to false if a valid exportedTypes field is not specified (value=${exportedTypes})`, () => {
-                        const packageConfig = _createPackageConfig();
-                        packageConfig.buildMetadata.exportedTypes =
-                            exportedTypes;
-
-                        const instance = new Project(packageConfig);
-                        expect(instance.exportedTypes).toEqual('');
-                        expect(instance.hasExportedTypes).toBe(false);
-                    });
-                }
-            );
-
-            ['types-1', 'types-2', 'types-3'].forEach((exportedTypes) => {
-                it(`should set the hasExportedTypes property to true if a valid exportedTypes field is specified (value=${exportedTypes})`, () => {
-                    const packageConfig = _createPackageConfig();
-                    packageConfig.buildMetadata.exportedTypes = exportedTypes;
-
-                    const instance = new Project(packageConfig);
-                    expect(instance.exportedTypes).toEqual(exportedTypes);
-                    expect(instance.hasExportedTypes).toBe(true);
                 });
             });
         });

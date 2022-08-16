@@ -2,7 +2,6 @@
 
 import _gulp from 'gulp';
 import jsBuild from './build-js.js';
-import typesBuild from './build-types.js';
 import tsBuild from './build-ts.js';
 import uiTsBuild from './build-ui.js';
 
@@ -23,11 +22,7 @@ import uiTsBuild from './build-ui.js';
 export default (project, options) => {
     const { watch } = Object.assign({ watch: false }, options);
 
-    if (
-        !project.hasExportedTypes &&
-        !project.hasTypescript &&
-        project.projectType !== 'aws-microservice'
-    ) {
+    if (!project.hasTypescript && project.projectType !== 'aws-microservice') {
         return;
     }
 
@@ -39,8 +34,6 @@ export default (project, options) => {
 
         if (project.hasTypescript) {
             tasks.push(tsBuild(project, options));
-        } else if (project.hasExportedTypes) {
-            tasks.push(typesBuild(project, options));
         }
     } else {
         tasks = [uiTsBuild(project, options)];
