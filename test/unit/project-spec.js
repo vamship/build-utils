@@ -2,6 +2,8 @@
 
 import { Project } from '../../src/project.js';
 
+const ALL_BUT_OBJECT = [undefined, null, 123, 'abc', true, () => undefined];
+
 describe('[Project]', () => {
     function _createPackageConfig() {
         return {
@@ -18,7 +20,7 @@ describe('[Project]', () => {
                     stacks: {},
                 },
                 staticFilePatterns: ['foo'],
-                docker: undefined,
+                docker: {},
             },
         };
     }
@@ -270,17 +272,8 @@ describe('[Project]', () => {
             });
 
             ['aws-microservice'].forEach((projectType) => {
-                const allButObject = [
-                    undefined,
-                    null,
-                    123,
-                    'abc',
-                    true,
-                    () => undefined,
-                ];
-
-                allButObject.map((aws) => {
-                    it(`should throw an error if invalid aws information specified (${aws}) for projects that require it (value=${projectType})`, () => {
+                ALL_BUT_OBJECT.forEach((aws) => {
+                    it(`should throw an error for project type (${projectType}) if aws config (${aws}) is invalid`, () => {
                         const packageConfig = _createPackageConfig();
                         packageConfig.buildMetadata.projectType = projectType;
                         packageConfig.buildMetadata.aws = undefined;
@@ -292,13 +285,55 @@ describe('[Project]', () => {
                     });
                 });
 
-                allButObject.map((stacks) => {
-                    it(`should throw an error if invalid aws stacks (${stacks}) are specified for projects that require it (value=${projectType})`, () => {
+                ALL_BUT_OBJECT.forEach((stacks) => {
+                    it(`should throw an error for project type (${projectType}) if aws stacks (${stacks}) are invalid`, () => {
                         const packageConfig = _createPackageConfig();
                         packageConfig.buildMetadata.projectType = projectType;
                         packageConfig.buildMetadata.aws = { stacks };
 
                         const error = `The project does not define AWS stacks, but the project type requires it (type=${projectType})`;
+
+                        const wrapper = () => new Project(packageConfig);
+                        expect(wrapper).toThrow(error);
+                    });
+                });
+            });
+        });
+
+        describe('[docker properties]', () => {
+            ['lib', 'aws-microservice'].forEach((projectType) => {
+                it(`should not initialize docker properties for project types (${projectType}) that do not support them`, () => {
+                    const packageConfig = _createPackageConfig();
+                    packageConfig.buildMetadata.projectType = projectType;
+
+                    const instance = new Project(packageConfig);
+                    expect(instance.hasDocker).toEqual(false);
+                    expect(instance.getDockerTargets()).toEqual([]);
+                });
+            });
+
+            ['cli', 'api', 'ui'].forEach((projectType) => {
+                ALL_BUT_OBJECT.forEach((dockerConfig) => {
+                    it(`should not initialize docker for project type (${projectType}) if docker config (${dockerConfig}) is invalid`, () => {
+                        const packageConfig = _createPackageConfig();
+                        packageConfig.buildMetadata.projectType = projectType;
+                        packageConfig.buildMetadata.docker = dockerConfig;
+
+                        const instance = new Project(packageConfig);
+                        expect(instance.hasDocker).toEqual(false);
+                        expect(instance.getDockerTargets()).toEqual([]);
+                    });
+                });
+            });
+
+            ['container'].forEach((projectType) => {
+                ALL_BUT_OBJECT.forEach((dockerConfig) => {
+                    it(`should throw an error if docker config (${dockerConfig}) is invalid for project types that require it`, () => {
+                        const packageConfig = _createPackageConfig();
+                        packageConfig.buildMetadata.projectType = projectType;
+                        packageConfig.buildMetadata.docker = dockerConfig;
+
+                        const error = `The project does not define docker configuration, but the project type requires it (type=${projectType})`;
 
                         const wrapper = () => new Project(packageConfig);
                         expect(wrapper).toThrow(error);

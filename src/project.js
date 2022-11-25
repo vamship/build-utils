@@ -154,8 +154,17 @@ export class Project {
             this._projectType !== 'aws-microservice' &&
             docker &&
             typeof docker === 'object';
+        this._hasDocker = !!this._hasDocker;
 
-        this._dockerTargets = this._initDockerTargets(docker);
+        if (!this._hasDocker && this._projectType === 'container') {
+            throw new Error(
+                `The project does not define docker configuration, but the project type requires it (type=${this._projectType})`
+            );
+        }
+
+        this._dockerTargets = this._hasDocker
+            ? this._initDockerTargets(docker)
+            : [];
     }
 
     /**
