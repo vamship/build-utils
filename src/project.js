@@ -134,22 +134,18 @@ export class Project {
         if (this._projectType === 'aws-microservice') {
             if (!aws || typeof aws !== 'object') {
                 throw new Error(
-                    'The project is an AWS microservice, but does not define AWS configuration'
+                    `The project does not define AWS configuration, but the project type requires it (type=${this._projectType})`
                 );
             }
 
             if (!aws.stacks || typeof aws.stacks !== 'object') {
                 throw new Error(
-                    'The project is an AWS microservice, but does not define AWS stacks'
+                    `The project does not define AWS stacks, but the project type requires it (type=${this._projectType})`
                 );
             }
 
-            this._awsRegion = aws.region;
-            this._awsProfile = aws.profile;
             this._cdkStacks = aws.stacks;
         } else {
-            this._awsRegion = undefined;
-            this._awsProfile = undefined;
             this._cdkStacks = {};
         }
 
@@ -390,24 +386,6 @@ export class Project {
      */
     get language() {
         return this._language;
-    }
-
-    /**
-     * Returns the AWS region configured for the project.
-     *
-     * @return {String}
-     */
-    get awsRegion() {
-        return this._awsRegion;
-    }
-
-    /**
-     * Returns the AWS profile configured for the project.
-     *
-     * @return {String}
-     */
-    get awsProfile() {
-        return this._awsProfile;
     }
 
     /**

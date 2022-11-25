@@ -125,6 +125,7 @@ describe('[Project]', () => {
                     const error = `Invalid projectType (buildMetadata.projectType).\n\tMust be one of: [lib,cli,api,aws-microservice,container,ui]`;
                     const packageConfig = _createPackageConfig();
                     packageConfig.buildMetadata.projectType = projectType;
+
                     const wrapper = () => new Project(packageConfig);
                     expect(wrapper).toThrow(error);
                 });
@@ -253,6 +254,55 @@ describe('[Project]', () => {
                     expect(instance.staticFilePatterns).toEqual(
                         staticFilePatterns
                     );
+                });
+            });
+        });
+
+        describe('[aws properties]', () => {
+            ['lib', 'cli', 'container', 'ui'].forEach((projectType) => {
+                it(`should set AWS properties to default for unsupported project types (value=${projectType})`, () => {
+                    const packageConfig = _createPackageConfig();
+                    packageConfig.buildMetadata.projectType = projectType;
+
+                    const instance = new Project(packageConfig);
+                    expect(instance.getCdkStacks()).toEqual([]);
+                });
+            });
+
+            ['aws-microservice'].forEach((projectType) => {
+                const allButObject = [
+                    undefined,
+                    null,
+                    123,
+                    'abc',
+                    true,
+                    () => undefined,
+                ];
+
+                allButObject.map((aws) => {
+                    it(`should throw an error if invalid aws information specified (${aws}) for projects that require it (value=${projectType})`, () => {
+                        const packageConfig = _createPackageConfig();
+                        packageConfig.buildMetadata.projectType = projectType;
+                        packageConfig.buildMetadata.aws = undefined;
+
+                        const error = `The project does not define AWS configuration, but the project type requires it (type=${projectType})`;
+
+                        const wrapper = () => new Project(packageConfig);
+                        expect(wrapper).toThrow(error);
+                    });
+                });
+
+                allButObject.map((stacks) => {
+                    it(`should throw an error if invalid aws stacks (${stacks}) are specified for projects that require it (value=${projectType})`, () => {
+                        const packageConfig = _createPackageConfig();
+                        packageConfig.buildMetadata.projectType = projectType;
+                        packageConfig.buildMetadata.aws = { stacks };
+
+                        const error = `The project does not define AWS stacks, but the project type requires it (type=${projectType})`;
+
+                        const wrapper = () => new Project(packageConfig);
+                        expect(wrapper).toThrow(error);
+                    });
                 });
             });
         });
