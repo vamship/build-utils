@@ -138,7 +138,11 @@ export class Project {
                 );
             }
 
-            if (!aws.stacks || typeof aws.stacks !== 'object') {
+            if (
+                !aws.stacks ||
+                typeof aws.stacks !== 'object' ||
+                Object.keys(aws.stacks).length <= 0
+            ) {
                 throw new Error(
                     `The project does not define AWS stacks, but the project type requires it (type=${this._projectType})`
                 );

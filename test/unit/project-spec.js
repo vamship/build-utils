@@ -17,7 +17,9 @@ describe('[Project]', () => {
                 language: 'ts',
                 requiredEnv: ['ENV_1', 'ENV_2'],
                 aws: {
-                    stacks: {},
+                    stacks: {
+                        mystack: 'foo'
+                    },
                 },
                 staticFilePatterns: ['foo'],
                 docker: {},
@@ -296,6 +298,17 @@ describe('[Project]', () => {
                         const wrapper = () => new Project(packageConfig);
                         expect(wrapper).toThrow(error);
                     });
+                });
+
+                it(`should throw an error for project type (${projectType}) if no aws stacks are defined`, () => {
+                    const packageConfig = _createPackageConfig();
+                    packageConfig.buildMetadata.projectType = projectType;
+                    packageConfig.buildMetadata.aws = { stacks: {} };
+
+                    const error = `The project does not define AWS stacks, but the project type requires it (type=${projectType})`;
+
+                    const wrapper = () => new Project(packageConfig);
+                    expect(wrapper).toThrow(error);
                 });
             });
         });
