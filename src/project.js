@@ -504,7 +504,9 @@ module.exports = class Project {
         }
         envFiles
             .filter((file) => _fs.existsSync(file))
-            .forEach((file) => _dotEnvExpand.expand(_dotEnv.config({ path: file })));
+            .forEach((file) =>
+                _dotEnvExpand.expand(_dotEnv.config({ path: file }))
+            );
     }
 
     /**
