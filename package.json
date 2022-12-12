@@ -6,7 +6,7 @@
     "main": "src/index.js",
     "scripts": {
         "clean": "rm -rf .nyc_output coverage",
-        "monitor": "jest --testMatch '**/(*-)+(spec|test).[jt]s?(x)' --watchAll --coverage --verbose",
+        "monitor": "jest --testMatch '**/(project2)(*-)+(spec|test).[jt]s?(x)' --watchAll --coverage --verbose",
         "test": "jest --testMatch '**/(*-)+(spec|test).[jt]s?(x)' --coverage",
         "lint": "eslint src/**/*.js test/**/*.js",
         "format": "prettier --write \"{{src,test}/**/*.js,README.md}\"",
@@ -42,6 +42,7 @@
     },
     "homepage": "https://github.com/vamship/build-utils#readme",
     "devDependencies": {
+        "dot-prop": "^7.2.0",
         "eslint": "^8.21.0",
         "jest": "^28.1.3",
         "jsdoc": "^3.6.11",
@@ -51,6 +52,7 @@
         "rewire": "^6.0.0"
     },
     "dependencies": {
+        "ajv": "^8.11.2",
         "camelcase": "^7.0.0",
         "delete": "^1.1.0",
         "docdash": "^1.2.0",
