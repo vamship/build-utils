@@ -54,7 +54,7 @@
         "sinon-chai": "^3.7.0"
     },
     "dependencies": {
-        "camelcase": "^7.0.0",
+        "camelcase": "^6.3.0",
         "delete": "^1.1.0",
         "docdash": "^1.2.0",
         "dotenv": "^16.0.1",
