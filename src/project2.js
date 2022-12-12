@@ -1,4 +1,5 @@
 import semver from 'semver';
+import _camelcase from 'camelcase';
 import _gulp from 'gulp';
 import Ajv from 'ajv';
 
@@ -63,6 +64,8 @@ export default class Project {
         }
 
         this._name = name;
+        this._unscopedName = name.replace(/^@[^/]*\//, '');
+        this._kebabCasedName = name.replace(/^@/, '').replace(/\//g, '-');
         this._version = version;
         this._type = type;
         this._language = language;
@@ -101,6 +104,34 @@ export default class Project {
      */
     get name() {
         return this._name;
+    }
+
+    /**
+     * Gets the name of the project without any scoping prefixes.
+     *
+     * @returns {String} The project name (without scope).
+     */
+    get unscopedName() {
+        return this._unscopedName;
+    }
+
+    /**
+     * Gets the name of the project in kebab case.
+     *
+     * @returns {String} The project name in kebab case.
+     */
+    get kebabCasedName() {
+        return this._kebabCasedName;
+    }
+
+    /**
+     * Gets the name of the expected configuration file name based on the name
+     * of the project.
+     *
+     * @returns {String} The expected config file name.
+     */
+    get configFileName() {
+        return `.${_camelcase(this._unscopedName)}rc`;
     }
 
     /**

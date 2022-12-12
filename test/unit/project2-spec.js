@@ -358,15 +358,64 @@ describe('[Project]', () => {
             ['version', '1.2.3'],
             ['buildMetadata.language', 'ts'],
             ['buildMetadata.type', 'cli'],
-        ].forEach(([property, value]) => {
+        ].forEach(([property, inputValue, expectedValue]) => {
             it(`should set the property [${property}]  based on data in the project definition`, () => {
+                expectedValue = expectedValue || inputValue;
                 const definition = _createProjectDefinition({
-                    [property]: value,
+                    [property]: inputValue,
                 });
                 const project = new Project(definition);
                 const projectProp = property.split('.').pop();
 
-                expect(project[projectProp]).toEqual(value);
+                expect(project[projectProp]).toEqual(expectedValue);
+            });
+        });
+
+        describe('[unscopedName]', () => {
+            [
+                ['bar-project', 'bar-project'],
+                ['@foo/bar-project', 'bar-project'],
+            ].forEach(([name, unscopedName]) => {
+                it(`should return the name of the project without scope (name=${name})`, () => {
+                    const definition = _createProjectDefinition({
+                        name: name,
+                    });
+                    const project = new Project(definition);
+
+                    expect(project.unscopedName).toEqual(unscopedName);
+                });
+            });
+        });
+
+        describe('[kebabCasedName]', () => {
+            [
+                ['bar-project', 'bar-project'],
+                ['@foo/bar-project', 'foo-bar-project'],
+            ].forEach(([name, kebabCasedName]) => {
+                it(`should return the name of the project in kebab case (name=${name})`, () => {
+                    const definition = _createProjectDefinition({
+                        name: name,
+                    });
+                    const project = new Project(definition);
+
+                    expect(project.kebabCasedName).toEqual(kebabCasedName);
+                });
+            });
+        });
+
+        describe('[configFileName]', () => {
+            [
+                ['bar-project', '.barProjectrc'],
+                ['@foo/bar-project', '.barProjectrc'],
+            ].forEach(([name, configFileName]) => {
+                it(`should return the name of the project without scope (name=${name})`, () => {
+                    const definition = _createProjectDefinition({
+                        name: name,
+                    });
+                    const project = new Project(definition);
+
+                    expect(project.configFileName).toEqual(configFileName);
+                });
             });
         });
     });
