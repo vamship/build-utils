@@ -67,9 +67,30 @@ export default class Project {
         this._type = type;
         this._language = language;
         this._staticFilePatterns = staticFilePatterns || [];
-        this._requiredEnv = requiredEnv;
-        this._cdkStacks = aws.stacks;
-        this._containerTargets = container;
+        this._requiredEnv = requiredEnv || [];
+        this._aws = aws || { stacks: {} };
+        this._cdkTargets = Object.keys(this._aws.stacks).reduce(
+            (result, key) => {
+                result[key] = { name: this._aws.stacks[key] };
+                return result;
+            },
+            {}
+        );
+        this._container = container || {};
+
+        this._containerTargets = Object.keys(this._container).reduce(
+            (result, key) => {
+                const { repo, buildFile, buildArgs } = this._container[key];
+                result[key] = {
+                    name: key,
+                    repo,
+                    buildFile,
+                    buildArgs,
+                };
+                return result;
+            },
+            {}
+        );
         // this._taskBuilder = {};
     }
 
@@ -119,35 +140,75 @@ export default class Project {
         return this._staticFilePatterns.concat([]);
     }
 
-    // /**
-    //  * Returns a list of environment variables that must be defined for the
-    //  * build.
-    //  *
-    //  * @returns {Array} An array of environment variable names.
-    //  */
-    // get requiredEnv() {
-    //     return this._requiredEnv;
-    // }
-
-    // /**
-    //  * Returns a list of CDK stack keys defined for the project. These stack
-    //  * keys will be used to generate deploy tasks for each. Each key maps to a
-    //  * specific CDK stack that can be deployed.
-    //  *
-    //  * @return {Array} A list of stack keys
-    //  */
-    // get cdkStacks() {
-    //     return this._aws;
-    // }
+    /**
+     * Returns a list of environment variables that must be defined for the
+     * build.
+     *
+     * @returns {Array} An array of environment variable names.
+     */
+    getRequiredEnv() {
+        return this._requiredEnv.concat([]);
+    }
 
     /**
-     * Initializes tasks and associates them with the specified Gulp instance.
+     * Returns a list of CDK stack keys defined for the project. These stack
+     * keys will be used to generate deploy tasks for each. Each key maps to a
+     * specific CDK stack that can be deployed.
      *
-     * @param {Object} gulp A reference to a gulp instance.
+     * @return {Array} A list of stack keys
      */
-    createTasks(gulp) {
-        if (!gulp || gulp instanceof Array || typeof gulp !== 'object') {
-            throw new Error('Invalid gulp instance (arg #1)');
+    getCdkTargets() {
+        return Object.keys(this._cdkTargets);
+    }
+
+    /**
+     * Gets CDK stack information based on the cdk stack key.
+     *
+     * @param {String} target The CDK target name
+     * @returns {Object} The CDK definition corresponding to the target.
+     */
+    getCdkStackDefinition(target) {
+        if (typeof target !== 'string' || target.length <= 0) {
+            throw new Error('Invalid CDK target (arg #1)');
         }
+        const stack = this._cdkTargets[target];
+        if (!stack) {
+            throw new Error(`CDK target has not been defined (${target})`);
+        }
+        return Object.assign({}, stack);
+    }
+
+    /**
+     * Returns a list of docker targets defined for the project. Every target
+     * will define the following properties:
+     * - repo: The docker repo
+     * - buildFile: The name of the build file to use
+     * - buildArgs: Arguments to be passed to the docker build
+     * - isDefault: Determines if the current target is the default one
+     * - isDeprecated: Determines if the target uses a deprecated configuration.
+     *
+     * @return {Array}
+     */
+    getContainerTargets() {
+        return Object.keys(this._containerTargets);
+    }
+
+    /**
+     * Gets CDK stack information based on the cdk stack key.
+     *
+     * @param {String} target The CDK target name
+     * @returns {Object} The container definition corresponding to the target.
+     */
+    getContainerDefinition(target) {
+        if (typeof target !== 'string' || target.length <= 0) {
+            throw new Error('Invalid container target (arg #1)');
+        }
+        const container = this._containerTargets[target];
+        if (!container) {
+            throw new Error(
+                `Container target has not been defined (${target})`
+            );
+        }
+        return Object.assign({}, container);
     }
 }

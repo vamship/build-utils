@@ -8,6 +8,7 @@ import {
     makeOptional,
 } from '../utils/data-generator.js';
 import { setProperty } from 'dot-prop';
+import projectDefinition from '../../src/schema/project-definition.js';
 
 describe('[Project]', () => {
     function _createProjectDefinition(overrides) {
@@ -42,12 +43,6 @@ describe('[Project]', () => {
             setProperty(definition, key, value);
         });
         return definition;
-    }
-
-    function _createInstance(name, version) {
-        name = name || 'sample-project';
-        version = version || '1.0.0';
-        return new Project(name, version);
     }
 
     describe('ctor()', () => {
@@ -371,7 +366,6 @@ describe('[Project]', () => {
                 const project = new Project(definition);
                 const projectProp = property.split('.').pop();
 
-                console.log(projectProp);
                 expect(project[projectProp]).toEqual(value);
             });
         });
@@ -404,21 +398,303 @@ describe('[Project]', () => {
             });
             const project = new Project(definition);
 
-            const actualValues = project.getStaticFilePatterns();
-            actualValues.pop();
+            const oldValues = project.getStaticFilePatterns();
+            oldValues.pop();
 
-            expect(values).not.toEqual(actualValues);
+            const newValues = project.getStaticFilePatterns();
+            expect(newValues).not.toEqual(oldValues);
         });
     });
 
-    xdescribe('createTasks()', () => {
-        getAllButObject().forEach((gulp) => {
-            it(`should throw an error if invoked without a valid Gulp instance (value=${typeof gulp})`, () => {
-                const project = _createInstance();
-                const wrapper = () => project.createTasks(gulp);
-                const error = 'Invalid gulp instance (arg #1)';
+    describe('getRequiredEnv()', () => {
+        it('should return an empty array if the definition does not contain required environment variables', () => {
+            const definition = _createProjectDefinition({
+                'buildMetadata.requiredEnv': undefined,
+            });
+            const project = new Project(definition);
+
+            expect(project.getRequiredEnv()).toEqual([]);
+        });
+
+        it('should return the values specified in the project definition', () => {
+            const values = ['foo', 'bar'];
+            const definition = _createProjectDefinition({
+                'buildMetadata.requiredEnv': values,
+            });
+            const project = new Project(definition);
+
+            expect(project.getRequiredEnv()).toEqual(values);
+        });
+
+        it('should return a copy of the values, not a reference', () => {
+            const values = ['foo', 'bar'];
+            const definition = _createProjectDefinition({
+                'buildMetadata.requiredEnv': values,
+            });
+            const project = new Project(definition);
+
+            const oldValues = project.getRequiredEnv();
+            oldValues.pop();
+
+            const newValues = project.getRequiredEnv();
+            expect(newValues).not.toEqual(oldValues);
+        });
+    });
+
+    describe('getCdkTargets()', () => {
+        it('should return an empty array if the definition does not contain an aws definition', () => {
+            const definition = _createProjectDefinition({
+                'buildMetadata.aws': undefined,
+            });
+            const project = new Project(definition);
+
+            expect(project.getCdkTargets()).toEqual([]);
+        });
+
+        it('should return the stack keys specified in the project definition', () => {
+            const targets = ['foo', 'bar'];
+            const definition = _createProjectDefinition({
+                'buildMetadata.aws.stacks': targets.reduce((result, key) => {
+                    result[key] = `${key}-stack`;
+                    return result;
+                }, {}),
+            });
+            const project = new Project(definition);
+
+            expect(project.getCdkTargets()).toEqual(targets);
+        });
+
+        it('should return a copy of the values, not a reference', () => {
+            const targets = ['foo', 'bar'];
+            const definition = _createProjectDefinition({
+                'buildMetadata.aws.stacks': targets.reduce((result, key) => {
+                    result[key] = `${key}-stack`;
+                    return result;
+                }, {}),
+            });
+            const project = new Project(definition);
+
+            const oldValues = project.getCdkTargets();
+            oldValues.pop();
+
+            const newValues = project.getCdkTargets();
+            expect(newValues).not.toEqual(oldValues);
+        });
+    });
+
+    describe('getCdkStackDefinition()', () => {
+        getAllButString('').forEach((target) => {
+            it(`should throw an error if invoked without a valid target (value=${typeof target})`, () => {
+                const definition = _createProjectDefinition();
+                const project = new Project(definition);
+                const wrapper = () => project.getCdkStackDefinition(target);
+                const error = 'Invalid CDK target (arg #1)';
 
                 expect(wrapper).toThrow(error);
+            });
+        });
+
+        it('should throw an error if the CDK target has not been defined', () => {
+            const targets = ['foo', 'bar'];
+            const definition = _createProjectDefinition({
+                'buildMetadata.aws.stacks': targets.reduce((result, key) => {
+                    result[key] = `${key}-stack`;
+                    return result;
+                }, {}),
+            });
+            const project = new Project(definition);
+
+            const target = 'bad-target';
+            const wrapper = () => project.getCdkStackDefinition(target);
+            const error = `CDK target has not been defined (${target})`;
+
+            expect(wrapper).toThrow(error);
+        });
+
+        it('should return stack details if the CDK target has been defined', () => {
+            const targets = ['foo', 'bar'];
+            const stacks = targets.reduce((result, key) => {
+                result[key] = `${key}-stack`;
+                return result;
+            }, {});
+            const definition = _createProjectDefinition({
+                'buildMetadata.aws.stacks': stacks,
+            });
+
+            const project = new Project(definition);
+
+            targets.forEach((target) => {
+                const stack = project.getCdkStackDefinition(target);
+                expect(stack).toEqual({ name: stacks[target] });
+            });
+        });
+
+        it('should return a copy of the definition and not a reference', () => {
+            const targets = ['foo', 'bar'];
+            const stacks = targets.reduce((result, key) => {
+                result[key] = `${key}-stack`;
+                return result;
+            }, {});
+            const definition = _createProjectDefinition({
+                'buildMetadata.aws.stacks': stacks,
+            });
+
+            const project = new Project(definition);
+
+            targets.forEach((target) => {
+                const oldValue = project.getCdkStackDefinition(target);
+                expect(oldValue).toEqual({ name: stacks[target] });
+
+                oldValue.foo = 'bar';
+
+                const newValue = project.getCdkStackDefinition(target);
+                expect(newValue).not.toEqual(oldValue);
+            });
+        });
+    });
+
+    describe('getContainerTargets()', () => {
+        it('should return an empty array if the definition does not contain an aws definition', () => {
+            const definition = _createProjectDefinition({
+                'buildMetadata.container': undefined,
+            });
+            const project = new Project(definition);
+
+            expect(project.getContainerTargets()).toEqual([]);
+        });
+
+        it('should return the stack keys specified in the project definition', () => {
+            const targets = ['foo', 'bar'];
+            const definition = _createProjectDefinition({
+                'buildMetadata.container': targets.reduce((result, key) => {
+                    result[key] = {
+                        repo: key,
+                        buildFile: 'BuildFile-1',
+                        buildArgs: {
+                            arg1: 'value1',
+                        },
+                    };
+                    return result;
+                }, {}),
+            });
+            const project = new Project(definition);
+
+            expect(project.getContainerTargets()).toEqual(targets);
+        });
+
+        it('should return a copy of the values, not a reference', () => {
+            const targets = ['foo', 'bar'];
+            const definition = _createProjectDefinition({
+                'buildMetadata.container': targets.reduce((result, key) => {
+                    result[key] = {
+                        repo: key,
+                        buildFile: 'BuildFile-1',
+                        buildArgs: {
+                            arg1: 'value1',
+                        },
+                    };
+                    return result;
+                }, {}),
+            });
+            const project = new Project(definition);
+
+            const oldValues = project.getContainerTargets();
+            oldValues.pop();
+
+            const newValues = project.getContainerTargets();
+            expect(newValues).not.toEqual(oldValues);
+        });
+    });
+
+    describe('getContainerDefinition()', () => {
+        getAllButString('').forEach((target) => {
+            it(`should throw an error if invoked without a valid target (value=${typeof target})`, () => {
+                const definition = _createProjectDefinition();
+                const project = new Project(definition);
+                const wrapper = () => project.getContainerDefinition(target);
+                const error = 'Invalid container target (arg #1)';
+
+                expect(wrapper).toThrow(error);
+            });
+        });
+
+        it('should throw an error if the container target has not been defined', () => {
+            const targets = ['foo', 'bar'];
+            const definition = _createProjectDefinition({
+                'buildMetadata.container': targets.reduce((result, key) => {
+                    result[key] = {
+                        repo: 'my-repo',
+                        buildFile: 'BuildFile-1',
+                        buildArgs: {
+                            arg1: 'value1',
+                        },
+                    };
+                    return result;
+                }, {}),
+            });
+            const project = new Project(definition);
+
+            const target = 'bad-target';
+            const wrapper = () => project.getContainerDefinition(target);
+            const error = `Container target has not been defined (${target})`;
+
+            expect(wrapper).toThrow(error);
+        });
+
+        it('should return container details if the container target has been defined', () => {
+            const targets = ['foo', 'bar'];
+            const containers = targets.reduce((result, key) => {
+                result[key] = {
+                    repo: 'my-repo',
+                    buildFile: 'BuildFile-1',
+                    buildArgs: {
+                        arg1: 'value1',
+                    },
+                };
+                return result;
+            }, {});
+            const definition = _createProjectDefinition({
+                'buildMetadata.container': containers,
+            });
+
+            const project = new Project(definition);
+
+            targets.forEach((target) => {
+                const container = project.getContainerDefinition(target);
+                expect(container).toEqual(
+                    Object.assign({ name: target }, containers[target])
+                );
+            });
+        });
+
+        it('should return a copy of the definition and not a reference', () => {
+            const targets = ['foo', 'bar'];
+            const containers = targets.reduce((result, key) => {
+                result[key] = {
+                    repo: 'my-repo',
+                    buildFile: 'BuildFile-1',
+                    buildArgs: {
+                        arg1: 'value1',
+                    },
+                };
+                return result;
+            }, {});
+            const definition = _createProjectDefinition({
+                'buildMetadata.container': containers,
+            });
+
+            const project = new Project(definition);
+
+            targets.forEach((target) => {
+                const oldValue = project.getContainerDefinition(target);
+                expect(oldValue).toEqual(
+                    Object.assign({ name: target }, containers[target])
+                );
+
+                oldValue.foo = 'bar';
+
+                const newValue = project.getContainerDefinition(target);
+                expect(newValue).not.toEqual(oldValue);
             });
         });
     });
