@@ -236,6 +236,42 @@ describe('[Directory]', () => {
         });
     });
 
+    describe('addChild()', () => {
+        getAllButString('').forEach((name) => {
+            it(`should throw an error if invoked without a valid name (value=${typeof name})`, () => {
+                const error = 'Invalid directory name (arg #1)';
+                const dir = new Directory('foo');
+                const wrapper = () => dir.addChild(name);
+                expect(wrapper).toThrowError(error);
+            });
+        });
+
+        ['foo/bar', 'foo\\bar', 'foo:bar'].forEach((name) => {
+            it(`should throw an error if the directory name contains invalid characters (value=${name})`, () => {
+                const error =
+                    'Directory name cannot include path separators (:, \\ or /)';
+                const dir = new Directory('foo');
+                const wrapper = () => dir.addChild(name);
+                expect(wrapper).toThrowError(error);
+            });
+        });
+
+        it('should create and add a child node to the current directory', () => {
+            const expectedName = 'bar';
+            const dir = new Directory('foo');
+
+            expect(dir.getChildren()).toHaveLength(0);
+            dir.addChild(expectedName);
+
+            const children = dir.getChildren();
+            expect(children).toHaveLength(1);
+            expect(children[0].name).toEqual(expectedName);
+            expect(children[0].path).toEqual(
+                `${dir.path}${expectedName}${_path.sep}`
+            );
+        });
+    });
+
     describe('getChildren()', () => {
         it('should return an empty array if the directory has no children', () => {
             const dir = new Directory('foo');
@@ -273,42 +309,6 @@ describe('[Directory]', () => {
             dirNames.forEach((expectedName, index) => {
                 expect(children[index].name).toBe(expectedName);
             });
-        });
-    });
-
-    describe('addChild()', () => {
-        getAllButString('').forEach((name) => {
-            it(`should throw an error if invoked without a valid name (value=${typeof name})`, () => {
-                const error = 'Invalid directory name (arg #1)';
-                const dir = new Directory('foo');
-                const wrapper = () => dir.addChild(name);
-                expect(wrapper).toThrowError(error);
-            });
-        });
-
-        ['foo/bar', 'foo\\bar', 'foo:bar'].forEach((name) => {
-            it(`should throw an error if the directory name contains invalid characters (value=${name})`, () => {
-                const error =
-                    'Directory name cannot include path separators (:, \\ or /)';
-                const dir = new Directory('foo');
-                const wrapper = () => dir.addChild(name);
-                expect(wrapper).toThrowError(error);
-            });
-        });
-
-        it('should create and add a child node to the current directory', () => {
-            const expectedName = 'bar';
-            const dir = new Directory('foo');
-
-            expect(dir.getChildren()).toHaveLength(0);
-            dir.addChild(expectedName);
-
-            const children = dir.getChildren();
-            expect(children).toHaveLength(1);
-            expect(children[0].name).toEqual(expectedName);
-            expect(children[0].path).toEqual(
-                `${dir.path}${expectedName}${_path.sep}`
-            );
         });
     });
 });
