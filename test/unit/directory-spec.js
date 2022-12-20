@@ -1,5 +1,13 @@
 import { Directory } from '../../src/directory.js';
 import _path from 'path';
+import {
+    getAllButString,
+    getAllButObject,
+    getAllButArray,
+    makeOptional,
+    getAllButFunction,
+} from '../utils/data-generator.js';
+import { jest } from '@jest/globals';
 
 function _createPath(...components) {
     return components.join(_path.sep);
@@ -30,27 +38,20 @@ describe('[Static Members]', () => {
             });
         }
 
-        it('should throw an error if invoked without a valid root path', () => {
-            const error = 'Invalid rootPath specified (arg #1)';
-            const inputs = [null, undefined, 123, true, {}, [], () => {}];
-
-            inputs.forEach((path) => {
-                const wrapper = () => {
-                    return Directory.createTree(path);
-                };
+        getAllButString().forEach((rootPath) => {
+            it('should throw an error if invoked without a valid root path', () => {
+                const error = 'Invalid rootPath (arg #1)';
+                const tree = {};
+                const wrapper = () => Directory.createTree(rootPath, tree);
                 expect(wrapper).toThrowError(error);
             });
         });
 
-        it('should throw an error if invoked without a valid tree object', () => {
-            const error = 'Invalid tree specified (arg #2)';
-            const inputs = [null, undefined, 123, true, 'test', [], () => {}];
-
-            inputs.forEach((tree) => {
-                const wrapper = () => {
-                    const rootPath = './';
-                    return Directory.createTree(rootPath, tree);
-                };
+        getAllButObject().forEach((tree) => {
+            it('should throw an error if invoked without a valid tree object', () => {
+                const error = 'Invalid tree (arg #2)';
+                const rootPath = '.';
+                const wrapper = () => Directory.createTree(rootPath, tree);
                 expect(wrapper).toThrowError(error);
             });
         });
@@ -135,6 +136,58 @@ describe('[Static Members]', () => {
                 'raz',
                 'zaz'
             );
+        });
+    });
+
+    describe('traverseTree()', () => {
+        getAllButObject({}).forEach((root) => {
+            it('should throw an error if invoked without a directory object', () => {
+                const error = 'Invalid root directory (arg #1)';
+                const callback = jest.fn(() => undefined);
+                const wrapper = () => Directory.traverseTree(root, callback);
+                expect(wrapper).toThrowError(error);
+            });
+        });
+
+        getAllButFunction().forEach((callback) => {
+            it('should throw an error if invoked without a callback', () => {
+                const error = 'Invalid callback function (arg #2)';
+                const root = Directory.createTree('.', { foo: { bar: 1 } });
+                const wrapper = () => Directory.traverseTree(root, callback);
+                expect(wrapper).toThrowError(error);
+            });
+        });
+
+        it('should invoke the callback for each directory in the tree', () => {
+            // We're going to use the naming convention of directories to 
+            // test the traversal. Specifically, the directory level is encoded
+            // into the name.
+            const dirs = {
+                level_1_0: {
+                    level_2_0: {
+                        level_3_0: {},
+                    },
+                    level_2_1: {
+                        level_3_1: {},
+                    },
+                },
+                level_1_1: {},
+            };
+            const rootDir = "foo";
+            const root = Directory.createTree(rootDir, dirs);
+            const callback = jest.fn((dir, level) => {
+                if (dir.name !== rootDir) {
+                    const [_, l1] = dir.name.split('_');
+                    expect(level).toEqual(parseInt(l1));
+                } else {
+                    expect(level).toEqual(0);
+                }
+            });
+
+            Directory.traverseTree(root, callback);
+
+            // There are 7 levels in our input including the root level
+            expect(callback.mock.calls.length).toEqual(7);
         });
     });
 });

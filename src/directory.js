@@ -39,10 +39,10 @@ export class Directory {
      */
     static createTree(rootPath, tree) {
         if (typeof rootPath !== 'string') {
-            throw new Error('Invalid rootPath specified (arg #1)');
+            throw new Error('Invalid rootPath (arg #1)');
         }
         if (!tree || tree instanceof Array || typeof tree !== 'object') {
-            throw new Error('Invalid tree specified (arg #2)');
+            throw new Error('Invalid tree (arg #2)');
         }
 
         function createRecursive(parent, tree) {
@@ -72,10 +72,10 @@ export class Directory {
      */
     static traverseTree(root, callback) {
         if (!(root instanceof Directory)) {
-            throw new Error('Invalid root directory specified (arg #1)');
+            throw new Error('Invalid root directory (arg #1)');
         }
         if (typeof callback !== 'function') {
-            throw new Error('Invalid callback function specified (arg #1)');
+            throw new Error('Invalid callback function (arg #2)');
         }
         function traverseRecursive(parent, level) {
             callback(parent, level);

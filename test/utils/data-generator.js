@@ -37,11 +37,27 @@ export function getAllButObject(...extras) {
  * @param {Array} extras An array of extra values to append to the original
  * list.
  *
- * @returns {Array} A list of values that contain everything except an object,
+ * @returns {Array} A list of values that contain everything except an array,
  * concatenated with the extras.
  */
 export function getAllButArray(...extras) {
     return [undefined, null, 123, true, 'abc', {}, () => 0].concat(
+        extras || []
+    );
+}
+
+/**
+ * Generates an array of sample values of different types - everything except a
+ * function.
+ *
+ * @param {Array} extras An array of extra values to append to the original
+ * list.
+ *
+ * @returns {Array} A list of values that contain everything except a function,
+ * concatenated with the extras.
+ */
+export function getAllButFunction(...extras) {
+    return [undefined, null, 123, true, 'abc', {}, []].concat(
         extras || []
     );
 }
