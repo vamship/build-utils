@@ -6,7 +6,7 @@
     "main": "src/index.js",
     "scripts": {
         "clean": "rm -rf .nyc_output coverage",
-        "monitor": "jest --testMatch '**/(project2)(*-)+(spec|test).[jt]s?(x)' --watchAll --coverage --verbose",
+        "watch:test": "jest --testMatch '**/(directory)(*-)+(spec|test).[jt]s?(x)' --watchAll --coverage --verbose",
         "test": "jest --testMatch '**/(*-)+(spec|test).[jt]s?(x)' --coverage",
         "lint": "eslint src/**/*.js test/**/*.js",
         "format": "prettier --write \"{{src,test}/**/*.js,README.md}\"",
