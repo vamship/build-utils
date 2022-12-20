@@ -14,7 +14,7 @@ export class Directory {
      */
     constructor(path) {
         if (typeof path !== 'string') {
-            throw new Error('Invalid path specified (arg #1)');
+            throw new Error('Invalid path (arg #1)');
         }
 
         let relativePath = path.replace(process.cwd(), '');
@@ -129,7 +129,7 @@ export class Directory {
      */
     addChild(name) {
         if (typeof name !== 'string' || name.length <= 0) {
-            throw new Error('Invalid directory name specified (arg #1)');
+            throw new Error('Invalid directory name (arg #1)');
         }
         if (name.match(/[\\/:]/)) {
             throw new Error(
@@ -140,6 +140,16 @@ export class Directory {
         this._children.push(child);
 
         return child;
+    }
+
+    /**
+     * Returns an array containing all first level children of the current
+     * directory.
+     *
+     * @return {Directory[]} An array of first level children for the directory.
+     */
+    getChildren() {
+        return this._children.slice();
     }
 
     /**
@@ -169,16 +179,6 @@ export class Directory {
             throw new Error(`Child not found at path: [${path}]`);
         }
         return child;
-    }
-
-    /**
-     * Returns an array containing all first level children of the current
-     * directory.
-     *
-     * @return {Directory[]} An array of first level children for the directory.
-     */
-    getChildren() {
-        return this._children.slice();
     }
 
     /**
