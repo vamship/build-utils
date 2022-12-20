@@ -159,7 +159,7 @@ describe('[Static Members]', () => {
         });
 
         it('should invoke the callback for each directory in the tree', () => {
-            // We're going to use the naming convention of directories to 
+            // We're going to use the naming convention of directories to
             // test the traversal. Specifically, the directory level is encoded
             // into the name.
             const dirs = {
@@ -173,7 +173,7 @@ describe('[Static Members]', () => {
                 },
                 level_1_1: {},
             };
-            const rootDir = "foo";
+            const rootDir = 'foo';
             const root = Directory.createTree(rootDir, dirs);
             const callback = jest.fn((dir, level) => {
                 if (dir.name !== rootDir) {

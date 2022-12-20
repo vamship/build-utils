@@ -18,7 +18,7 @@ describe('[Project]', () => {
                 requiredEnv: ['ENV_1', 'ENV_2'],
                 aws: {
                     stacks: {
-                        mystack: 'foo'
+                        mystack: 'foo',
                     },
                 },
                 staticFilePatterns: ['foo'],

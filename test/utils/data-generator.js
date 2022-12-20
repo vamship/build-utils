@@ -9,9 +9,7 @@
  * concatenated with the extras.
  */
 export function getAllButString(...extras) {
-    return [undefined, null, 123, true, {}, [], () => 0].concat(
-        extras || []
-    );
+    return [undefined, null, 123, true, {}, [], () => 0].concat(extras || []);
 }
 
 /**
@@ -57,9 +55,7 @@ export function getAllButArray(...extras) {
  * concatenated with the extras.
  */
 export function getAllButFunction(...extras) {
-    return [undefined, null, 123, true, 'abc', {}, []].concat(
-        extras || []
-    );
+    return [undefined, null, 123, true, 'abc', {}, []].concat(extras || []);
 }
 
 /**
@@ -73,5 +69,5 @@ export function getAllButFunction(...extras) {
  * removed.
  */
 export function makeOptional(values) {
-    return values.filter(value => typeof value !== 'undefined');
+    return values.filter((value) => typeof value !== 'undefined');
 }
