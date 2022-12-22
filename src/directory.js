@@ -164,7 +164,7 @@ export class Directory {
      */
     getChild(path) {
         if (typeof path !== 'string' || path.length <= 0) {
-            throw new Error('Invalid child path specified (arg #1)');
+            throw new Error('Invalid childPath (arg #1)');
         }
         const tokens = path.split('/');
         const child = tokens.reduce((result, name) => {
