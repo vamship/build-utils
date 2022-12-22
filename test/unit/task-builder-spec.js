@@ -41,6 +41,27 @@ describe('[TaskBuilder]', () => {
         });
     });
 
+    describe('[properties]', () => {
+        describe('name', () => {
+            it('should return the name of the task', () => {
+                const name = 'sample-task';
+                const description = 'some task';
+                const builder = new TaskBuilder(name, description);
+
+                expect(builder.name).toEqual(name);
+            });
+        });
+        describe('description', () => {
+            it('should return the name of the task', () => {
+                const name = 'sample-task';
+                const description = 'some task';
+                const builder = new TaskBuilder(name, description);
+
+                expect(builder.description).toEqual(description);
+            });
+        });
+    });
+
     describe('createTasks()', () => {
         it('should throw an error if invoked', () => {
             const builder = _createInstance();

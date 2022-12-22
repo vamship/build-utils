@@ -44,8 +44,10 @@ export default class TaskBuilder {
 
     /**
      * Creates a new task - needs to be implemented by a child class.
+     *
+     * @param {Object} project The project for which the task will be created.
      */
-    createTask() {
+    createTask(project) {
         throw new Error('Not implemented - TaskBuilder.createTask()');
     }
 }
