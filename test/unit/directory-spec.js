@@ -423,10 +423,12 @@ describe('[Directory]', () => {
                 const glob = dir.getAllFilesGlob(extension);
 
                 expect(glob).toEqual(
-                    `${dir.absolutePath.replace(/\\/g, _path.sep)}**/*.${extension}`
+                    `${dir.absolutePath.replace(
+                        /\\/g,
+                        _path.sep
+                    )}**/*.${extension}`
                 );
             });
-            
         });
     });
 });
