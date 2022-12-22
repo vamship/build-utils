@@ -8,7 +8,6 @@ import {
     makeOptional,
 } from '../utils/data-generator.js';
 import { setProperty } from 'dot-prop';
-import projectDefinition from '../../src/schema/project-definition.js';
 
 describe('[Project]', () => {
     function _createProjectDefinition(overrides) {

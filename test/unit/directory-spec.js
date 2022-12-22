@@ -3,8 +3,6 @@ import _path from 'path';
 import {
     getAllButString,
     getAllButObject,
-    getAllButArray,
-    makeOptional,
     getAllButFunction,
 } from '../utils/data-generator.js';
 import { jest } from '@jest/globals';
@@ -184,7 +182,7 @@ describe('[Directory]', () => {
                 const root = Directory.createTree(rootDir, dirs);
                 const callback = jest.fn((dir, level) => {
                     if (dir.name !== rootDir) {
-                        const [_, l1] = dir.name.split('_');
+                        const l1 = dir.name.split('_')[1];
                         expect(level).toEqual(parseInt(l1));
                     } else {
                         expect(level).toEqual(0);
