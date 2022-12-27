@@ -6,12 +6,15 @@
     "main": "src/index.js",
     "scripts": {
         "clean": "rm -rf .nyc_output coverage",
-        "watch:test": "jest --testMatch '**/(task-builder)(*-)+(spec|test).[jt]s?(x)' --watchAll --coverage --verbose",
-        "test": "jest --testMatch '**/(*-)+(spec|test).[jt]s?(x)' --coverage",
+        "watch:test": "NODE_OPTIONS=\"--experimental-vm-modules --loader=esmock jest\" jest --testMatch '**/(clean-task-builder)(*-)+(spec|test).[jt]s?(x)' --watchAll --coverage --verbose",
+        "test": "NODE_OPTIONS=\"--experimental-vm-modules --loader=esmock jest\" jest --testMatch '**/(clean-task-builder)(*-)+(spec|test).[jt]s?(x)' --coverage",
         "lint": "eslint src/**/*.js test/**/*.js",
         "format": "prettier --write \"{{src,test}/**/*.js,README.md}\"",
         "docs": "jsdoc --readme README.md --package package.json --template node_modules/docdash --destination docs --recurse src",
         "all": "npm run format && npm run lint && npm run test && npm run clean"
+    },
+    "engines": {
+        "node" : ">=18.4.0"
     },
     "files": [
         "package.json",
@@ -44,6 +47,7 @@
     "devDependencies": {
         "dot-prop": "^7.2.0",
         "eslint": "^8.30.0",
+        "esmock": "^2.1.0",
         "jest": "^29.3.1",
         "jsdoc": "^4.0.0",
         "nodemon": "^2.0.20",
