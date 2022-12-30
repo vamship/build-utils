@@ -14,7 +14,11 @@
         "all": "npm run format && npm run lint && npm run test && npm run clean"
     },
     "engines": {
-        "node" : ">=18.4.0"
+        "node": ">= 14.18.1",
+        "npm": ">= 8.1.0"
+    },
+    "jest": {
+        "runner": "jest-light-runner"
     },
     "files": [
         "package.json",
@@ -49,6 +53,7 @@
         "eslint": "^8.30.0",
         "esmock": "^2.1.0",
         "jest": "^29.3.1",
+        "jest-light-runner": "^0.4.1",
         "jsdoc": "^4.0.0",
         "nodemon": "^2.0.20",
         "nyc": "^15.1.0",
@@ -87,9 +92,5 @@
         "gulp-jsdoc3": "= 3.0.0",
         "typedoc": ">=0.23.23",
         "typescript": ">=4.9.4"
-    },
-    "engines": {
-        "node": ">= 14.18.1",
-        "npm": ">= 8.1.0"
     }
 }

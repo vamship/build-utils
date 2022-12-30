@@ -1,7 +1,8 @@
 'use strict';
 
 // import _delete from 'delete';
-import TaskBuilder from '../task-builder';
+import TaskBuilder from '../task-builder.js';
+import Project from '../project2.js';
 
 /**
  * Builder that can be used to generate a gulp task to clean temporary project
@@ -12,11 +13,10 @@ export default class CleanTaskBuilder extends TaskBuilder {
      * Creates a new clean task.
      */
     constructor() {
-        super('foo', 'bar')
-        // super(
-        //     'clean',
-        //     'Cleans out working, distribution and temporary files and directories'
-        // );
+        super(
+            'clean',
+            'Cleans out working, distribution and temporary files and directories'
+        );
     }
 
     /**
@@ -27,7 +27,12 @@ export default class CleanTaskBuilder extends TaskBuilder {
      *
      * @returns {Function} A gulp task.
      */
-    createTask(project) {}
+    createTask(project) {
+        if (!(project instanceof Project)) {
+            throw new Error('Invalid project (arg #1)');
+        }
+        return () => undefined;
+    }
 }
 
 // export default (project, options) => {
