@@ -5,7 +5,7 @@ import {
     getAllButObject,
     getAllButFunction,
 } from '../utils/data-generator.js';
-import { jest } from '@jest/globals';
+// import { jest } from '@jest/globals';
 
 function _createPath(...components) {
     return components.join(_path.sep);
