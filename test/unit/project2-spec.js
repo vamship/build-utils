@@ -1,5 +1,4 @@
-'use strict';
-
+import {expect} from 'chai';
 import Project from '../../src/project2.js';
 import {
     getAllButString,
@@ -50,7 +49,7 @@ describe('[Project]', () => {
                 const error = 'Invalid project definition (arg #1)';
                 const wrapper = () => new Project(definition);
 
-                expect(wrapper).toThrow(error);
+                expect(wrapper).to.throw(error);
             });
         });
 
@@ -61,7 +60,7 @@ describe('[Project]', () => {
                     const wrapper = () => new Project(definition);
                     const error = /Schema validation failed \[.*name.*\]/;
 
-                    expect(wrapper).toThrow(error);
+                    expect(wrapper).to.throw(error);
                 });
             });
 
@@ -71,7 +70,7 @@ describe('[Project]', () => {
                     const wrapper = () => new Project(definition);
                     const error = /Schema validation failed \[.*version.*\]/;
 
-                    expect(wrapper).toThrow(error);
+                    expect(wrapper).to.throw(error);
                 });
             });
         });
@@ -86,7 +85,7 @@ describe('[Project]', () => {
                     const error =
                         /Schema validation failed \[.*buildMetadata.*\]/;
 
-                    expect(wrapper).toThrow(error);
+                    expect(wrapper).to.throw(error);
                 });
             });
 
@@ -98,7 +97,7 @@ describe('[Project]', () => {
                     const wrapper = () => new Project(definition);
                     const error = /Schema validation failed \[.*type.*\]/;
 
-                    expect(wrapper).toThrow(error);
+                    expect(wrapper).to.throw(error);
                 });
             });
 
@@ -110,7 +109,7 @@ describe('[Project]', () => {
                     const wrapper = () => new Project(definition);
                     const error = /Schema validation failed \[.*language.*\]/;
 
-                    expect(wrapper).toThrow(error);
+                    expect(wrapper).to.throw(error);
                 });
             });
 
@@ -123,7 +122,7 @@ describe('[Project]', () => {
                     const error =
                         /Schema validation failed \[.*requiredEnv.*\]/;
 
-                    expect(wrapper).toThrow(error);
+                    expect(wrapper).to.throw(error);
                 });
             });
 
@@ -136,7 +135,7 @@ describe('[Project]', () => {
                     const error =
                         /Schema validation failed \[.*staticFilePatterns.*\]/;
 
-                    expect(wrapper).toThrow(error);
+                    expect(wrapper).to.throw(error);
                 });
             });
 
@@ -149,7 +148,7 @@ describe('[Project]', () => {
                         const wrapper = () => new Project(definition);
                         const error = /Schema validation failed \[.*aws.*\]/;
 
-                        expect(wrapper).toThrow(error);
+                        expect(wrapper).to.throw(error);
                     });
                 });
 
@@ -161,7 +160,7 @@ describe('[Project]', () => {
                         const wrapper = () => new Project(definition);
                         const error = /Schema validation failed \[.*stacks.*\]/;
 
-                        expect(wrapper).toThrow(error);
+                        expect(wrapper).to.throw(error);
                     });
                 });
 
@@ -172,7 +171,7 @@ describe('[Project]', () => {
                     const wrapper = () => new Project(definition);
                     const error = /No AWS stacks defined/;
 
-                    expect(wrapper).toThrow(error);
+                    expect(wrapper).to.throw(error);
                 });
 
                 ['$?!', ''].forEach((stackName) => {
@@ -188,7 +187,7 @@ describe('[Project]', () => {
                         const error =
                             /Schema validation failed \[.*additional properties.*\]/;
 
-                        expect(wrapper).toThrow(error);
+                        expect(wrapper).to.throw(error);
                     });
                 });
 
@@ -201,7 +200,7 @@ describe('[Project]', () => {
                         const error =
                             /Schema validation failed \[.*myStack.*\]/;
 
-                        expect(wrapper).toThrow(error);
+                        expect(wrapper).to.throw(error);
                     });
                 });
 
@@ -212,7 +211,7 @@ describe('[Project]', () => {
                     const error =
                         /Schema validation failed \[.*additional properties.*\]/;
 
-                    expect(wrapper).toThrow(error);
+                    expect(wrapper).to.throw(error);
                 });
             });
 
@@ -226,7 +225,7 @@ describe('[Project]', () => {
                         const error =
                             /Schema validation failed \[.*container.*\]/;
 
-                        expect(wrapper).toThrow(error);
+                        expect(wrapper).to.throw(error);
                     });
                 });
 
@@ -237,7 +236,7 @@ describe('[Project]', () => {
                     const wrapper = () => new Project(definition);
                     const error = /No container builds defined/;
 
-                    expect(wrapper).toThrow(error);
+                    expect(wrapper).to.throw(error);
                 });
 
                 ['$?!', ''].forEach((buildName) => {
@@ -251,7 +250,7 @@ describe('[Project]', () => {
                         const error =
                             /Schema validation failed \[.*additional properties.*\]/;
 
-                        expect(wrapper).toThrow(error);
+                        expect(wrapper).to.throw(error);
                     });
                 });
 
@@ -264,7 +263,7 @@ describe('[Project]', () => {
                         const error =
                             /Schema validation failed \[.*myBuild.*\]/;
 
-                        expect(wrapper).toThrow(error);
+                        expect(wrapper).to.throw(error);
                     });
                 });
 
@@ -276,7 +275,7 @@ describe('[Project]', () => {
                         const wrapper = () => new Project(definition);
                         const error = /Schema validation failed \[.*repo.*\]/;
 
-                        expect(wrapper).toThrow(error);
+                        expect(wrapper).to.throw(error);
                     });
                 });
 
@@ -290,7 +289,7 @@ describe('[Project]', () => {
                         const error =
                             /Schema validation failed \[.*buildFile.*\]/;
 
-                        expect(wrapper).toThrow(error);
+                        expect(wrapper).to.throw(error);
                     });
                 });
 
@@ -304,7 +303,7 @@ describe('[Project]', () => {
                         const error =
                             /Schema validation failed \[.*buildArgs.*\]/;
 
-                        expect(wrapper).toThrow(error);
+                        expect(wrapper).to.throw(error);
                     });
                 });
 
@@ -315,7 +314,7 @@ describe('[Project]', () => {
                     const error =
                         /Schema validation failed \[.*additional properties.*\]/;
 
-                    expect(wrapper).toThrow(error);
+                    expect(wrapper).to.throw(error);
                 });
 
                 ['$?!', ''].forEach((buildArg) => {
@@ -329,7 +328,7 @@ describe('[Project]', () => {
                         const error =
                             /Schema validation failed \[.*additional properties.*\]/;
 
-                        expect(wrapper).toThrow(error);
+                        expect(wrapper).to.throw(error);
                     });
                 });
 
@@ -344,7 +343,7 @@ describe('[Project]', () => {
                         const error =
                             /Schema validation failed \[.*buildArgs.*\]/;
 
-                        expect(wrapper).toThrow(error);
+                        expect(wrapper).to.throw(error);
                     });
                 });
             });
@@ -366,7 +365,7 @@ describe('[Project]', () => {
                 const project = new Project(definition);
                 const projectProp = property.split('.').pop();
 
-                expect(project[projectProp]).toEqual(expectedValue);
+                expect(project[projectProp]).to.equal(expectedValue);
             });
         });
 
@@ -381,7 +380,7 @@ describe('[Project]', () => {
                     });
                     const project = new Project(definition);
 
-                    expect(project.unscopedName).toEqual(unscopedName);
+                    expect(project.unscopedName).to.equal(unscopedName);
                 });
             });
         });
@@ -397,7 +396,7 @@ describe('[Project]', () => {
                     });
                     const project = new Project(definition);
 
-                    expect(project.kebabCasedName).toEqual(kebabCasedName);
+                    expect(project.kebabCasedName).to.equal(kebabCasedName);
                 });
             });
         });
@@ -413,7 +412,7 @@ describe('[Project]', () => {
                     });
                     const project = new Project(definition);
 
-                    expect(project.configFileName).toEqual(configFileName);
+                    expect(project.configFileName).to.equal(configFileName);
                 });
             });
         });
@@ -426,7 +425,7 @@ describe('[Project]', () => {
             });
             const project = new Project(definition);
 
-            expect(project.getStaticFilePatterns()).toEqual([]);
+            expect(project.getStaticFilePatterns()).to.deep.equal([]);
         });
 
         it('should return the values specified in the project definition', () => {
@@ -436,7 +435,7 @@ describe('[Project]', () => {
             });
             const project = new Project(definition);
 
-            expect(project.getStaticFilePatterns()).toEqual(values);
+            expect(project.getStaticFilePatterns()).to.deep.equal(values);
         });
 
         it('should return a copy of the values, not a reference', () => {
@@ -450,7 +449,7 @@ describe('[Project]', () => {
             oldValues.pop();
 
             const newValues = project.getStaticFilePatterns();
-            expect(newValues).not.toEqual(oldValues);
+            expect(newValues).not.to.equal(oldValues);
         });
     });
 
@@ -461,7 +460,7 @@ describe('[Project]', () => {
             });
             const project = new Project(definition);
 
-            expect(project.getRequiredEnv()).toEqual([]);
+            expect(project.getRequiredEnv()).to.deep.equal([]);
         });
 
         it('should return the values specified in the project definition', () => {
@@ -471,7 +470,7 @@ describe('[Project]', () => {
             });
             const project = new Project(definition);
 
-            expect(project.getRequiredEnv()).toEqual(values);
+            expect(project.getRequiredEnv()).to.deep.equal(values);
         });
 
         it('should return a copy of the values, not a reference', () => {
@@ -485,7 +484,7 @@ describe('[Project]', () => {
             oldValues.pop();
 
             const newValues = project.getRequiredEnv();
-            expect(newValues).not.toEqual(oldValues);
+            expect(newValues).not.to.equal(oldValues);
         });
     });
 
@@ -496,7 +495,7 @@ describe('[Project]', () => {
             });
             const project = new Project(definition);
 
-            expect(project.getCdkTargets()).toEqual([]);
+            expect(project.getCdkTargets()).to.deep.equal([]);
         });
 
         it('should return the stack keys specified in the project definition', () => {
@@ -509,7 +508,7 @@ describe('[Project]', () => {
             });
             const project = new Project(definition);
 
-            expect(project.getCdkTargets()).toEqual(targets);
+            expect(project.getCdkTargets()).to.deep.equal(targets);
         });
 
         it('should return a copy of the values, not a reference', () => {
@@ -526,7 +525,7 @@ describe('[Project]', () => {
             oldValues.pop();
 
             const newValues = project.getCdkTargets();
-            expect(newValues).not.toEqual(oldValues);
+            expect(newValues).not.to.equal(oldValues);
         });
     });
 
@@ -538,7 +537,7 @@ describe('[Project]', () => {
                 const wrapper = () => project.getCdkStackDefinition(target);
                 const error = 'Invalid CDK target (arg #1)';
 
-                expect(wrapper).toThrow(error);
+                expect(wrapper).to.throw(error);
             });
         });
 
@@ -556,7 +555,7 @@ describe('[Project]', () => {
             const wrapper = () => project.getCdkStackDefinition(target);
             const error = `CDK target has not been defined (${target})`;
 
-            expect(wrapper).toThrow(error);
+            expect(wrapper).to.throw(error);
         });
 
         it('should return stack details if the CDK target has been defined', () => {
@@ -573,7 +572,7 @@ describe('[Project]', () => {
 
             targets.forEach((target) => {
                 const stack = project.getCdkStackDefinition(target);
-                expect(stack).toEqual({ name: stacks[target] });
+                expect(stack).to.deep.equal({ name: stacks[target] });
             });
         });
 
@@ -591,12 +590,12 @@ describe('[Project]', () => {
 
             targets.forEach((target) => {
                 const oldValue = project.getCdkStackDefinition(target);
-                expect(oldValue).toEqual({ name: stacks[target] });
+                expect(oldValue).to.deep.equal({ name: stacks[target] });
 
                 oldValue.foo = 'bar';
 
                 const newValue = project.getCdkStackDefinition(target);
-                expect(newValue).not.toEqual(oldValue);
+                expect(newValue).not.to.equal(oldValue);
             });
         });
     });
@@ -608,7 +607,7 @@ describe('[Project]', () => {
             });
             const project = new Project(definition);
 
-            expect(project.getContainerTargets()).toEqual([]);
+            expect(project.getContainerTargets()).to.deep.equal([]);
         });
 
         it('should return the stack keys specified in the project definition', () => {
@@ -627,7 +626,7 @@ describe('[Project]', () => {
             });
             const project = new Project(definition);
 
-            expect(project.getContainerTargets()).toEqual(targets);
+            expect(project.getContainerTargets()).to.deep.equal(targets);
         });
 
         it('should return a copy of the values, not a reference', () => {
@@ -650,7 +649,7 @@ describe('[Project]', () => {
             oldValues.pop();
 
             const newValues = project.getContainerTargets();
-            expect(newValues).not.toEqual(oldValues);
+            expect(newValues).not.to.equal(oldValues);
         });
     });
 
@@ -662,7 +661,7 @@ describe('[Project]', () => {
                 const wrapper = () => project.getContainerDefinition(target);
                 const error = 'Invalid container target (arg #1)';
 
-                expect(wrapper).toThrow(error);
+                expect(wrapper).to.throw(error);
             });
         });
 
@@ -686,7 +685,7 @@ describe('[Project]', () => {
             const wrapper = () => project.getContainerDefinition(target);
             const error = `Container target has not been defined (${target})`;
 
-            expect(wrapper).toThrow(error);
+            expect(wrapper).to.throw(error);
         });
 
         it('should return container details if the container target has been defined', () => {
@@ -709,7 +708,7 @@ describe('[Project]', () => {
 
             targets.forEach((target) => {
                 const container = project.getContainerDefinition(target);
-                expect(container).toEqual(
+                expect(container).to.deep.equal(
                     Object.assign({ name: target }, containers[target])
                 );
             });
@@ -735,14 +734,14 @@ describe('[Project]', () => {
 
             targets.forEach((target) => {
                 const oldValue = project.getContainerDefinition(target);
-                expect(oldValue).toEqual(
+                expect(oldValue).to.deep.equal(
                     Object.assign({ name: target }, containers[target])
                 );
 
                 oldValue.foo = 'bar';
 
                 const newValue = project.getContainerDefinition(target);
-                expect(newValue).not.toEqual(oldValue);
+                expect(newValue).not.to.equal(oldValue);
             });
         });
     });

@@ -1,44 +1,43 @@
-'use strict';
+import _chai, { expect } from 'chai';
+import _sinonChai from 'sinon-chai';
+_chai.use(_sinonChai);
 
-import { expand } from 'dotenv-expand';
+import { spy } from 'sinon';
 import _esmock from 'esmock';
 import { getAllButObject } from '../../utils/data-generator.js';
 
 describe('[CleanTaskBuilder]', () => {
-    let CleanTaskBuilder;
-    let TaskBuilderMock;
-    let ProjectMock;
-
-    beforeEach(async () => {
-        TaskBuilderMock = {
-            default: jest.fn(),
+    async function importModule(projectMock, taskBuilderMock) {
+        const mocks = {};
+        if (typeof projectMock !== 'undefined') {
+            mocks['../../../src/project2.js'] = projectMock;
+        }
+        if (typeof taskBuilderMock !== 'undefined') {
+            mocks['../../../src/task-builder.js'] = taskBuilderMock;
+        }
+        return {
+            CleanTaskBuilder: await _esmock(
+                '../../../src/task-builders/clean-task-builder.js',
+                mocks
+            ),
+            projectMock,
+            taskBuilderMock,
         };
-        ProjectMock = {
-            default: jest.fn(),
-        };
-
-        CleanTaskBuilder = await _esmock(
-            '../../../src/task-builders/clean-task-builder',
-            {
-                '../../../src/task-builder.js': TaskBuilderMock,
-                '../../../src/project2.js': ProjectMock
-            }
-        );
-    });
+    }
 
     describe('ctor()', () => {
-        it('should invoke the super constructor with correct arguments', () => {
-            const superCtor = TaskBuilderMock.default;
+        it('should invoke the super constructor with correct arguments', async () => {
+            const superCtor = spy();
+            const { CleanTaskBuilder } = await importModule(undefined, {
+                default: superCtor,
+            });
 
-            expect(superCtor).not.toHaveBeenCalled();
+            expect(superCtor).not.to.have.been.called;
 
             new CleanTaskBuilder();
 
-            expect(superCtor).toHaveBeenCalled();
-            expect(superCtor.mock.calls).toHaveLength(1);
-            expect(superCtor.mock.calls[0]).toHaveLength(2);
-            expect(superCtor.mock.calls[0][0]).toEqual('clean');
-            expect(superCtor.mock.calls[0][1]).toEqual(
+            expect(superCtor).to.have.been.calledOnceWithExactly(
+                'clean',
                 'Cleans out working, distribution and temporary files and directories'
             );
         });
@@ -46,20 +45,23 @@ describe('[CleanTaskBuilder]', () => {
 
     describe('createTask()', () => {
         getAllButObject({}).forEach((project) => {
-            it(`should throw an error if invoked without valid project (value=${typeof project})`, () => {
+            it(`should throw an error if invoked without valid project (value=${typeof project})`, async () => {
+                const {CleanTaskBuilder} = await importModule();
                 const error = 'Invalid project (arg #1)';
                 const builder = new CleanTaskBuilder();
                 const wrapper = () => builder.createTask(project);
 
-                expect(wrapper).toThrow(error);
+                expect(wrapper).to.throw(error);
             });
         });
 
-        it('should return a function when invoked', () => {
+        it('should return a function when invoked', async () => {
+            const MockProject = function () {};
+            const {CleanTaskBuilder} = await importModule(MockProject);
             const builder = new CleanTaskBuilder();
-            const task = builder.createTask(new ProjectMock.default());
+            const task = builder.createTask(new MockProject());
 
-            expect(typeof task).toEqual('function');
+            expect(typeof task).to.equal('function');
         });
     });
 });

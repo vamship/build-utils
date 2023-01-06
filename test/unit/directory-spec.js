@@ -1,3 +1,5 @@
+import {expect} from 'chai';
+import {spy} from 'sinon';
 import { Directory } from '../../src/directory.js';
 import _path from 'path';
 import {
@@ -5,7 +7,6 @@ import {
     getAllButObject,
     getAllButFunction,
 } from '../utils/data-generator.js';
-// import { jest } from '@jest/globals';
 
 function _createPath(...components) {
     return components.join(_path.sep);
@@ -34,8 +35,8 @@ describe('[Directory]', () => {
 
     describe('[Static Members]', () => {
         it('should expose the expected static members', () => {
-            expect(typeof Directory.createTree).toBe('function');
-            expect(typeof Directory.traverseTree).toBe('function');
+            expect(typeof Directory.createTree).to.equal('function');
+            expect(typeof Directory.traverseTree).to.equal('function');
         });
 
         describe('createTree()', () => {
@@ -43,17 +44,17 @@ describe('[Directory]', () => {
                 const child = parent.getChildren().find((dir) => {
                     return dir.name === name;
                 });
-                expect(child).toBeInstanceOf(Directory);
+                expect(child).to.be.an.instanceof(Directory);
 
                 const expectedPath = _path.join(parent.path, name, _path.sep);
-                expect(child.path).toBe(expectedPath);
+                expect(child.path).to.equal(expectedPath);
                 return child;
             }
 
             function _verifyLeaves(parent, ...children) {
                 children.forEach((childName) => {
                     const child = _verifyDirectory(parent, childName);
-                    expect(child.getChildren()).toEqual([]);
+                    expect(child.getChildren()).to.deep.equal([]);
                 });
             }
 
@@ -62,7 +63,7 @@ describe('[Directory]', () => {
                     const error = 'Invalid rootPath (arg #1)';
                     const tree = _createTree();
                     const wrapper = () => Directory.createTree(rootPath, tree);
-                    expect(wrapper).toThrowError(error);
+                    expect(wrapper).to.throw(error);
                 });
             });
 
@@ -71,7 +72,7 @@ describe('[Directory]', () => {
                     const error = 'Invalid tree (arg #2)';
                     const rootPath = '.';
                     const wrapper = () => Directory.createTree(rootPath, tree);
-                    expect(wrapper).toThrowError(error);
+                    expect(wrapper).to.throw(error);
                 });
             });
 
@@ -80,8 +81,8 @@ describe('[Directory]', () => {
                 const tree = _createTree();
                 const root = Directory.createTree(rootPath, tree);
 
-                expect(root).toBeInstanceOf(Directory);
-                expect(root.path).toBe(_createPath('.', ''));
+                expect(root).to.be.an.instanceof(Directory);
+                expect(root.path).to.equal(_createPath('.', ''));
             });
 
             it('should add a child directory for each member of the tree', () => {
@@ -102,18 +103,18 @@ describe('[Directory]', () => {
                 const tree = _createTree();
                 const root = Directory.createTree(rootPath, tree);
 
-                expect(root.getChildren()).toHaveLength(5);
+                expect(root.getChildren()).to.have.lengthOf(5);
                 _verifyLeaves(root, 'working', '.tmp', '.coverage');
 
                 const src = _verifyDirectory(root, 'src');
-                expect(src.getChildren()).toHaveLength(3);
+                expect(src.getChildren()).to.have.lengthOf(3);
                 _verifyLeaves(src, 'handlers', 'devices', 'data');
 
                 const test = _verifyDirectory(root, 'test');
-                expect(test.getChildren()).toHaveLength(1);
+                expect(test.getChildren()).to.have.lengthOf(1);
 
                 const unit = _verifyDirectory(test, 'unit');
-                expect(unit.getChildren()).toHaveLength(3);
+                expect(unit.getChildren()).to.have.lengthOf(3);
                 _verifyLeaves(unit, 'handlers', 'devices', 'data');
             });
 
@@ -146,10 +147,10 @@ describe('[Directory]', () => {
             getAllButObject({}).forEach((root) => {
                 it(`should throw an error if invoked without a directory object (value=${typeof root})`, () => {
                     const error = 'Invalid root directory (arg #1)';
-                    const callback = jest.fn(() => undefined);
+                    const callback = spy();
                     const wrapper = () =>
                         Directory.traverseTree(root, callback);
-                    expect(wrapper).toThrowError(error);
+                    expect(wrapper).to.throw(error);
                 });
             });
 
@@ -159,7 +160,7 @@ describe('[Directory]', () => {
                     const root = Directory.createTree('.', { foo: { bar: 1 } });
                     const wrapper = () =>
                         Directory.traverseTree(root, callback);
-                    expect(wrapper).toThrowError(error);
+                    expect(wrapper).to.throw(error);
                 });
             });
 
@@ -180,19 +181,19 @@ describe('[Directory]', () => {
                 };
                 const rootDir = 'foo';
                 const root = Directory.createTree(rootDir, dirs);
-                const callback = jest.fn((dir, level) => {
+                const callback = spy((dir, level) => {
                     if (dir.name !== rootDir) {
                         const l1 = dir.name.split('_')[1];
-                        expect(level).toEqual(parseInt(l1));
+                        expect(level).to.equal(parseInt(l1));
                     } else {
-                        expect(level).toEqual(0);
+                        expect(level).to.equal(0);
                     }
                 });
 
                 Directory.traverseTree(root, callback);
 
                 // There are 7 levels in our input including the root level
-                expect(callback.mock.calls.length).toEqual(7);
+                expect(callback.callCount).to.equal(7);
             });
         });
     });
@@ -202,7 +203,7 @@ describe('[Directory]', () => {
             it(`should throw an error if invoked without a valid path (value=${typeof path})`, () => {
                 const error = 'Invalid path (arg #1)';
                 const wrapper = () => new Directory(path);
-                expect(wrapper).toThrowError(error);
+                expect(wrapper).to.throw(error);
             });
         });
     });
@@ -211,19 +212,19 @@ describe('[Directory]', () => {
         it('[name] should return the directory name', () => {
             const expectedName = 'foo';
             const dir = new Directory(_path.join(process.cwd(), expectedName));
-            expect(dir.name).toBe(expectedName);
+            expect(dir.name).to.equal(expectedName);
         });
 
         it('[path] should return the relative path to the directory', () => {
             const expectedPath = 'foo';
             const dir = new Directory(_path.join(process.cwd(), 'foo'));
-            expect(dir.path).toBe(`${_path.sep}${expectedPath}${_path.sep}`);
+            expect(dir.path).to.equal(`${_path.sep}${expectedPath}${_path.sep}`);
         });
 
         it('[absolutePath] should return the relative path to the directory', () => {
             const path = 'foo';
             const dir = new Directory(path);
-            expect(dir.absolutePath).toBe(
+            expect(dir.absolutePath).to.equal(
                 `${_path.join(process.cwd(), path)}${_path.sep}`
             );
         });
@@ -234,7 +235,7 @@ describe('[Directory]', () => {
             // The glob path will different from the absolute path in windows,
             // where the separator will be '\', not '/'. On linux/mac both of
             // these paths will be the same.
-            expect(dir.globPath).toBe(`${_path.join(process.cwd(), path)}/`);
+            expect(dir.globPath).to.equal(`${_path.join(process.cwd(), path)}/`);
         });
     });
 
@@ -244,7 +245,7 @@ describe('[Directory]', () => {
                 const error = 'Invalid directory name (arg #1)';
                 const dir = new Directory('foo');
                 const wrapper = () => dir.addChild(name);
-                expect(wrapper).toThrowError(error);
+                expect(wrapper).to.throw(error);
             });
         });
 
@@ -254,7 +255,7 @@ describe('[Directory]', () => {
                     'Directory name cannot include path separators (:, \\ or /)';
                 const dir = new Directory('foo');
                 const wrapper = () => dir.addChild(name);
-                expect(wrapper).toThrowError(error);
+                expect(wrapper).to.throw(error);
             });
         });
 
@@ -262,13 +263,13 @@ describe('[Directory]', () => {
             const expectedName = 'bar';
             const dir = new Directory('foo');
 
-            expect(dir.getChildren()).toHaveLength(0);
+            expect(dir.getChildren()).to.have.lengthOf(0);
             dir.addChild(expectedName);
 
             const children = dir.getChildren();
-            expect(children).toHaveLength(1);
-            expect(children[0].name).toEqual(expectedName);
-            expect(children[0].path).toEqual(
+            expect(children).to.have.lengthOf(1);
+            expect(children[0].name).to.equal(expectedName);
+            expect(children[0].path).to.equal(
                 `${dir.path}${expectedName}${_path.sep}`
             );
         });
@@ -277,7 +278,7 @@ describe('[Directory]', () => {
     describe('getChildren()', () => {
         it('should return an empty array if the directory has no children', () => {
             const dir = new Directory('foo');
-            expect(dir.getChildren()).toEqual([]);
+            expect(dir.getChildren()).to.deep.equal([]);
         });
 
         it('should return a list of first level children if the directory has children', () => {
@@ -289,9 +290,9 @@ describe('[Directory]', () => {
             const dir = Directory.createTree('.', tree);
 
             const children = dir.getChildren();
-            expect(children).toHaveLength(dirNames.length);
+            expect(children).to.have.lengthOf(dirNames.length);
             dirNames.forEach((expectedName, index) => {
-                expect(children[index].name).toBe(expectedName);
+                expect(children[index].name).to.equal(expectedName);
             });
         });
 
@@ -307,9 +308,9 @@ describe('[Directory]', () => {
             const dir = Directory.createTree('.', tree);
 
             const children = dir.getChildren();
-            expect(children).toHaveLength(dirNames.length);
+            expect(children).to.have.lengthOf(dirNames.length);
             dirNames.forEach((expectedName, index) => {
-                expect(children[index].name).toBe(expectedName);
+                expect(children[index].name).to.equal(expectedName);
             });
         });
     });
@@ -320,7 +321,7 @@ describe('[Directory]', () => {
                 const error = 'Invalid childPath (arg #1)';
                 const dir = new Directory('foo');
                 const wrapper = () => dir.getChild(childPath);
-                expect(wrapper).toThrowError(error);
+                expect(wrapper).to.throw(error);
             });
         });
 
@@ -329,7 +330,7 @@ describe('[Directory]', () => {
             const error = `Child not found at path: [${badPath}]`;
             const dir = Directory.createTree('.', _createTree());
             const wrapper = () => dir.getChild(badPath);
-            expect(wrapper).toThrowError(error);
+            expect(wrapper).to.throw(error);
         });
 
         it('should return a reference to a child at the appropriate path', () => {
@@ -354,7 +355,7 @@ describe('[Directory]', () => {
                 { path: '.tmp', nodeName: '.tmp' },
             ].forEach(({ path, nodeName }) => {
                 const child = dir.getChild(path);
-                expect(child.name).toEqual(nodeName);
+                expect(child.name).to.equal(nodeName);
             });
         });
     });
@@ -365,7 +366,7 @@ describe('[Directory]', () => {
                 const dir = new Directory('foo');
                 const filePath = dir.getFilePath(fileName);
 
-                expect(filePath).toEqual(dir.absolutePath);
+                expect(filePath).to.equal(dir.absolutePath);
             });
         });
 
@@ -374,7 +375,7 @@ describe('[Directory]', () => {
                 const dir = new Directory('foo');
                 const filePath = dir.getFilePath(fileName);
 
-                expect(filePath).toEqual(`${dir.absolutePath}${fileName}`);
+                expect(filePath).to.equal(`${dir.absolutePath}${fileName}`);
             });
         });
     });
@@ -385,7 +386,7 @@ describe('[Directory]', () => {
                 const dir = new Directory('foo');
                 const glob = dir.getFileGlob(fileName);
 
-                expect(glob).toEqual(
+                expect(glob).to.equal(
                     dir.absolutePath.replace(/\\/g, _path.sep)
                 );
             });
@@ -396,7 +397,7 @@ describe('[Directory]', () => {
                 const dir = new Directory('foo');
                 const glob = dir.getFileGlob(fileName);
 
-                expect(glob).toEqual(
+                expect(glob).to.equal(
                     `${dir.absolutePath}${fileName}`.replace(/\\/g, _path.sep)
                 );
             });
@@ -409,7 +410,7 @@ describe('[Directory]', () => {
                 const dir = new Directory('foo');
                 const glob = dir.getAllFilesGlob(extension);
 
-                expect(glob).toEqual(
+                expect(glob).to.equal(
                     `${dir.absolutePath.replace(/\\/g, _path.sep)}**/*`
                 );
             });
@@ -420,7 +421,7 @@ describe('[Directory]', () => {
                 const dir = new Directory('foo');
                 const glob = dir.getAllFilesGlob(extension);
 
-                expect(glob).toEqual(
+                expect(glob).to.equal(
                     `${dir.absolutePath.replace(
                         /\\/g,
                         _path.sep

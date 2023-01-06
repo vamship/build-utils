@@ -1,5 +1,4 @@
-'use strict';
-
+import {expect} from 'chai';
 import TaskBuilder from '../../src/task-builder.js';
 import { getAllButString } from '../utils/data-generator.js';
 
@@ -17,7 +16,7 @@ describe('[TaskBuilder]', () => {
                 const wrapper = () => new TaskBuilder(name, description);
                 const error = 'Invalid name (arg #1)';
 
-                expect(wrapper).toThrow(error);
+                expect(wrapper).to.throw(error);
             });
         });
 
@@ -27,7 +26,7 @@ describe('[TaskBuilder]', () => {
                 const wrapper = () => new TaskBuilder(name, description);
                 const error = 'Invalid description (arg #2)';
 
-                expect(wrapper).toThrow(error);
+                expect(wrapper).to.throw(error);
             });
         });
 
@@ -36,8 +35,8 @@ describe('[TaskBuilder]', () => {
             const description = 'some task';
             const builder = new TaskBuilder(name, description);
 
-            expect(builder.name).toEqual(name);
-            expect(builder.description).toEqual(description);
+            expect(builder.name).to.equal(name);
+            expect(builder.description).to.equal(description);
         });
     });
 
@@ -48,7 +47,7 @@ describe('[TaskBuilder]', () => {
                 const description = 'some task';
                 const builder = new TaskBuilder(name, description);
 
-                expect(builder.name).toEqual(name);
+                expect(builder.name).to.equal(name);
             });
         });
         describe('description', () => {
@@ -57,7 +56,7 @@ describe('[TaskBuilder]', () => {
                 const description = 'some task';
                 const builder = new TaskBuilder(name, description);
 
-                expect(builder.description).toEqual(description);
+                expect(builder.description).to.equal(description);
             });
         });
     });
@@ -68,7 +67,7 @@ describe('[TaskBuilder]', () => {
             const wrapper = () => builder.createTask();
             const error = 'Not implemented - TaskBuilder.createTask()';
 
-            expect(wrapper).toThrow(error);
+            expect(wrapper).to.throw(error);
         });
     });
 });
