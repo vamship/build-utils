@@ -449,7 +449,7 @@ describe('[Project]', () => {
             oldValues.pop();
 
             const newValues = project.getStaticFilePatterns();
-            expect(newValues).not.to.equal(oldValues);
+            expect(newValues).to.not.equal(oldValues);
         });
     });
 
@@ -484,7 +484,7 @@ describe('[Project]', () => {
             oldValues.pop();
 
             const newValues = project.getRequiredEnv();
-            expect(newValues).not.to.equal(oldValues);
+            expect(newValues).to.not.equal(oldValues);
         });
     });
 
@@ -525,7 +525,7 @@ describe('[Project]', () => {
             oldValues.pop();
 
             const newValues = project.getCdkTargets();
-            expect(newValues).not.to.equal(oldValues);
+            expect(newValues).to.not.equal(oldValues);
         });
     });
 
@@ -595,7 +595,7 @@ describe('[Project]', () => {
                 oldValue.foo = 'bar';
 
                 const newValue = project.getCdkStackDefinition(target);
-                expect(newValue).not.to.equal(oldValue);
+                expect(newValue).to.not.equal(oldValue);
             });
         });
     });
@@ -649,7 +649,7 @@ describe('[Project]', () => {
             oldValues.pop();
 
             const newValues = project.getContainerTargets();
-            expect(newValues).not.to.equal(oldValues);
+            expect(newValues).to.not.equal(oldValues);
         });
     });
 
@@ -741,7 +741,7 @@ describe('[Project]', () => {
                 oldValue.foo = 'bar';
 
                 const newValue = project.getContainerDefinition(target);
-                expect(newValue).not.to.equal(oldValue);
+                expect(newValue).to.not.equal(oldValue);
             });
         });
     });
