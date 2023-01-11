@@ -1,4 +1,4 @@
-import {expect} from 'chai';
+import { expect } from 'chai';
 import Project from '../../src/project2.js';
 import {
     getAllButString,

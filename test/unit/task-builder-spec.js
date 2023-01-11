@@ -1,4 +1,4 @@
-import {expect} from 'chai';
+import { expect } from 'chai';
 import TaskBuilder from '../../src/task-builder.js';
 import { getAllButString } from '../utils/data-generator.js';
 

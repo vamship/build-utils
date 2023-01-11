@@ -46,7 +46,7 @@ describe('[CleanTaskBuilder]', () => {
     describe('createTask()', () => {
         getAllButObject({}).forEach((project) => {
             it(`should throw an error if invoked without valid project (value=${typeof project})`, async () => {
-                const {CleanTaskBuilder} = await importModule();
+                const { CleanTaskBuilder } = await importModule();
                 const error = 'Invalid project (arg #1)';
                 const builder = new CleanTaskBuilder();
                 const wrapper = () => builder.createTask(project);
@@ -57,7 +57,7 @@ describe('[CleanTaskBuilder]', () => {
 
         it('should return a function when invoked', async () => {
             const MockProject = function () {};
-            const {CleanTaskBuilder} = await importModule(MockProject);
+            const { CleanTaskBuilder } = await importModule(MockProject);
             const builder = new CleanTaskBuilder();
             const task = builder.createTask(new MockProject());
 

@@ -1,5 +1,5 @@
-import {expect} from 'chai';
-import {spy} from 'sinon';
+import { expect } from 'chai';
+import { spy } from 'sinon';
 import { Directory } from '../../src/directory.js';
 import _path from 'path';
 import {
@@ -218,7 +218,9 @@ describe('[Directory]', () => {
         it('[path] should return the relative path to the directory', () => {
             const expectedPath = 'foo';
             const dir = new Directory(_path.join(process.cwd(), 'foo'));
-            expect(dir.path).to.equal(`${_path.sep}${expectedPath}${_path.sep}`);
+            expect(dir.path).to.equal(
+                `${_path.sep}${expectedPath}${_path.sep}`
+            );
         });
 
         it('[absolutePath] should return the relative path to the directory', () => {
@@ -235,7 +237,9 @@ describe('[Directory]', () => {
             // The glob path will different from the absolute path in windows,
             // where the separator will be '\', not '/'. On linux/mac both of
             // these paths will be the same.
-            expect(dir.globPath).to.equal(`${_path.join(process.cwd(), path)}/`);
+            expect(dir.globPath).to.equal(
+                `${_path.join(process.cwd(), path)}/`
+            );
         });
     });
 
