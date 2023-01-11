@@ -1,6 +1,6 @@
 'use strict';
 
-// import _delete from 'delete';
+import _delete from 'delete';
 import TaskBuilder from '../task-builder.js';
 import Project from '../project2.js';
 
@@ -31,7 +31,13 @@ export default class CleanTaskBuilder extends TaskBuilder {
         if (!(project instanceof Project)) {
             throw new Error('Invalid project (arg #1)');
         }
-        return () => undefined;
+        const task = () => {
+            _delete();
+        };
+        task.displayName = this.name;
+        task.description = this.description;
+
+        return task;
     }
 }
 
