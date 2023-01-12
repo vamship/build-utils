@@ -17,9 +17,6 @@
         "node": ">= 14.18.1",
         "npm": ">= 8.1.0"
     },
-    "jest": {
-        "runner": "jest-light-runner"
-    },
     "files": [
         "package.json",
         "LICENSE",
