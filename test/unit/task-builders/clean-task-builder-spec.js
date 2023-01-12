@@ -14,7 +14,7 @@ describe('[CleanTaskBuilder]', () => {
     async function _importModule(mockDefs) {
         const moduleMap = {
             deleteMock: 'delete',
-            projectMock: '../../../src/project2.js',
+            projectMock: '../../../src/project.js',
             taskBuilderMock: '../../../src/task-builder.js',
         };
 
@@ -64,7 +64,7 @@ describe('[CleanTaskBuilder]', () => {
         it('should return a function when invoked', async () => {
             const MockProject = function () {};
             const CleanTaskBuilder = await _importModule({
-                projectMock: MockProject,
+                projectMock: { Project: MockProject},
             });
             const builder = new CleanTaskBuilder();
             const task = builder.createTask(new MockProject());
@@ -75,7 +75,7 @@ describe('[CleanTaskBuilder]', () => {
         it('should have a display name and description associated with a task', async () => {
             const MockProject = function () {};
             const CleanTaskBuilder = await _importModule({
-                projectMock: MockProject,
+                projectMock: { Project: MockProject },
             });
             const builder = new CleanTaskBuilder();
             const task = builder.createTask(new MockProject());
@@ -91,7 +91,7 @@ describe('[CleanTaskBuilder]', () => {
             const MockProject = function () {};
             const CleanTaskBuilder = await _importModule({
                 deleteMock,
-                projectMock: MockProject,
+                projectMock: { Project: MockProject },
             });
             const builder = new CleanTaskBuilder(new MockProject());
 

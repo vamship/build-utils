@@ -2,7 +2,7 @@
 
 import _delete from 'delete';
 import TaskBuilder from '../task-builder.js';
-import Project from '../project2.js';
+import {Project} from '../project.js';
 
 /**
  * Builder that can be used to generate a gulp task to clean temporary project
