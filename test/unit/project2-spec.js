@@ -1,5 +1,7 @@
+import _path from 'path';
 import { expect } from 'chai';
-import Project from '../../src/project2.js';
+import { Project } from '../../src/project2.js';
+import { Directory } from '../../src/directory.js';
 import {
     getAllButString,
     getAllButObject,
@@ -414,6 +416,68 @@ describe('[Project]', () => {
 
                     expect(project.configFileName).to.equal(configFileName);
                 });
+            });
+        });
+
+        describe('[rootDir]', () => {
+            it('should return a directory that represents the project root', () => {
+                const definition = _createProjectDefinition({});
+                const project = new Project(definition);
+                const rootDir = project.rootDir;
+
+                expect(rootDir).to.be.an.instanceOf(Directory);
+
+                // This is assuming that we are running the test in the root
+                // directory of the build utils project.
+                expect(rootDir.name).to.equal('build-utils');
+                expect(rootDir.path).to.equal(`.${_path.sep}`);
+            });
+
+            it('should include the expected directory structure under the project root', () => {
+                const expectedDirs = [
+                    './',
+                    'src/',
+                    'test/',
+                    'test/unit/',
+                    'test/api/',
+                    'infra/',
+                    'working/',
+                    'working/src/',
+                    'working/test/',
+                    'working/test/unit/',
+                    'working/test/api/',
+                    'working/infra/',
+                    'working/node_modules/',
+                    'dist/',
+                    'docs/',
+                    'node_modules/',
+                    'coverage/',
+                    '.gulp/',
+                    '.tscache/',
+                    'logs/',
+                    'cdk.out/',
+                ].reduce((result, name) => {
+                    result[name] = { visited: false };
+                    return result;
+                }, {});
+                const callback = (dir, level) => {
+                    const path = dir.path.replace(
+                        new RegExp(_path.sep, 'g'),
+                        '/'
+                    );
+                    const expectedDir = expectedDirs[path];
+                    expect(expectedDir.visited).to.be.false;
+                    expectedDir.visited = true;
+                };
+                const definition = _createProjectDefinition({});
+                const project = new Project(definition);
+                const rootDir = project.rootDir;
+
+                Directory.traverseTree(rootDir, callback);
+
+                Object.keys(expectedDirs).forEach(
+                    (dir) => expect(expectedDirs[dir].visited).to.be.true
+                );
             });
         });
     });

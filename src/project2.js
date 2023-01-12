@@ -4,6 +4,7 @@ import _gulp from 'gulp';
 import Ajv from 'ajv';
 
 import _projectDataSchema from './schema/project-definition.js';
+import { Directory } from './directory.js';
 
 const _validateProjectData = new Ajv().compile(_projectDataSchema);
 
@@ -11,7 +12,7 @@ const _validateProjectData = new Ajv().compile(_projectDataSchema);
  * Represents a build project that encapsulates one or more relavent build
  * tasks.
  */
-export default class Project {
+export class Project {
     /**
      * Creates a new project based on the specified build metadata.
      *
@@ -94,7 +95,32 @@ export default class Project {
             },
             {}
         );
-        // this._taskBuilder = {};
+
+        this._rootDir = Directory.createTree('./', {
+            src: null,
+            test: {
+                unit: null,
+                api: null,
+            },
+            infra: null,
+            working: {
+                src: null,
+                test: {
+                    unit: null,
+                    api: null,
+                },
+                infra: null,
+                node_modules: null,
+            },
+            dist: null,
+            docs: null,
+            node_modules: null,
+            coverage: null,
+            '.gulp': null,
+            '.tscache': null,
+            logs: null,
+            'cdk.out': null,
+        });
     }
 
     /**
@@ -159,6 +185,15 @@ export default class Project {
      */
     get language() {
         return this._language;
+    }
+
+    /**
+     * Gets the root directory of the project.
+     *
+     * @returns {Directory} The project root directory
+     */
+    get rootDir() {
+        return this._rootDir;
     }
 
     /**
