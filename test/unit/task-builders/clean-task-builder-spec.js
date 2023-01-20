@@ -5,6 +5,9 @@ _chai.use(_sinonChai);
 import { spy } from 'sinon';
 import _esmock from 'esmock';
 import { getAllButObject } from '../../utils/data-generator.js';
+import { Directory } from '../../../src/directory.js';
+import { Project } from '../../../src/project.js';
+import { buildProjectDefinition } from '../../utils/object-builder.js';
 
 describe('[CleanTaskBuilder]', () => {
     const TASK_NAME = 'clean';
@@ -63,22 +66,22 @@ describe('[CleanTaskBuilder]', () => {
 
         it('should return a function when invoked', async () => {
             const MockProject = function () {};
-            const CleanTaskBuilder = await _importModule({
-                projectMock: { Project: MockProject},
-            });
+            const CleanTaskBuilder = await _importModule();
             const builder = new CleanTaskBuilder();
-            const task = builder.createTask(new MockProject());
+
+            const project = new Project(buildProjectDefinition());
+            const task = builder.createTask(project);
 
             expect(typeof task).to.equal('function');
         });
 
         it('should have a display name and description associated with a task', async () => {
             const MockProject = function () {};
-            const CleanTaskBuilder = await _importModule({
-                projectMock: { Project: MockProject },
-            });
+            const CleanTaskBuilder = await _importModule();
             const builder = new CleanTaskBuilder();
-            const task = builder.createTask(new MockProject());
+
+            const project = new Project(buildProjectDefinition());
+            const task = builder.createTask(project);
 
             expect(task.displayName).to.equal(TASK_NAME);
             expect(task.description).to.equal(TASK_DESCRIPTION);
@@ -86,27 +89,76 @@ describe('[CleanTaskBuilder]', () => {
     });
 
     describe('[task]', () => {
-        async function _createTask() {
+        async function _createTask(definitionOverrides) {
             const deleteMock = spy();
-            const MockProject = function () {};
             const CleanTaskBuilder = await _importModule({
                 deleteMock,
-                projectMock: { Project: MockProject },
             });
-            const builder = new CleanTaskBuilder(new MockProject());
+
+            const definition = buildProjectDefinition(definitionOverrides);
+            const project = new Project(definition);
+            const builder = new CleanTaskBuilder();
 
             return {
                 deleteMock,
-                task: builder.createTask(new MockProject()),
+                project,
+                task: builder.createTask(project),
             };
         }
 
-        it('should invoke a file delete operation when called', async () => {
-            const { deleteMock, task } = await _createTask();
+        [
+            {
+                title: `aws-microservice (js)`,
+                expectedDirs: ['coverage', 'dist', 'working', 'cdk.out'],
+                overrides: {
+                    'buildMetadata.type': 'aws-microservice',
+                    'buildMetadata.language': 'js',
+                },
+            },
+            {
+                title: `aws-microservice (ts)`,
+                expectedDirs: [
+                    'coverage',
+                    'dist',
+                    '.tscache',
+                    'working',
+                    'cdk.out',
+                ],
+                overrides: {
+                    'buildMetadata.type': 'aws-microservice',
+                    'buildMetadata.language': 'ts',
+                },
+            },
+        ]
+            .concat(
+                ['lib', 'cli', 'api', 'ui', 'container'].map((type) => ({
+                    title: `typescript project (${type})`,
+                    expectedDirs: ['coverage', 'dist', 'working', '.tscache'],
+                    overrides: {
+                        'buildMetadata.type': type,
+                        'buildMetadata.language': 'ts',
+                    },
+                }))
+            )
+            .forEach(({ title, expectedDirs, overrides }) => {
+                it(`should delete the expected files for ${title}`, async () => {
+                    const { deleteMock, project, task } = await _createTask(
+                        overrides
+                    );
 
-            expect(deleteMock).to.not.have.been.called;
-            task();
-            expect(deleteMock).to.have.been.calledOnce;
-        });
+                    const expectedPaths = expectedDirs.map(
+                        (name) => `${project.rootDir.getFileGlob(name)}/`
+                    );
+
+                    expect(deleteMock).to.not.have.been.called;
+
+                    task();
+
+                    expect(deleteMock).to.have.been.calledOnce;
+                    expect(deleteMock.args[0][0]).to.have.members(
+                        expectedPaths
+                    );
+                });
+            });
     });
 });

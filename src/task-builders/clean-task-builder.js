@@ -2,7 +2,7 @@
 
 import _delete from 'delete';
 import TaskBuilder from '../task-builder.js';
-import {Project} from '../project.js';
+import { Project } from '../project.js';
 
 /**
  * Builder that can be used to generate a gulp task to clean temporary project
@@ -31,51 +31,27 @@ export default class CleanTaskBuilder extends TaskBuilder {
         if (!(project instanceof Project)) {
             throw new Error('Invalid project (arg #1)');
         }
-        const task = () => {
-            _delete();
-        };
+        const rootDir = project.rootDir;
+        const dirs = ['coverage', 'dist'];
+
+        if (project.language === 'ts' || project.type === 'aws-microservice') {
+            dirs.push('working');
+        }
+
+        if (project.language === 'ts') {
+            dirs.push('.tscache');
+        }
+
+        if (project.type === 'aws-microservice') {
+            dirs.push('cdk.out');
+        }
+
+        const paths = dirs.map((dir) => rootDir.getChild(dir).globPath);
+        const task = () => _delete(paths);
+
         task.displayName = this.name;
         task.description = this.description;
 
         return task;
     }
 }
-
-// export default (project, options) => {
-//     const rootDir = project.rootDir;
-
-//     const dirs = ['coverage', 'dist'];
-//     const extras = [];
-
-//     if (project.hasTypescript || project.projectType === 'aws-microservice') {
-//         dirs.push('working');
-//     }
-
-//     if (project.hasTypescript) {
-//         dirs.push('.tscache');
-//         extras.push({
-//             name: 'typescript-temp',
-//             path: rootDir.getFileGlob('tscommand-*.tmp.txt'),
-//         });
-//     }
-
-//     if (project.projectType === 'aws-microservice') {
-//         dirs.push('cdk.out');
-//     }
-
-//     if (project.hasServer) {
-//         extras.push({
-//             name: 'logs',
-//             path: rootDir.getChild('logs').getAllFilesGlob('log'),
-//         });
-//     }
-
-//     const paths = dirs.map((dir) => rootDir.getChild(dir).globPath);
-//     const task = () => _delete(paths);
-
-//     task.displayName = 'clean';
-//     task.description =
-//         'Cleans out working, distribution and temporary files and directories';
-
-//     return task;
-// };
