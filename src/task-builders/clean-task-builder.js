@@ -1,5 +1,3 @@
-'use strict';
-
 import _delete from 'delete';
 import TaskBuilder from '../task-builder.js';
 import { Project } from '../project.js';
