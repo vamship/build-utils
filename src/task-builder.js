@@ -1,3 +1,5 @@
+import { Project } from './project.js';
+
 /**
  * Represents a builder class that can construct a Gulp task. This abstract base
  * class must be extended by child classes that provide the required
@@ -25,6 +27,17 @@ export default class TaskBuilder {
     }
 
     /**
+     * Creates a new task - needs to be implemented by a child class.
+     *
+     * @protected
+     * @param {Object} project The project for which the task will be created.
+     * @returns {Function} A gulp task
+     */
+    _createTask(project) {
+        throw new Error('Not implemented - TaskBuilder._createTask()');
+    }
+
+    /**
      * Gets the name of the task.
      *
      * @returns {String} The task name.
@@ -43,11 +56,18 @@ export default class TaskBuilder {
     }
 
     /**
-     * Creates a new task - needs to be implemented by a child class.
+     * Builds and returns a Gulp task.
      *
      * @param {Object} project The project for which the task will be created.
+     * @returns {Function} A gulp task
      */
-    createTask(project) {
-        throw new Error('Not implemented - TaskBuilder.createTask()');
+    buildTask(project) {
+        if (!(project instanceof Project)) {
+            throw new Error('Invalid project (arg #1)');
+        }
+        const task = this._createTask(project);
+        task.displayName = this._name;
+        task.description = this._description;
+        return task;
     }
 }
