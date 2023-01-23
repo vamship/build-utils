@@ -4,16 +4,11 @@ _chai.use(_sinonChai);
 
 import { spy } from 'sinon';
 import _esmock from 'esmock';
-import { getAllButObject } from '../../utils/data-generator.js';
-import { Directory } from '../../../src/directory.js';
 import { Project } from '../../../src/project.js';
 import { buildProjectDefinition } from '../../utils/object-builder.js';
+import { injectBuilderInitTests } from '../../utils/task-builder-snippets.js';
 
 describe('[CleanTaskBuilder]', () => {
-    const TASK_NAME = 'clean';
-    const TASK_DESCRIPTION =
-        'Cleans out working, distribution and temporary files and directories';
-
     async function _importModule(mockDefs) {
         const moduleMap = {
             deleteMock: 'delete',
@@ -32,49 +27,11 @@ describe('[CleanTaskBuilder]', () => {
         );
     }
 
-    describe('ctor()', () => {
-        it('should invoke the super constructor with correct arguments', async () => {
-            const superCtor = spy();
-            const CleanTaskBuilder = await _importModule({
-                taskBuilderMock: {
-                    default: superCtor,
-                },
-            });
-
-            expect(superCtor).not.to.have.been.called;
-
-            new CleanTaskBuilder();
-
-            expect(superCtor).to.have.been.calledOnceWithExactly(
-                TASK_NAME,
-                TASK_DESCRIPTION
-            );
-        });
-    });
-
-    describe('_createTask()', () => {
-        getAllButObject({}).forEach((project) => {
-            it(`should throw an error if invoked without valid project (value=${typeof project})`, async () => {
-                const CleanTaskBuilder = await _importModule();
-                const error = 'Invalid project (arg #1)';
-                const builder = new CleanTaskBuilder();
-                const wrapper = () => builder._createTask(project);
-
-                expect(wrapper).to.throw(error);
-            });
-        });
-
-        it('should return a function when invoked', async () => {
-            const MockProject = function () {};
-            const CleanTaskBuilder = await _importModule();
-            const builder = new CleanTaskBuilder();
-
-            const project = new Project(buildProjectDefinition());
-            const task = builder._createTask(project);
-
-            expect(typeof task).to.equal('function');
-        });
-    });
+    injectBuilderInitTests(
+        _importModule,
+        'clean',
+        'Cleans out working, distribution and temporary files and directories'
+    );
 
     describe('[task]', () => {
         async function _createTask(definitionOverrides) {
