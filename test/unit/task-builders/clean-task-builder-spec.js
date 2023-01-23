@@ -52,13 +52,13 @@ describe('[CleanTaskBuilder]', () => {
         });
     });
 
-    describe('createTask()', () => {
+    describe('_createTask()', () => {
         getAllButObject({}).forEach((project) => {
             it(`should throw an error if invoked without valid project (value=${typeof project})`, async () => {
                 const CleanTaskBuilder = await _importModule();
                 const error = 'Invalid project (arg #1)';
                 const builder = new CleanTaskBuilder();
-                const wrapper = () => builder.createTask(project);
+                const wrapper = () => builder._createTask(project);
 
                 expect(wrapper).to.throw(error);
             });
@@ -70,21 +70,9 @@ describe('[CleanTaskBuilder]', () => {
             const builder = new CleanTaskBuilder();
 
             const project = new Project(buildProjectDefinition());
-            const task = builder.createTask(project);
+            const task = builder._createTask(project);
 
             expect(typeof task).to.equal('function');
-        });
-
-        it('should have a display name and description associated with a task', async () => {
-            const MockProject = function () {};
-            const CleanTaskBuilder = await _importModule();
-            const builder = new CleanTaskBuilder();
-
-            const project = new Project(buildProjectDefinition());
-            const task = builder.createTask(project);
-
-            expect(task.displayName).to.equal(TASK_NAME);
-            expect(task.description).to.equal(TASK_DESCRIPTION);
         });
     });
 
@@ -102,7 +90,7 @@ describe('[CleanTaskBuilder]', () => {
             return {
                 deleteMock,
                 project,
-                task: builder.createTask(project),
+                task: builder.buildTask(project),
             };
         }
 

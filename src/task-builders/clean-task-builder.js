@@ -22,12 +22,13 @@ export default class CleanTaskBuilder extends TaskBuilder {
     /**
      * Generates a gulp task to clean up temporary project files.
      *
+     * @protected
      * @param {Object} project Reference to the project for which the task needs
      * to be defined.
      *
      * @returns {Function} A gulp task.
      */
-    createTask(project) {
+    _createTask(project) {
         if (!(project instanceof Project)) {
             throw new Error('Invalid project (arg #1)');
         }
@@ -47,11 +48,6 @@ export default class CleanTaskBuilder extends TaskBuilder {
         }
 
         const paths = dirs.map((dir) => rootDir.getChild(dir).globPath);
-        const task = () => _delete(paths);
-
-        task.displayName = this.name;
-        task.description = this.description;
-
-        return task;
+        return () => _delete(paths);
     }
 }
