@@ -71,3 +71,40 @@ export function getAllButFunction(...extras) {
 export function makeOptional(values) {
     return values.filter((value) => typeof value !== 'undefined');
 }
+
+/**
+ * Generates a comprehensive list of all projects and transforms each record
+ * using the provided callback. The mapped values  are filtered for falsy
+ * values, and the resultant array is returned.
+ *
+ * @param {Function} transform A transformer function that receives the project
+ * type and langauage as two input parameters.
+ *
+ * @return {Array} An array of transformed objects, with falsy results removed.
+ */
+export function mapProjectList(transform) {
+    return ['lib', 'cli', 'api', 'ui', 'container', 'aws-microservice']
+        .map((type) => ['js', 'ts'].map((language) => ({ language, type })))
+        .reduce((result, item) => result.concat(item), [])
+        .map(transform)
+        .filter((item) => !!item);
+}
+
+/**
+ * Gets a list of pre-canned project overrides for every project type/language
+ * combination. This list is useful when testing the task builders.
+ *
+ * @return {Array} An array of objects that includes the following fields:
+ *    - title : A string that can be interpolated into test descriptions
+ *    - overrides: Specific overrides to a project definition that apply the
+ *    project type.
+ */
+export function getAllProjectOverrides() {
+    return mapProjectList(({ type, language }) => ({
+        title: `${type} - ${language}`,
+        overrides: {
+            'buildMetadata.type': type,
+            'buildMetadata.language': language,
+        },
+    }));
+}
