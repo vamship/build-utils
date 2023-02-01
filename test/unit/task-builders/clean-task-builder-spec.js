@@ -5,6 +5,7 @@ _chai.use(_sinonChai);
 import { spy } from 'sinon';
 import _esmock from 'esmock';
 import { Project } from '../../../src/project.js';
+import { getAllProjectOverrides } from '../../utils/data-generator.js';
 import { buildProjectDefinition } from '../../utils/object-builder.js';
 import { injectBuilderInitTests } from '../../utils/task-builder-snippets.js';
 
@@ -50,46 +51,19 @@ describe('[CleanTaskBuilder]', () => {
                 task: builder.buildTask(project),
             };
         }
-
-        [
-            {
-                title: `aws-microservice (js)`,
-                expectedDirs: ['coverage', 'dist', 'working', 'cdk.out'],
-                overrides: {
-                    'buildMetadata.type': 'aws-microservice',
-                    'buildMetadata.language': 'js',
-                },
-            },
-            {
-                title: `aws-microservice (ts)`,
-                expectedDirs: [
-                    'coverage',
-                    'dist',
-                    '.tscache',
-                    'working',
-                    'cdk.out',
-                ],
-                overrides: {
-                    'buildMetadata.type': 'aws-microservice',
-                    'buildMetadata.language': 'ts',
-                },
-            },
-        ]
-            .concat(
-                ['lib', 'cli', 'api', 'ui', 'container'].map((type) => ({
-                    title: `typescript project (${type})`,
-                    expectedDirs: ['coverage', 'dist', 'working', '.tscache'],
-                    overrides: {
-                        'buildMetadata.type': type,
-                        'buildMetadata.language': 'ts',
-                    },
-                }))
-            )
-            .forEach(({ title, expectedDirs, overrides }) => {
-                it(`should delete the expected files for ${title}`, async () => {
+        getAllProjectOverrides().forEach(({ title, overrides }) => {
+            describe(`Verify task (${title})`, () => {
+                it('should delete the expected files', async () => {
                     const { deleteMock, project, task } = await _createTask(
                         overrides
                     );
+                    const expectedDirs = [
+                        'coverage',
+                        'dist',
+                        '.tscache',
+                        'working',
+                        'cdk.out',
+                    ];
 
                     const expectedPaths = expectedDirs.map(
                         (name) => `${project.rootDir.getFileGlob(name)}/`
@@ -105,5 +79,6 @@ describe('[CleanTaskBuilder]', () => {
                     );
                 });
             });
+        });
     });
 });
