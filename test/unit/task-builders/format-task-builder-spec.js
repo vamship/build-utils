@@ -75,7 +75,7 @@ describe('[FormatTaskBuilder]', () => {
         }
 
         getAllProjectOverrides().forEach(({ title, overrides }) => {
-            describe(`should configure the task correctly (${title})`, () => {
+            describe(`Verify task (${title})`, () => {
                 it('should inititalize and set the appropriate gulp source files', async () => {
                     const { gulpMock, task, project } = await _createTask(
                         overrides
