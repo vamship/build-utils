@@ -154,42 +154,5 @@ describe('[FormatTaskBuilder]', () => {
                 });
             });
         });
-
-        // ].forEach(({ title, expectedDirs, expectedFiles, overrides }) => {
-        //     it(`should initialize a gulp task with the correct sources for ${title}`, async () => {
-        //         const { gulpMock, task, project } = await _createTask(
-        //             overrides
-        //         );
-
-        //         const expectedPaths = expectedTargets.map((target) => {
-
-        //         });
-        //     });
-        // });
-
-        // it('should initialize a gulp task when invoked', async () => {
-        //     const { gulpMock, task, project } = await _createTask();
-
-        //     expect(gulpMock.src).to.not.have.been.called;
-        //     expect(gulpMock.pipe).to.not.have.been.called;
-
-        //     task();
-
-        //     expect(gulpMock.src).to.have.been.calledOnce;
-        //     expect(gulpMock.pipe).to.have.been.calledTwice;
-        //     expect(gulpMock.callSequence).to.deep.equal([
-        //         'src',
-        //         'pipe',
-        //         'dest',
-        //         'pipe',
-        //     ]);
-
-        //     expect(gulpMock.src.args[0]).to.have.length(2);
-        //     expect(gulpMock.src.args[0][0]).to.deep.equal([]);
-        //     expect(gulpMock.src.args[0][1]).to.deep.equal({
-        //         allowEmpty: true,
-        //         base: project.rootDir.globPath,
-        //     });
-        // });
     });
 });
