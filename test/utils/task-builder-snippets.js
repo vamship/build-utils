@@ -24,7 +24,7 @@ export function injectBuilderInitTests(
     describe('ctor()', () => {
         it('should invoke the super constructor with correct arguments', async () => {
             const superCtor = spy();
-            const CleanTaskBuilder = await importModule({
+            const TaskBuilder = await importModule({
                 taskBuilderMock: {
                     default: superCtor,
                 },
@@ -32,7 +32,7 @@ export function injectBuilderInitTests(
 
             expect(superCtor).not.to.have.been.called;
 
-            new CleanTaskBuilder();
+            new TaskBuilder();
 
             expect(superCtor).to.have.been.calledOnceWithExactly(
                 taskName,
@@ -44,9 +44,9 @@ export function injectBuilderInitTests(
     describe('_createTask()', () => {
         getAllButObject({}).forEach((project) => {
             it(`should throw an error if invoked without valid project (value=${typeof project})`, async () => {
-                const CleanTaskBuilder = await importModule();
+                const TaskBuilder = await importModule();
                 const error = 'Invalid project (arg #1)';
-                const builder = new CleanTaskBuilder();
+                const builder = new TaskBuilder();
                 const wrapper = () => builder._createTask(project);
 
                 expect(wrapper).to.throw(error);
@@ -54,8 +54,8 @@ export function injectBuilderInitTests(
         });
 
         it('should return a function when invoked', async () => {
-            const CleanTaskBuilder = await importModule();
-            const builder = new CleanTaskBuilder();
+            const TaskBuilder = await importModule();
+            const builder = new TaskBuilder();
 
             const project = new Project(buildProjectDefinition());
             const task = builder._createTask(project);
