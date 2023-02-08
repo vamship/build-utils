@@ -7,7 +7,7 @@ import { Project } from '../project.js';
 /**
  * Builder that can be used to generate a gulp task to format source/test files.
  */
-export default class FormatTaskBuilder extends TaskBuilder {
+export class FormatTaskBuilder extends TaskBuilder {
     /**
      * Creates a new task builder.
      */

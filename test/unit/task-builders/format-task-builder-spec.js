@@ -23,10 +23,11 @@ describe('[FormatTaskBuilder]', () => {
             return result;
         }, {});
 
-        return await _esmock(
+        const { FormatTaskBuilder } = await _esmock(
             '../../../src/task-builders/format-task-builder.js',
             mocks
         );
+        return FormatTaskBuilder;
     }
 
     injectBuilderInitTests(

@@ -23,10 +23,11 @@ describe('[LintTaskBuilder]', () => {
             return result;
         }, {});
 
-        return await _esmock(
+        const { LintTaskBuilder } = await _esmock(
             '../../../src/task-builders/lint-task-builder.js',
             mocks
         );
+        return LintTaskBuilder;
     }
 
     injectBuilderInitTests(_importModule, 'lint', 'Lints all source files');

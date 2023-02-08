@@ -6,7 +6,7 @@ import { Project } from '../project.js';
  * Builder that can be used to generate a gulp task to clean temporary project
  * files.
  */
-export default class CleanTaskBuilder extends TaskBuilder {
+export class CleanTaskBuilder extends TaskBuilder {
     /**
      * Creates a new task builder.
      */

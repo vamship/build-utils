@@ -22,10 +22,12 @@ describe('[CleanTaskBuilder]', () => {
             return result;
         }, {});
 
-        return await _esmock(
+        const { CleanTaskBuilder } = await _esmock(
             '../../../src/task-builders/clean-task-builder.js',
             mocks
         );
+
+        return CleanTaskBuilder;
     }
 
     injectBuilderInitTests(

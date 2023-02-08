@@ -9,7 +9,7 @@ import { Project } from '../project.js';
 /**
  * Builder that can be used to generate a gulp task to lint source/test files.
  */
-export default class LintTaskBuilder extends TaskBuilder {
+export class LintTaskBuilder extends TaskBuilder {
     /**
      * Creates a new task builder.
      */
