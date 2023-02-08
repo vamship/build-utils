@@ -48,7 +48,7 @@ export class FormatTaskBuilder extends TaskBuilder {
                     allowEmpty: true,
                     base: project.rootDir.globPath,
                 })
-                .pipe(_prettier)
+                .pipe(_prettier())
                 .pipe(_gulp.dest(project.rootDir.absolutePath));
         return task;
     }

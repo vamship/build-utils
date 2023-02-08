@@ -2,7 +2,7 @@ import _chai, { expect } from 'chai';
 import _sinonChai from 'sinon-chai';
 _chai.use(_sinonChai);
 
-import { spy, stub } from 'sinon';
+import { stub } from 'sinon';
 import _esmock from 'esmock';
 import { Project } from '../../../src/project.js';
 import { getAllProjectOverrides } from '../../utils/data-generator.js';
@@ -38,7 +38,9 @@ describe('[FormatTaskBuilder]', () => {
 
     describe('[task]', () => {
         async function _createTask(definitionOverrides) {
-            const gulpPrettierMock = spy();
+            const gulpPrettierMock = stub().callsFake(() => ({
+                _source: '_prettier_ret_',
+            }));
             const gulpMock = [
                 { method: 'src' },
                 { method: 'pipe' },
@@ -124,7 +126,9 @@ describe('[FormatTaskBuilder]', () => {
                     expect(gulpMock.callSequence[1]).to.equal('pipe');
 
                     expect(gulpMock.pipe.args[0]).to.have.length(1);
-                    expect(gulpMock.pipe.args[0][0]).to.equal(gulpPrettierMock);
+                    expect(gulpMock.pipe.args[0][0]).to.equal(
+                        gulpPrettierMock.returnValues[0]
+                    );
                 });
 
                 it('should overwrite the source file with formatted contents', async () => {
