@@ -13,7 +13,7 @@ describe('[LintTaskBuilder]', () => {
     async function _importModule(mockDefs) {
         const moduleMap = {
             gulpMock: 'gulp',
-            gulpEslintMock: 'gulp-eslint',
+            gulpEslintMock: 'gulp-eslint-new',
             projectMock: '../../../src/project.js',
             taskBuilderMock: '../../../src/task-builder.js',
         };
@@ -118,7 +118,12 @@ describe('[LintTaskBuilder]', () => {
                     task();
 
                     expect(gulpMock.pipe).to.have.been.called;
-                    expect(gulpEslintMock).to.have.been.called;
+                    expect(gulpEslintMock).to.have.been.calledOnce;
+
+                    expect(gulpEslintMock.args[0]).to.have.length(1);
+                    expect(gulpEslintMock.args[0][0]).to.deep.equal({
+                        configType: 'flat'
+                    });
 
                     expect(gulpMock.callSequence[1]).to.equal('pipe');
                     expect(gulpMock.pipe.args[0]).to.have.length(1);

@@ -1,7 +1,7 @@
 'use strict';
 
 import _gulp from 'gulp';
-import _eslint from 'gulp-eslint';
+import _eslint from 'gulp-eslint-new';
 
 import TaskBuilder from '../task-builder.js';
 import { Project } from '../project.js';
@@ -47,7 +47,7 @@ export class LintTaskBuilder extends TaskBuilder {
                     allowEmpty: true,
                     base: project.rootDir.globPath,
                 })
-                .pipe(_eslint())
+                .pipe(_eslint({ configType: 'flat' }))
                 .pipe(_eslint.format())
                 .pipe(_eslint.failAfterError());
         return task;
