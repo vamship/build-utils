@@ -19,7 +19,7 @@ export class FormatTaskBuilder extends TaskBuilder {
     }
 
     /**
-     * Generates a gulp task to clean up temporary project files.
+     * Generates a gulp task to format source files.
      *
      * @protected
      * @param {Object} project Reference to the project for which the task needs
