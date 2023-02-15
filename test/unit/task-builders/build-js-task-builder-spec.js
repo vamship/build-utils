@@ -126,16 +126,16 @@ describe('[BuildJsTaskBuilder]', () => {
 
         // Combine all project types and set default properties on the
         // definition.
-        const projectOverrides = projectsWithoutContainer.concat(
-            projectsWithContainer
-        ).map(({title, overrides})=>({
-            title,
-            overrides: {
-                ...overrides,
-                'buildMetadata.staticFilePatterns': [],
-                name: '@test/my-package',
-            }
-        }));
+        const projectOverrides = projectsWithoutContainer
+            .concat(projectsWithContainer)
+            .map(({ title, overrides }) => ({
+                title,
+                overrides: {
+                    ...overrides,
+                    'buildMetadata.staticFilePatterns': [],
+                    name: '@test/my-package',
+                },
+            }));
 
         projectOverrides.forEach(({ title, overrides }) => {
             describe(`Verify task (${title})`, () => {
@@ -199,7 +199,11 @@ describe('[BuildJsTaskBuilder]', () => {
 
                     expect(gulpMock.dest.args[0]).to.have.length(1);
                     expect(gulpMock.dest.args[0][0]).to.equal(
-                        _path.join(project.rootDir.absolutePath, 'working', '/')
+                        _path.join(
+                            project.rootDir.absolutePath,
+                            'working',
+                            _path.sep
+                        )
                     );
 
                     expect(gulpMock.pipe).to.have.been.called;
