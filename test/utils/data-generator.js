@@ -94,17 +94,24 @@ export function mapProjectList(transform) {
  * Gets a list of pre-canned project overrides for every project type/language
  * combination. This list is useful when testing the task builders.
  *
+ * @param {Number} [maxItems=0] The upper limit to the number of records
+ * returned. This is a useful parameter when debugging test failures.
+ *
  * @return {Array} An array of objects that includes the following fields:
  *    - title : A string that can be interpolated into test descriptions
  *    - overrides: Specific overrides to a project definition that apply the
  *    project type.
  */
-export function getAllProjectOverrides() {
+export function getAllProjectOverrides(maxItems) {
+    if (typeof maxItems !== 'number') {
+        maxItems = -1;
+    }
+
     return mapProjectList(({ type, language }) => ({
         title: `${type} - ${language}`,
         overrides: {
             'buildMetadata.type': type,
             'buildMetadata.language': language,
         },
-    }));
+    })).filter((_, index) => maxItems < 0 || index < maxItems);
 }
