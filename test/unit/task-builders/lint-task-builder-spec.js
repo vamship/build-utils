@@ -2,11 +2,18 @@ import _chai, { expect } from 'chai';
 import _sinonChai from 'sinon-chai';
 _chai.use(_sinonChai);
 
+import _path from 'path';
 import { stub } from 'sinon';
 import _esmock from 'esmock';
 import { Project } from '../../../src/project.js';
-import { getAllProjectOverrides } from '../../utils/data-generator.js';
-import { buildProjectDefinition } from '../../utils/object-builder.js';
+import {
+    getAllProjectOverrides,
+    generateGlobPatterns,
+} from '../../utils/data-generator.js';
+import {
+    buildProjectDefinition,
+    createGulpMock,
+} from '../../utils/object-builder.js';
 import { injectBuilderInitTests } from '../../utils/task-builder-snippets.js';
 
 describe('[LintTaskBuilder]', () => {
@@ -44,20 +51,7 @@ describe('[LintTaskBuilder]', () => {
                 _source: '_eslint.failAfterError_ret_',
             }));
 
-            const gulpMock = [{ method: 'src' }, { method: 'pipe' }].reduce(
-                (result, item) => {
-                    const { method, retValue } = item;
-                    const mock = stub().callsFake(() => {
-                        result.callSequence.push(method);
-                        return typeof retValue !== 'undefined'
-                            ? retValue
-                            : result;
-                    });
-                    result[method] = mock;
-                    return result;
-                },
-                { callSequence: [] }
-            );
+            const gulpMock = createGulpMock();
 
             const LintTaskBuilder = await _importModule({
                 gulpMock,
@@ -76,23 +70,21 @@ describe('[LintTaskBuilder]', () => {
             };
         }
 
+        function createSourceList(project, overrides) {
+            const dirs = ['src', 'test', 'infra', '.gulp'];
+            const extensions = ['ts', 'js', 'tsx', 'jsx'];
+            const rootDir = project.rootDir.absolutePath;
+
+            return generateGlobPatterns(rootDir, dirs, extensions)
+                .concat([_path.join(rootDir, 'Gulpfile.js')]);
+        }
+
         getAllProjectOverrides().forEach(({ title, overrides }) => {
             describe(`Verify task (${title})`, () => {
                 it('should inititalize and set the appropriate gulp source files', async () => {
                     const { gulpMock, task, project } = await _createTask(
                         overrides
                     );
-                    const extensions = ['ts', 'js', 'tsx', 'jsx'];
-                    const files = ['src', 'test', 'infra', '.gulp']
-                        .map((dir) =>
-                            extensions.map((ext) =>
-                                project.rootDir
-                                    .getChild(dir)
-                                    .getAllFilesGlob(ext)
-                            )
-                        )
-                        .reduce((result, item) => result.concat(item), [])
-                        .concat([project.rootDir.getFileGlob('Gulpfile.js')]);
 
                     expect(gulpMock.src).to.not.have.been.called;
 
@@ -101,7 +93,9 @@ describe('[LintTaskBuilder]', () => {
                     expect(gulpMock.src).to.have.been.calledOnce;
                     expect(gulpMock.callSequence[0]).to.equal('src');
                     expect(gulpMock.src.args[0]).to.have.length(2);
-                    expect(gulpMock.src.args[0][0]).to.have.members(files);
+                    expect(gulpMock.src.args[0][0]).to.have.members(
+                        createSourceList(project, overrides)
+                    );
                     expect(gulpMock.src.args[0][1]).to.deep.equal({
                         allowEmpty: true,
                         base: project.rootDir.globPath,
