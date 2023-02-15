@@ -122,7 +122,7 @@ describe('[LintTaskBuilder]', () => {
 
                     expect(gulpEslintMock.args[0]).to.have.length(1);
                     expect(gulpEslintMock.args[0][0]).to.deep.equal({
-                        configType: 'flat'
+                        configType: 'flat',
                     });
 
                     expect(gulpMock.callSequence[1]).to.equal('pipe');
