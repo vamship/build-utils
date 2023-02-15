@@ -1,3 +1,5 @@
+import _path from 'path';
+
 /**
  * Generates an array of sample values of different types - everything except a
  * string.
@@ -150,4 +152,22 @@ export function getSelectedProjectOverrides(projectTypes, maxItems) {
               }
             : undefined;
     }).filter((_, index) => maxItems < 0 || index < maxItems);
+}
+
+/**
+ * Generates an array of glob patterns by interpolating multiple extensions into
+ * multiple directories.
+ *
+ * @param {String} basePath The base path to use when generating glob paths
+ * @param {String} dirs An array of directories to use
+ * @param {String} extensions An array of extensions to use
+ *
+ * @return {Array} A list of glob patterns.
+ */
+export function generateGlobPatterns(basePath, dirs, extensions) {
+    return dirs
+        .map((dir) =>
+            extensions.map((ext) => _path.join(basePath, dir, '**', `*.${ext}`))
+        )
+        .reduce((result, item) => result.concat(item), []);
 }
