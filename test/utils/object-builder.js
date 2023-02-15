@@ -1,4 +1,5 @@
 import { setProperty } from 'dot-prop';
+import { stub } from 'sinon';
 
 /**
  * Creates a default project definition, with the option to override specific
@@ -42,4 +43,28 @@ export function buildProjectDefinition(overrides) {
         setProperty(definition, key, value);
     });
     return definition;
+}
+
+/**
+ * Creates and returns a mock object for gulp.
+ *
+ * @returns {Object} A mock gulp object.
+ */
+export function createGulpMock() {
+    return [
+        { method: 'src' },
+        { method: 'pipe' },
+        { method: 'dest', retValue: '_dest_ret_' },
+    ].reduce(
+        (result, item) => {
+            const { method, retValue } = item;
+            const mock = stub().callsFake(() => {
+                result.callSequence.push(method);
+                return typeof retValue !== 'undefined' ? retValue : result;
+            });
+            result[method] = mock;
+            return result;
+        },
+        { callSequence: [] }
+    );
 }
