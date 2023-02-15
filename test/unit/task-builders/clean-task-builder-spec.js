@@ -2,6 +2,7 @@ import _chai, { expect } from 'chai';
 import _sinonChai from 'sinon-chai';
 _chai.use(_sinonChai);
 
+import _path from 'path';
 import { spy } from 'sinon';
 import _esmock from 'esmock';
 import { Project } from '../../../src/project.js';
@@ -53,22 +54,24 @@ describe('[CleanTaskBuilder]', () => {
                 task: builder.buildTask(project),
             };
         }
+
         getAllProjectOverrides().forEach(({ title, overrides }) => {
+            function createSourceList(project, overrides) {
+                return [
+                    'coverage',
+                    'dist',
+                    '.tscache',
+                    'working',
+                    'cdk.out',
+                ].map((name) =>
+                    _path.join(project.rootDir.absolutePath, name, _path.sep)
+                );
+            }
+
             describe(`Verify task (${title})`, () => {
                 it('should delete the expected files', async () => {
                     const { deleteMock, project, task } = await _createTask(
                         overrides
-                    );
-                    const expectedDirs = [
-                        'coverage',
-                        'dist',
-                        '.tscache',
-                        'working',
-                        'cdk.out',
-                    ];
-
-                    const expectedPaths = expectedDirs.map(
-                        (name) => `${project.rootDir.getFileGlob(name)}/`
                     );
 
                     expect(deleteMock).to.not.have.been.called;
@@ -77,7 +80,7 @@ describe('[CleanTaskBuilder]', () => {
 
                     expect(deleteMock).to.have.been.calledOnce;
                     expect(deleteMock.args[0][0]).to.have.members(
-                        expectedPaths
+                        createSourceList(project, overrides)
                     );
                 });
             });
