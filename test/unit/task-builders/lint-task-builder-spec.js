@@ -70,7 +70,7 @@ describe('[LintTaskBuilder]', () => {
             };
         }
 
-        function createSourceList(project, overrides) {
+        function createSourceList(project) {
             const dirs = ['src', 'test', 'infra', '.gulp'];
             const extensions = ['ts', 'js', 'tsx', 'jsx'];
             const rootDir = project.rootDir.absolutePath;
@@ -94,7 +94,7 @@ describe('[LintTaskBuilder]', () => {
                     expect(gulpMock.callSequence[0]).to.equal('src');
                     expect(gulpMock.src.args[0]).to.have.length(2);
                     expect(gulpMock.src.args[0][0]).to.have.members(
-                        createSourceList(project, overrides)
+                        createSourceList(project)
                     );
                     expect(gulpMock.src.args[0][1]).to.deep.equal({
                         allowEmpty: true,
