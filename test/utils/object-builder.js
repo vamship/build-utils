@@ -1,5 +1,8 @@
 import { setProperty } from 'dot-prop';
 import { stub } from 'sinon';
+import _esmock from 'esmock';
+import _path from 'path';
+import { fileURLToPath } from 'url';
 
 /**
  * Creates a default project definition, with the option to override specific
@@ -67,4 +70,38 @@ export function createGulpMock() {
         },
         { callSequence: [] }
     );
+}
+
+/**
+ * Creates an importer function that imports a module with mocks injected into
+ * dependencies.
+ *
+ * @param {String} modulePath The path to the module that is being imported
+ * @param {Object} pathDefinitions A map of keys to dependent module paths. The
+ * keys used in this dictionary should be used as the keys to the mocks passed
+ * when the importer is invoked.
+ * @param {String} memberName The name of member within the module that needs to
+ * be imported.
+ *
+ * @returns {Function} A function that can be used to import the module with
+ * mocks injected as dependencies.
+ */
+export function createModuleImporter(modulePath, pathDefinitions, memberName) {
+    const basePath = _path.resolve(fileURLToPath(import.meta.url), '../../../');
+    const transform = (path) =>
+        path.startsWith('src/') ? _path.resolve(basePath, path) : path;
+
+    return async (mockDefs) => {
+        const mocks = Object.keys({ ...mockDefs }).reduce((result, key) => {
+            result[transform(pathDefinitions[key])] = mockDefs[key];
+            return result;
+        }, {});
+
+        const module = await _esmock(
+            _path.resolve(basePath, transform(modulePath)),
+            mocks
+        );
+
+        return typeof memberName !== 'string' ? module : module[memberName];
+    };
 }
