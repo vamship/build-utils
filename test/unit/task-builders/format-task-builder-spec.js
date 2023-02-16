@@ -6,7 +6,10 @@ import _path from 'path';
 import { stub } from 'sinon';
 import _esmock from 'esmock';
 import { Project } from '../../../src/project.js';
-import { getAllProjectOverrides } from '../../utils/data-generator.js';
+import {
+    getAllProjectOverrides,
+    generateGlobPatterns,
+} from '../../utils/data-generator.js';
 import {
     buildProjectDefinition,
     createGulpMock,
@@ -65,20 +68,14 @@ describe('[FormatTaskBuilder]', () => {
         }
 
         function createSourceList(project, overrides) {
+            const dirs = ['src', 'test', 'infra', '.gulp'];
             const extensions = ['ts', 'js', 'json', 'py', 'tsx', 'jsx'];
             const rootDir = project.rootDir.absolutePath;
 
-            return ['src', 'test', 'infra', '.gulp']
-                .map((dir) =>
-                    extensions.map((ext) =>
-                        _path.join(rootDir, dir, '**', `*.${ext}`)
-                    )
-                )
-                .reduce((result, item) => result.concat(item), [])
-                .concat([
-                    _path.join(rootDir, 'README.md'),
-                    _path.join(rootDir, 'Gulpfile.js'),
-                ]);
+            return generateGlobPatterns(rootDir, dirs, extensions).concat([
+                _path.join(rootDir, 'README.md'),
+                _path.join(rootDir, 'Gulpfile.js'),
+            ]);
         }
 
         getAllProjectOverrides().forEach(({ title, overrides }) => {

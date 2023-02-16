@@ -9,6 +9,7 @@ import { Project } from '../../../src/project.js';
 import {
     getAllProjectOverrides,
     getSelectedProjectOverrides,
+    generateGlobPatterns,
 } from '../../utils/data-generator.js';
 import {
     buildProjectDefinition,
@@ -66,7 +67,6 @@ describe('[BuildJsTaskBuilder]', () => {
                 'buildMetadata.staticFilePatterns': staticFilePatterns,
                 'buildMetadata.container': container = {},
             } = overrides;
-
             const extras = [
                 `.${name.replace(/(^@[a-zA-Z]*\/|-)/g, '')}rc`,
                 'package.json',
@@ -77,17 +77,11 @@ describe('[BuildJsTaskBuilder]', () => {
                     (key) => container[key].buildFile || 'Dockerfile'
                 )
             );
-
+            const dirs= ['src', 'test', 'infra'];
             const extensions = ['js', 'json'].concat(staticFilePatterns);
             const rootDir = project.rootDir.absolutePath;
 
-            return ['src', 'test', 'infra']
-                .map((dir) =>
-                    extensions.map((ext) =>
-                        _path.join(rootDir, dir, '**', `*.${ext}`)
-                    )
-                )
-                .reduce((result, item) => result.concat(item), [])
+            return generateGlobPatterns(rootDir, dirs, extensions)
                 .concat(extras.map((file) => _path.join(rootDir, file)));
         }
 
