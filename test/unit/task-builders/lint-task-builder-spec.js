@@ -13,29 +13,20 @@ import {
 import {
     buildProjectDefinition,
     createGulpMock,
+    createModuleImporter,
 } from '../../utils/object-builder.js';
 import { injectBuilderInitTests } from '../../utils/task-builder-snippets.js';
 
 describe('[LintTaskBuilder]', () => {
-    async function _importModule(mockDefs) {
-        const moduleMap = {
+    const _importModule = createModuleImporter(
+        'src/task-builders/lint-task-builder.js',
+        {
             gulpMock: 'gulp',
             gulpEslintMock: 'gulp-eslint-new',
-            projectMock: '../../../src/project.js',
-            taskBuilderMock: '../../../src/task-builder.js',
-        };
-
-        const mocks = Object.keys({ ...mockDefs }).reduce((result, key) => {
-            result[moduleMap[key]] = mockDefs[key];
-            return result;
-        }, {});
-
-        const { LintTaskBuilder } = await _esmock(
-            '../../../src/task-builders/lint-task-builder.js',
-            mocks
-        );
-        return LintTaskBuilder;
-    }
+            taskBuilderMock: 'src/task-builder.js',
+        },
+        'LintTaskBuilder'
+    );
 
     injectBuilderInitTests(_importModule, 'lint', 'Lints all source files');
 

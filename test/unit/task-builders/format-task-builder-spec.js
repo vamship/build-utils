@@ -12,30 +12,21 @@ import {
 } from '../../utils/data-generator.js';
 import {
     buildProjectDefinition,
+    createModuleImporter,
     createGulpMock,
 } from '../../utils/object-builder.js';
 import { injectBuilderInitTests } from '../../utils/task-builder-snippets.js';
 
 describe('[FormatTaskBuilder]', () => {
-    async function _importModule(mockDefs) {
-        const moduleMap = {
+    const _importModule = createModuleImporter(
+        'src/task-builders/format-task-builder.js',
+        {
             gulpMock: 'gulp',
             gulpPrettierMock: 'gulp-prettier',
-            projectMock: '../../../src/project.js',
-            taskBuilderMock: '../../../src/task-builder.js',
-        };
-
-        const mocks = Object.keys({ ...mockDefs }).reduce((result, key) => {
-            result[moduleMap[key]] = mockDefs[key];
-            return result;
-        }, {});
-
-        const { FormatTaskBuilder } = await _esmock(
-            '../../../src/task-builders/format-task-builder.js',
-            mocks
-        );
-        return FormatTaskBuilder;
-    }
+            taskBuilderMock: 'src/task-builder.js',
+        },
+        'FormatTaskBuilder'
+    );
 
     injectBuilderInitTests(
         _importModule,

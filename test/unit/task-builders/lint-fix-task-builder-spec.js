@@ -6,30 +6,27 @@ import _path from 'path';
 import { stub } from 'sinon';
 import _esmock from 'esmock';
 import { Project } from '../../../src/project.js';
-import { getAllProjectOverrides, generateGlobPatterns } from '../../utils/data-generator.js';
-import { buildProjectDefinition, createGulpMock } from '../../utils/object-builder.js';
+import {
+    getAllProjectOverrides,
+    generateGlobPatterns,
+} from '../../utils/data-generator.js';
+import {
+    buildProjectDefinition,
+    createGulpMock,
+    createModuleImporter,
+} from '../../utils/object-builder.js';
 import { injectBuilderInitTests } from '../../utils/task-builder-snippets.js';
 
 describe('[LintFixTaskBuilder]', () => {
-    async function _importModule(mockDefs) {
-        const moduleMap = {
+    const _importModule = createModuleImporter(
+        'src/task-builders/lint-fix-task-builder.js',
+        {
             gulpMock: 'gulp',
             gulpEslintMock: 'gulp-eslint-new',
-            projectMock: '../../../src/project.js',
-            taskBuilderMock: '../../../src/task-builder.js',
-        };
-
-        const mocks = Object.keys({ ...mockDefs }).reduce((result, key) => {
-            result[moduleMap[key]] = mockDefs[key];
-            return result;
-        }, {});
-
-        const { LintFixTaskBuilder } = await _esmock(
-            '../../../src/task-builders/lint-fix-task-builder.js',
-            mocks
-        );
-        return LintFixTaskBuilder;
-    }
+            taskBuilderMock: 'src/task-builder.js',
+        },
+        'LintFixTaskBuilder'
+    );
 
     injectBuilderInitTests(
         _importModule,
@@ -76,8 +73,9 @@ describe('[LintFixTaskBuilder]', () => {
             const extensions = ['ts', 'js', 'tsx', 'jsx'];
             const rootDir = project.rootDir.absolutePath;
 
-            return generateGlobPatterns(rootDir, dirs, extensions)
-                .concat([_path.join(rootDir, 'Gulpfile.js')]);
+            return generateGlobPatterns(rootDir, dirs, extensions).concat([
+                _path.join(rootDir, 'Gulpfile.js'),
+            ]);
         }
 
         getAllProjectOverrides().forEach(({ title, overrides }) => {

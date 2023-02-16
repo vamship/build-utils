@@ -14,28 +14,19 @@ import {
 import {
     buildProjectDefinition,
     createGulpMock,
+    createModuleImporter,
 } from '../../utils/object-builder.js';
 import { injectBuilderInitTests } from '../../utils/task-builder-snippets.js';
 
 describe('[BuildJsTaskBuilder]', () => {
-    async function _importModule(mockDefs) {
-        const moduleMap = {
+    const _importModule = createModuleImporter(
+        'src/task-builders/build-js-task-builder.js',
+        {
             gulpMock: 'gulp',
-            projectMock: '../../../src/project.js',
-            taskBuilderMock: '../../../src/task-builder.js',
-        };
-
-        const mocks = Object.keys({ ...mockDefs }).reduce((result, key) => {
-            result[moduleMap[key]] = mockDefs[key];
-            return result;
-        }, {});
-
-        const { BuildJsTaskBuilder } = await _esmock(
-            '../../../src/task-builders/build-js-task-builder.js',
-            mocks
-        );
-        return BuildJsTaskBuilder;
-    }
+            taskBuilderMock: 'src/task-builder.js',
+        },
+        'BuildJsTaskBuilder'
+    );
 
     injectBuilderInitTests(
         _importModule,
@@ -77,12 +68,13 @@ describe('[BuildJsTaskBuilder]', () => {
                     (key) => container[key].buildFile || 'Dockerfile'
                 )
             );
-            const dirs= ['src', 'test', 'infra'];
+            const dirs = ['src', 'test', 'infra'];
             const extensions = ['js', 'json'].concat(staticFilePatterns);
             const rootDir = project.rootDir.absolutePath;
 
-            return generateGlobPatterns(rootDir, dirs, extensions)
-                .concat(extras.map((file) => _path.join(rootDir, file)));
+            return generateGlobPatterns(rootDir, dirs, extensions).concat(
+                extras.map((file) => _path.join(rootDir, file))
+            );
         }
 
         // List of all projects - they can all run without containers

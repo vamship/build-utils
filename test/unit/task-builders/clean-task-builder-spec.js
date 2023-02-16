@@ -7,29 +7,18 @@ import { spy } from 'sinon';
 import _esmock from 'esmock';
 import { Project } from '../../../src/project.js';
 import { getAllProjectOverrides } from '../../utils/data-generator.js';
-import { buildProjectDefinition } from '../../utils/object-builder.js';
+import { buildProjectDefinition, createModuleImporter } from '../../utils/object-builder.js';
 import { injectBuilderInitTests } from '../../utils/task-builder-snippets.js';
 
 describe('[CleanTaskBuilder]', () => {
-    async function _importModule(mockDefs) {
-        const moduleMap = {
+    const _importModule = createModuleImporter(
+        'src/task-builders/clean-task-builder.js',
+        {
             deleteMock: 'delete',
-            projectMock: '../../../src/project.js',
-            taskBuilderMock: '../../../src/task-builder.js',
-        };
-
-        const mocks = Object.keys({ ...mockDefs }).reduce((result, key) => {
-            result[moduleMap[key]] = mockDefs[key];
-            return result;
-        }, {});
-
-        const { CleanTaskBuilder } = await _esmock(
-            '../../../src/task-builders/clean-task-builder.js',
-            mocks
-        );
-
-        return CleanTaskBuilder;
-    }
+            taskBuilderMock: 'src/task-builder.js',
+        },
+        'CleanTaskBuilder'
+    );
 
     injectBuilderInitTests(
         _importModule,
