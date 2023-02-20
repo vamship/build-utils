@@ -58,6 +58,7 @@ export function createGulpMock() {
         { method: 'src' },
         { method: 'pipe' },
         { method: 'dest', retValue: '_dest_ret_' },
+        { method: 'watch', retValue: () => undefined },
     ].reduce(
         (result, item) => {
             const { method, retValue } = item;
@@ -93,6 +94,11 @@ export function createModuleImporter(modulePath, pathDefinitions, memberName) {
 
     return async (mockDefs) => {
         const mocks = Object.keys({ ...mockDefs }).reduce((result, key) => {
+            if (!pathDefinitions[key]) {
+                throw new Error(
+                    `[Module Importer] Import path not defined for module: ${key}`
+                );
+            }
             result[transform(pathDefinitions[key])] = mockDefs[key];
             return result;
         }, {});
