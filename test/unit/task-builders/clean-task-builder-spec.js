@@ -7,7 +7,10 @@ import { spy } from 'sinon';
 import _esmock from 'esmock';
 import { Project } from '../../../src/project.js';
 import { getAllProjectOverrides } from '../../utils/data-generator.js';
-import { buildProjectDefinition, createModuleImporter } from '../../utils/object-builder.js';
+import {
+    buildProjectDefinition,
+    createModuleImporter,
+} from '../../utils/object-builder.js';
 import { injectBuilderInitTests } from '../../utils/task-builder-snippets.js';
 
 describe('[CleanTaskBuilder]', () => {

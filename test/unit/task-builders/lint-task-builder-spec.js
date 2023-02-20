@@ -66,8 +66,9 @@ describe('[LintTaskBuilder]', () => {
             const extensions = ['ts', 'js', 'tsx', 'jsx'];
             const rootDir = project.rootDir.absolutePath;
 
-            return generateGlobPatterns(rootDir, dirs, extensions)
-                .concat([_path.join(rootDir, 'Gulpfile.js')]);
+            return generateGlobPatterns(rootDir, dirs, extensions).concat([
+                _path.join(rootDir, 'Gulpfile.js'),
+            ]);
         }
 
         getAllProjectOverrides().forEach(({ title, overrides }) => {
