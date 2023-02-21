@@ -54,81 +54,14 @@ describe('[BuildJsTaskBuilder]', () => {
         }
 
         function createSourceList(project, overrides) {
-            const {
-                name,
-                'buildMetadata.staticFilePatterns': staticFilePatterns,
-                'buildMetadata.container': container = {},
-            } = overrides;
-            const extras = [
-                `.${_camelcase(name.replace(/(^@[a-zA-Z]*\/)/g, ''))}rc`,
-                'package.json',
-                'package-lock.json',
-                'LICENSE',
-                'README.md',
-                '.env',
-                '.npmignore',
-                '.npmrc',
-            ].concat(
-                Object.keys(container).map(
-                    (key) => container[key].buildFile || 'Dockerfile'
-                )
-            );
             const dirs = ['src', 'test', 'infra'];
-            const extensions = ['js', 'json'].concat(staticFilePatterns);
+            const extensions = ['js'];
             const rootDir = project.rootDir.absolutePath;
 
-            return generateGlobPatterns(rootDir, dirs, extensions).concat(
-                extras.map((file) => _path.join(rootDir, file))
-            );
+            return generateGlobPatterns(rootDir, dirs, extensions);
         }
 
-        // List of all projects - they can all run without containers
-        const projectsWithoutContainer = getAllProjectOverrides().map(
-            ({ title, overrides }) => ({
-                title,
-                overrides: {
-                    ...overrides,
-                    'buildMetadata.container': undefined,
-                },
-            })
-        );
-
-        // Identify projects that can support containers
-        const projectsWithContainer = getSelectedProjectOverrides([
-            'cli',
-            'api',
-            'ui',
-            'container',
-        ]).map(({ title, overrides }) => ({
-            title: `${title} (with container)`,
-            overrides: {
-                ...overrides,
-                'buildMetadata.container': {
-                    default: {
-                        repo: 'repo1',
-                    },
-                    custom: {
-                        repo: 'repo2',
-                        buildFile: 'CustomBuildFile',
-                    },
-                },
-            },
-        }));
-
-        // Combine all project types and set default properties on the
-        // definition.
-        const projectOverrides = projectsWithoutContainer
-            .concat(projectsWithContainer)
-            .map(({ title, overrides }) => ({
-                title,
-                overrides: {
-                    ...overrides,
-                    'buildMetadata.staticFilePatterns': [],
-                    name: '@test/my-package',
-                },
-            }));
-
-        projectOverrides.forEach(({ title, overrides }) => {
+        getAllProjectOverrides().forEach(({ title, overrides }) => {
             describe(`Verify task (${title})`, () => {
                 it('should inititalize and set the appropriate gulp source files', async () => {
                     const { gulpMock, task, project } = await _createTask(
@@ -151,10 +84,8 @@ describe('[BuildJsTaskBuilder]', () => {
                 });
 
                 it('should include static file patters from project configuration', async () => {
-                    const staticFilePatterns = ['pat1', 'pat2'];
                     overrides = {
                         ...overrides,
-                        'buildMetadata.staticFilePatterns': staticFilePatterns,
                     };
                     const { gulpMock, task, project } = await _createTask(
                         overrides

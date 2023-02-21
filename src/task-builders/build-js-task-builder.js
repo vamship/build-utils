@@ -37,33 +37,12 @@ export class BuildJsTaskBuilder extends TaskBuilder {
 
         const { rootDir } = project;
         const dirs = ['src', 'test', 'infra'];
-        const extensions = ['js', 'json'].concat(
-            project.getStaticFilePatterns()
-        );
-        const containerBuildFiles = project
-            .getContainerTargets()
-            .map(
-                (target) =>
-                    project.getContainerDefinition(target).buildFile ||
-                    'Dockerfile'
-            );
-
-        const extras = [
-            project.configFileName,
-            'package-lock.json',
-            'package.json',
-            'LICENSE',
-            'README.md',
-            '.env',
-            '.npmignore',
-            '.npmrc',
-        ].concat(containerBuildFiles);
+        const extensions = ['js'];
 
         const paths = dirs
             .map((dir) => rootDir.getChild(dir))
             .map((dir) => extensions.map((ext) => dir.getAllFilesGlob(ext)))
-            .reduce((result, arr) => result.concat(arr), [])
-            .concat(extras.map((item) => rootDir.getFileGlob(item)));
+            .reduce((result, arr) => result.concat(arr), []);
 
         const task = () =>
             _gulp
