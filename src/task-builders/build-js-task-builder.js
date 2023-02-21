@@ -49,8 +49,12 @@ export class BuildJsTaskBuilder extends TaskBuilder {
             );
 
         const extras = [
-            '.mypackagerc',
+            project.configFileName,
+            'package-lock.json',
             'package.json',
+            'LICENSE',
+            'README.md',
+            '.env',
             '.npmignore',
             '.npmrc',
         ].concat(containerBuildFiles);

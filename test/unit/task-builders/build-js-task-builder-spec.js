@@ -3,6 +3,7 @@ import _sinonChai from 'sinon-chai';
 _chai.use(_sinonChai);
 
 import _path from 'path';
+import _camelcase from 'camelcase';
 
 import _esmock from 'esmock';
 import { Project } from '../../../src/project.js';
@@ -59,8 +60,12 @@ describe('[BuildJsTaskBuilder]', () => {
                 'buildMetadata.container': container = {},
             } = overrides;
             const extras = [
-                `.${name.replace(/(^@[a-zA-Z]*\/|-)/g, '')}rc`,
+                `.${_camelcase(name.replace(/(^@[a-zA-Z]*\/)/g, ''))}rc`,
                 'package.json',
+                'package-lock.json',
+                'LICENSE',
+                'README.md',
+                '.env',
                 '.npmignore',
                 '.npmrc',
             ].concat(
