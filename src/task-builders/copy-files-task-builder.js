@@ -21,7 +21,7 @@ export class CopyFilesTaskBuilder extends TaskBuilder {
     }
 
     /**
-     * Generates a gulp task to copy javascript files from source to build
+     * Generates a gulp task to copy common files from source to build
      * directories.
      *
      * @protected
