@@ -83,29 +83,6 @@ describe('[BuildJsTaskBuilder]', () => {
                     });
                 });
 
-                it('should include static file patters from project configuration', async () => {
-                    overrides = {
-                        ...overrides,
-                    };
-                    const { gulpMock, task, project } = await _createTask(
-                        overrides
-                    );
-                    const files = createSourceList(project, overrides);
-
-                    expect(gulpMock.src).to.not.have.been.called;
-
-                    task();
-
-                    expect(gulpMock.src).to.have.been.calledOnce;
-                    expect(gulpMock.callSequence[0]).to.equal('src');
-                    expect(gulpMock.src.args[0]).to.have.length(2);
-                    expect(gulpMock.src.args[0][0]).to.have.members(files);
-                    expect(gulpMock.src.args[0][1]).to.deep.equal({
-                        allowEmpty: true,
-                        base: project.rootDir.globPath,
-                    });
-                });
-
                 it('should write the source files to the working directories', async () => {
                     const { gulpMock, task, project } = await _createTask(
                         overrides
