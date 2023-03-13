@@ -52,6 +52,8 @@ export class CopyFilesTaskBuilder extends TaskBuilder {
             'package.json',
             'LICENSE',
             'README.md',
+            '_scripts/*',
+            'nginx.conf',
             '.env',
             '.npmignore',
             '.npmrc',

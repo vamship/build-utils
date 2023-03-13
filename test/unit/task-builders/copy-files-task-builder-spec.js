@@ -65,6 +65,8 @@ describe('[CopyFilesTaskBuilder]', () => {
                 'package-lock.json',
                 'LICENSE',
                 'README.md',
+                '_scripts/*',
+                'nginx.conf',
                 '.env',
                 '.npmignore',
                 '.npmrc',
