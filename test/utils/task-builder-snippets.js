@@ -15,13 +15,20 @@ import { Project } from '../../src/project.js';
  * into imported module.
  * @param {String} taskName The expected name of the task.
  * @param {String} taskDescription The expected description of the task.
+ * @param {Array} [ctorArgs=[]] Optional args to be passed to the task builder
+ * constructor
  */
 export function injectBuilderInitTests(
     importModule,
     taskName,
-    taskDescription
+    taskDescription,
+    ctorArgs
 ) {
-    describe('ctor()', () => {
+    if(!(ctorArgs instanceof Array)) {
+        ctorArgs = [];
+    }
+
+    describe(`ctor() ${JSON.stringify(ctorArgs)}`, () => {
         it('should invoke the super constructor with correct arguments', async () => {
             const superCtor = spy();
             const TaskBuilder = await importModule({
@@ -32,7 +39,7 @@ export function injectBuilderInitTests(
 
             expect(superCtor).not.to.have.been.called;
 
-            new TaskBuilder();
+            new TaskBuilder(...ctorArgs);
 
             expect(superCtor).to.have.been.calledOnceWithExactly(
                 taskName,
@@ -41,12 +48,12 @@ export function injectBuilderInitTests(
         });
     });
 
-    describe('_createTask()', () => {
+    describe(`_createTask() ${JSON.stringify(ctorArgs)}`, () => {
         getAllButObject({}).forEach((project) => {
             it(`should throw an error if invoked without valid project (value=${typeof project})`, async () => {
                 const TaskBuilder = await importModule();
                 const error = 'Invalid project (arg #1)';
-                const builder = new TaskBuilder();
+                const builder = new TaskBuilder(...ctorArgs);
                 const wrapper = () => builder._createTask(project);
 
                 expect(wrapper).to.throw(error);
@@ -55,7 +62,7 @@ export function injectBuilderInitTests(
 
         it('should return a function when invoked', async () => {
             const TaskBuilder = await importModule();
-            const builder = new TaskBuilder();
+            const builder = new TaskBuilder(...ctorArgs);
 
             const project = new Project(buildProjectDefinition());
             const task = builder._createTask(project);
