@@ -8,11 +8,7 @@ import _camelcase from 'camelcase';
 import { stub } from 'sinon';
 import _esmock from 'esmock';
 import { Project } from '../../../src/project.js';
-import {
-    getAllProjectOverrides,
-    getSelectedProjectOverrides,
-    generateGlobPatterns,
-} from '../../utils/data-generator.js';
+import { getAllProjectOverrides } from '../../utils/data-generator.js';
 import {
     buildProjectDefinition,
     createGulpMock,
@@ -63,14 +59,6 @@ describe('[BuildTsTaskBuilder]', () => {
                 project,
                 task: builder.buildTask(project),
             };
-        }
-
-        function createSourceList(project, overrides) {
-            const dirs = ['src', 'test', 'infra'];
-            const extensions = ['ts'];
-            const rootDir = project.rootDir.absolutePath;
-
-            return generateGlobPatterns(rootDir, dirs, extensions);
         }
 
         getAllProjectOverrides().forEach(({ title, overrides }) => {
@@ -125,7 +113,7 @@ describe('[BuildTsTaskBuilder]', () => {
                 });
 
                 it('should pipe the source files to the typescript compiler', async () => {
-                    const { gulpMock, gulpTypescriptMock, task, project } =
+                    const { gulpMock, gulpTypescriptMock, task } =
                         await _createTask(overrides);
 
                     expect(gulpMock.pipe).to.not.have.been.called;
