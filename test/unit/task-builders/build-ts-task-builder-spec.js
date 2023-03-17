@@ -8,7 +8,10 @@ import _camelcase from 'camelcase';
 import { stub } from 'sinon';
 import _esmock from 'esmock';
 import { Project } from '../../../src/project.js';
-import { getAllProjectOverrides } from '../../utils/data-generator.js';
+import {
+    getAllProjectOverrides,
+    generateGlobPatterns,
+} from '../../utils/data-generator.js';
 import {
     buildProjectDefinition,
     createGulpMock,
@@ -59,6 +62,14 @@ describe('[BuildTsTaskBuilder]', () => {
                 project,
                 task: builder.buildTask(project),
             };
+        }
+
+        function createSourceList(project) {
+            const dirs = ['src', 'test', 'infra'];
+            const extensions = ['ts'];
+            const rootDir = project.rootDir.absolutePath;
+
+            return generateGlobPatterns(rootDir, dirs, extensions);
         }
 
         getAllProjectOverrides().forEach(({ title, overrides }) => {
