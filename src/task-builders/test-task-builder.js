@@ -19,7 +19,7 @@ export class TestTaskBuilder extends TaskBuilder {
         if (['unit', 'api'].indexOf(testType) < 0) {
             throw new Error('Invalid testType (arg #1)');
         }
-        super('test', `Execute ${testType} tests`);
+        super(`test-${testType}`, `Execute ${testType} tests`);
 
         this._testType = testType;
     }
@@ -39,8 +39,19 @@ export class TestTaskBuilder extends TaskBuilder {
         }
         const mochaBin = project.rootDir.getFilePath('node_modules/.bin/mocha');
         const c8Bin = project.rootDir.getFilePath('node_modules/.bin/c8');
+        const jsRootDir =
+            project.language === 'ts'
+                ? project.rootDir.getChild('working')
+                : project.rootDir;
 
-        const task = () => _execa(c8Bin, [mochaBin], { stdio: 'inherit' });
+        const args = [
+            mochaBin,
+            '--no-config',
+            '--loader=esmock',
+            jsRootDir.getChild(`test/${this._testType}`).getAllFilesGlob('js'),
+        ];
+
+        const task = () => _execa(c8Bin, args, { stdio: 'inherit' });
         return task;
     }
 }

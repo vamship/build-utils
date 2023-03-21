@@ -43,7 +43,7 @@ describe('[TestTaskBuilder]', () => {
     ['unit', 'api'].forEach((testType) =>
         injectBuilderInitTests(
             _importModule,
-            'test',
+            `test-${testType}`,
             `Execute ${testType} tests`,
             [testType]
         )
@@ -88,11 +88,24 @@ describe('[TestTaskBuilder]', () => {
                             )
                         );
 
+                        const specPath = _path.join(
+                            project.rootDir.absolutePath,
+                            project.language === 'ts' ? 'working' : '',
+                            'test',
+                            testType,
+                            '**',
+                            '*.js'
+                        );
                         expect(execaMock).to.not.have.been.called;
                         task();
                         expect(execaMock).to.have.been.calledOnceWithExactly(
                             c8Bin,
-                            [mochaBin],
+                            [
+                                mochaBin,
+                                '--no-config',
+                                '--loader=esmock',
+                                specPath,
+                            ],
                             { stdio: 'inherit' }
                         );
                     });
