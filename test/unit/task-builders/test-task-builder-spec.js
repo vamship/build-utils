@@ -8,7 +8,10 @@ import _camelcase from 'camelcase';
 import { stub } from 'sinon';
 import _esmock from 'esmock';
 import { Project } from '../../../src/project.js';
-import { getAllButString, getAllProjectOverrides } from '../../utils/data-generator.js';
+import {
+    getAllButString,
+    getAllProjectOverrides,
+} from '../../utils/data-generator.js';
 import {
     buildProjectDefinition,
     createModuleImporter,

@@ -24,7 +24,7 @@ export function injectBuilderInitTests(
     taskDescription,
     ctorArgs
 ) {
-    if(!(ctorArgs instanceof Array)) {
+    if (!(ctorArgs instanceof Array)) {
         ctorArgs = [];
     }
 
