@@ -20,7 +20,7 @@ module.exports = (project, options) => {
     const rootDir = project.rootDir;
     const workingDir = rootDir.getChild('working');
 
-    const dirs = ['src', 'test'];
+    const dirs = ['test'];
     if (project.projectType === 'aws-microservice') {
         dirs.push('infra');
     }
