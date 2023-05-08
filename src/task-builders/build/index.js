@@ -31,19 +31,29 @@ module.exports = (project, options) => {
     let tasks;
 
     if (project.projectType !== 'ui') {
-        const jsBuild = require('./build-js');
-        tasks = [jsBuild(project, options)];
+        const tasks = [];
+
+        const jsBuildImpl = require('./build-js-impl'); // build JS implementation (src folder)
+        tasks.push(jsBuildImpl(project, options));
+
+        // build tests
+        const jsBuildTests = require('./build-js-tests'); // build JS implementation (tests folder)
+        tasks.push(jsBuildTests(project, options));
 
         if (project.hasTypescript) {
-            const tsBuild = require('./build-ts');
-            tasks.push(tsBuild(project, options));
+            const tsBuildImpl = require('./build-ts-impl'); // build TS implementation (src folder)
+            tasks.push(tsBuildImpl(project, options));
+
+            const tsBuildTests = require('./build-ts-tests'); // build TS implementation (tests folder)
+            tasks.push(tsBuildTests(project, option));
+
         } else if (project.hasExportedTypes) {
             const typesBuild = require('./build-types');
             tasks.push(typesBuild(project, options));
         }
     } else {
         const tsBuild = require('./build-ui');
-        tasks = [tsBuild(project, options)];
+        tasks.push(tsBuild(project, options));
     }
 
     task = _gulp.parallel(tasks);
