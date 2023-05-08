@@ -28,10 +28,9 @@ module.exports = (project, options) => {
     }
 
     let task;
-    let tasks;
+    let tasks = [];
 
     if (project.projectType !== 'ui') {
-        const tasks = [];
 
         const jsBuildImpl = require('./build-js-impl'); // build JS implementation (src folder)
         tasks.push(jsBuildImpl(project, options));
