@@ -51,12 +51,12 @@ module.exports = (project, options) => {
             .src(paths, { allowEmpty: true, base: rootDir.globPath })
             .pipe(_gulp.dest(workingDir.absolutePath));
 
-    task.displayName = 'build-js';
+    task.displayName = 'build-js-impl';
     task.description = 'Copy javascript files from source to build directory';
 
     if (watch) {
         const watchTask = () => _gulp.watch(paths, task);
-        watchTask.displayName = 'watch-build-js';
+        watchTask.displayName = 'watch-build-js-impl';
         watchTask.description =
             'Automatically copy javascript files to build directory on change';
 

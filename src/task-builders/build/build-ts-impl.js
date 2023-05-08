@@ -55,12 +55,12 @@ module.exports = (project, options) => {
 
     const task = _gulp.parallel([copyTask, buildTask]);
 
-    task.displayName = 'build-ts';
+    task.displayName = 'build-ts-impl';
     task.description = 'Build typescript source files to javascript files';
 
     if (watch) {
         const watchTask = () => _gulp.watch(paths, task);
-        watchTask.displayName = 'watch-build-ts';
+        watchTask.displayName = 'watch-build-ts-impl';
         watchTask.description =
             'Automatically build typescript files on change';
 
