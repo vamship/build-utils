@@ -277,4 +277,14 @@ export class Project {
         }
         return Object.assign({}, container);
     }
+
+    /**
+     * Returns a list of project enviornment variables that are not defined in
+     * the current execution environment.
+     *
+     * @return {Array} An array of missing environment variables.
+     */
+    getUndefinedEnvironmentVariables() {
+        return this._requiredEnv.filter((env) => !process.env[env]);
+    }
 }

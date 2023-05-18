@@ -775,4 +775,39 @@ describe('[Project]', () => {
             });
         });
     });
+
+    describe('getUndefinedEnvironmentVariables()', () => {
+        it('should return an empty array if no environment variables are required', () => {
+            const definition = buildProjectDefinition({
+                'buildMetadata.requiredEnv': [],
+            });
+            const project = new Project(definition);
+            const missingVars = project.getUndefinedEnvironmentVariables();
+
+            expect(missingVars).to.deep.equal([]);
+        });
+
+        it('should return the full list of required environment variables if none are defined', () => {
+            const requiredVars = ['FIRST_VAR', 'SECOND_VAR']
+            const definition = buildProjectDefinition({
+                'buildMetadata.requiredEnv': requiredVars,
+            });
+            const project = new Project(definition);
+            const missingVars = project.getUndefinedEnvironmentVariables();
+
+            expect(missingVars).to.deep.equal(requiredVars);
+        });
+
+        it('should return the just the variables missing from the environent', () => {
+            const requiredVars = ['FIRST_VAR', 'SECOND_VAR']
+            process.env.FIRST_VAR = 'foo';
+            const definition = buildProjectDefinition({
+                'buildMetadata.requiredEnv': requiredVars,
+            });
+            const project = new Project(definition);
+            const missingVars = project.getUndefinedEnvironmentVariables();
+
+            expect(missingVars).to.deep.equal(['SECOND_VAR']);
+        });
+    });
 });
