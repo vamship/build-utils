@@ -55,6 +55,7 @@ export function buildProjectDefinition(overrides) {
  */
 export function createGulpMock() {
     return [
+        { method: 'series', retValue: () => undefined },
         { method: 'src' },
         { method: 'pipe' },
         { method: 'dest', retValue: '_dest_ret_' },
