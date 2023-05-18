@@ -1,4 +1,3 @@
-import _delete from 'delete';
 import TaskBuilder from '../task-builder.js';
 import { Project } from '../project.js';
 import _gulp from 'gulp';
