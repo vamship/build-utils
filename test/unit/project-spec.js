@@ -36,7 +36,8 @@ describe('[Project]', () => {
                 it(`should throw an error if the project definition has an invalid description (value=${typeof description})`, () => {
                     const definition = buildProjectDefinition({ description });
                     const wrapper = () => new Project(definition);
-                    const error = /Schema validation failed \[.*description.*\]/;
+                    const error =
+                        /Schema validation failed \[.*description.*\]/;
 
                     expect(wrapper).to.throw(error);
                 });
@@ -799,7 +800,7 @@ describe('[Project]', () => {
         });
 
         it('should return the full list of required environment variables if none are defined', () => {
-            const requiredVars = ['FIRST_VAR', 'SECOND_VAR']
+            const requiredVars = ['FIRST_VAR', 'SECOND_VAR'];
             const definition = buildProjectDefinition({
                 'buildMetadata.requiredEnv': requiredVars,
             });
@@ -810,7 +811,7 @@ describe('[Project]', () => {
         });
 
         it('should return the just the variables missing from the environent', () => {
-            const requiredVars = ['FIRST_VAR', 'SECOND_VAR']
+            const requiredVars = ['FIRST_VAR', 'SECOND_VAR'];
             process.env.FIRST_VAR = 'foo';
             const definition = buildProjectDefinition({
                 'buildMetadata.requiredEnv': requiredVars,
