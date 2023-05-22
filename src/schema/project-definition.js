@@ -10,6 +10,11 @@ export default {
         name: { type: 'string', minLength: 1 },
 
         /**
+         * Project description
+         */
+        description: { type: 'string', minLength: 1 },
+
+        /**
          * Project version
          */
         version: { type: 'string', minLength: 1 },
@@ -127,5 +132,5 @@ export default {
             required: ['type', 'language'],
         },
     },
-    required: ['name', 'version', 'buildMetadata'],
+    required: ['name', 'description', 'version', 'buildMetadata'],
 };

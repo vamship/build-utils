@@ -40,6 +40,7 @@ export class Project {
         const {
             name,
             version,
+            description,
             buildMetadata: {
                 type,
                 language,
@@ -65,6 +66,7 @@ export class Project {
         }
 
         this._name = name;
+        this._description = description;
         this._unscopedName = name.replace(/^@[^/]*\//, '');
         this._kebabCasedName = name.replace(/^@/, '').replace(/\//g, '-');
         this._version = version;
@@ -130,6 +132,15 @@ export class Project {
      */
     get name() {
         return this._name;
+    }
+
+    /**
+     * Gets the description of the project.
+     *
+     * @returns {String} The project description.
+     */
+    get description() {
+        return this._description;
     }
 
     /**

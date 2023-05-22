@@ -32,6 +32,16 @@ describe('[Project]', () => {
                 });
             });
 
+            getAllButString('').forEach((description) => {
+                it(`should throw an error if the project definition has an invalid description (value=${typeof description})`, () => {
+                    const definition = buildProjectDefinition({ description });
+                    const wrapper = () => new Project(definition);
+                    const error = /Schema validation failed \[.*description.*\]/;
+
+                    expect(wrapper).to.throw(error);
+                });
+            });
+
             getAllButString('', 'abc').forEach((version) => {
                 it(`should throw an error if invoked without a valid version (value=${typeof version})`, () => {
                     const definition = buildProjectDefinition({ version });
@@ -321,6 +331,7 @@ describe('[Project]', () => {
     describe('[properties]', () => {
         [
             ['name', 'test-project'],
+            ['description', 'Test project description'],
             ['version', '1.2.3'],
             ['buildMetadata.language', 'ts'],
             ['buildMetadata.type', 'cli'],

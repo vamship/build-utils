@@ -18,6 +18,7 @@ export function buildProjectDefinition(overrides) {
     overrides = overrides || [];
     const definition = {
         name: 'sample-project',
+        description: 'Sample project description',
         version: '1.0.0',
         buildMetadata: {
             type: 'lib',
