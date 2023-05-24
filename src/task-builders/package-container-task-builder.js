@@ -48,6 +48,15 @@ export class PackageContainerTaskBuilder extends TaskBuilder {
             throw new Error('Invalid project (arg #1)');
         }
 
+        const undefinedVars = project.getUndefinedEnvironmentVariables();
+        if (undefinedVars.length > 0) {
+            throw new Error(
+                `Missing required environment variables: [${undefinedVars.join(
+                    ', '
+                )}]`
+            );
+        }
+
         const jsDir =
             project.language === 'js'
                 ? project.rootDir
@@ -56,7 +65,7 @@ export class PackageContainerTaskBuilder extends TaskBuilder {
 
         const repo =
             typeof this._repo === 'undefined' ? definition.repo : this._repo;
-        const buildFile = definition.buildFile;
+        const { buildFile, buildArgs } = definition;
 
         const dockerBin = 'docker';
         const args = [
@@ -77,6 +86,14 @@ export class PackageContainerTaskBuilder extends TaskBuilder {
             '--build-arg',
             `BUILD_TIMESTAMP=${Date.now()}`,
         ];
+
+        Object.keys(buildArgs).forEach((key) => {
+            args.push('--build-arg');
+            args.push(`${key}=${buildArgs[key]}`);
+        });
+
+        args.push('.');
+
         const task = () =>
             _execa(dockerBin, args, {
                 stdio: 'inherit',

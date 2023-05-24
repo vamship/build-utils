@@ -30,6 +30,13 @@ describe('[PackageContainerTaskBuilder]', () => {
         'PackageContainerTaskBuilder'
     );
 
+    beforeEach(() => {
+        // Set environment variables so that validation against the default
+        // build definition does not fail.
+        process.env.ENV_1 = 'foo';
+        process.env.ENV_2 = 'foo';
+    });
+
     describe('ctor() <repo uri>', () => {
         getAllButString('').forEach((target) => {
             it(`should throw an error if invoked without a valid build target (value=${target})`, async () => {
@@ -61,16 +68,62 @@ describe('[PackageContainerTaskBuilder]', () => {
         });
     });
 
-    [undefined, 'custom-repo'].forEach((repo) =>
+    [undefined, 'custom-repo'].forEach((repo) => {
         injectBuilderInitTests(
             _importModule,
             'package-container',
             `Package a project for publishing to a container registry`,
             ['myBuild', repo] // myBuild is the name of the target populated by default (see object-builder.js)
-        )
-    );
+        );
+    });
+
+    getAllProjectOverrides().forEach(({ title, overrides }) => {
+        describe(`[Task Build] - (${title})`, () => {
+            it('should verify that all required build arguments exist in the environment', async () => {
+                const PackageContainerTaskBuilder = await _importModule();
+                const definition = buildProjectDefinition();
+                const project = new Project(definition);
+                const checkStub = stub(
+                    project,
+                    'getUndefinedEnvironmentVariables'
+                ).returns([]);
+
+                const builder = new PackageContainerTaskBuilder('myBuild'); // myBuild is the name of the target populated by default (see object-builder.js)
+
+                expect(checkStub).to.not.have.been.called;
+
+                builder.buildTask(project);
+
+                expect(checkStub).to.have.been.calledOnceWith();
+            });
+
+            it('should throw an error if any required build arguments are missing', async () => {
+                const PackageContainerTaskBuilder = await _importModule();
+                const definition = buildProjectDefinition();
+                const project = new Project(definition);
+                const checkStub = stub(
+                    project,
+                    'getUndefinedEnvironmentVariables'
+                ).returns(['foo', 'bar']);
+
+                const builder = new PackageContainerTaskBuilder('myBuild'); // myBuild is the name of the target populated by default (see object-builder.js)
+
+                const wrapper = () => builder.buildTask(project);
+
+                expect(wrapper).to.throw(
+                    `Missing required environment variables: [foo, bar]`
+                );
+            });
+        });
+    });
 
     describe('[task]', () => {
+        const target = 'customTarget';
+        const repo = 'custom-repo';
+        const description = 'Custom project description';
+        const buildFile = 'custom-build-file';
+        const STD_ARG_COUNT = 17;
+
         async function _createTask(target, repo, definitionOverrides) {
             const execaModuleMock = {
                 execa: stub().callsFake(() => ({
@@ -83,6 +136,7 @@ describe('[PackageContainerTaskBuilder]', () => {
             const definition = buildProjectDefinition(definitionOverrides);
             const project = new Project(definition);
             const builder = new PackageContainerTaskBuilder(target, repo);
+
             return {
                 project,
                 execaModuleMock,
@@ -91,39 +145,66 @@ describe('[PackageContainerTaskBuilder]', () => {
         }
 
         ['overridden-repo', undefined].forEach((repoOverride) => {
-            getAllProjectOverrides().forEach(({ title, overrides }) => {
+            const expectedRepo =
+                typeof repoOverride === 'undefined' ? repo : repoOverride;
+
+            getAllProjectOverrides(1).forEach(({ title, overrides }) => {
                 const language = overrides['buildMetadata.language'];
                 const jsRootDir = language == 'js' ? '' : `working${_path.sep}`;
+                overrides = {
+                    ...overrides,
+                    description,
+                    'buildMetadata.container': {
+                        [target]: {
+                            repo,
+                            buildFile,
+                            buildArgs: {},
+                        },
+                    },
+                };
+
+                function _verifyCommonBuildArgs(project, args) {
+                    const startTime = Date.now();
+
+                    let argCount = 0;
+                    [
+                        'build',
+                        '--rm',
+                        '--file',
+                        buildFile,
+                        '--tag',
+                        `${expectedRepo}:latest`,
+                        '--build-arg',
+                        `APP_NAME=${project.unscopedName}`,
+                        '--build-arg',
+                        `APP_VERSION=${project.version}`,
+                        '--build-arg',
+                        `APP_DESCRIPTION='${description}'`,
+                        '--build-arg',
+                        `CONFIG_FILE_NAME=${project.configFileName}`,
+                        '--build-arg',
+                    ].forEach((expectedArg, index) => {
+                        expect(args[index]).to.equal(expectedArg);
+                        argCount++;
+                    });
+
+                    // Check for build timestamp arg within a range (because
+                    // of timing differences between the test case and
+                    // actual execution)
+                    const [argName, argValue] = args[argCount].split('=');
+
+                    expect(argName).to.equal('BUILD_TIMESTAMP');
+
+                    expect(parseInt(argValue)).to.be.within(
+                        startTime - 100,
+                        startTime + 100
+                    );
+
+                    expect(args[args.length - 1]).to.equal('.');
+                }
 
                 describe(`Verify container image build - (${title})`, () => {
-                    it('should invoke docker to package the project', async () => {
-                        const target = 'customTarget';
-                        const repo = 'custom-repo';
-                        const description = 'Custom project description';
-                        const buildFile = 'custom-build-file';
-                        const buildArgs = {
-                            arg1: 'value1',
-                            arg2: 'value2',
-                            arg3: 'value3',
-                        };
-                        overrides = {
-                            ...overrides,
-                            description,
-                            'buildMetadata.container': {
-                                [target]: {
-                                    repo,
-                                    buildFile,
-                                    buildArgs: {
-                                        ...buildArgs,
-                                    },
-                                },
-                            },
-                        };
-
-                        const expectedRepo =
-                            typeof repoOverride === 'undefined'
-                                ? repo
-                                : repoOverride;
+                    it(`should invoke docker to package the project (no build args)`, async () => {
                         const {
                             execaModuleMock: { execa: execaMock },
                             task,
@@ -133,44 +214,19 @@ describe('[PackageContainerTaskBuilder]', () => {
 
                         expect(execaMock).to.not.have.been.called;
 
-                        const startTime = Date.now();
                         task();
 
                         expect(execaMock).to.have.been.calledOnce;
+
                         const args = execaMock.getCall(0).args;
 
                         expect(args[0]).to.equal(dockerBin);
 
-                        expect(args[1]).to.be.an('array').that.has.lengthOf(16);
-                        [
-                            'build',
-                            '--rm',
-                            '--file',
-                            buildFile,
-                            '--tag',
-                            `${expectedRepo}:latest`,
-                            '--build-arg',
-                            `APP_NAME=${project.unscopedName}`,
-                            '--build-arg',
-                            `APP_VERSION=${project.version}`,
-                            '--build-arg',
-                            `APP_DESCRIPTION='${description}'`,
-                            '--build-arg',
-                            `CONFIG_FILE_NAME=${project.configFileName}`,
-                            '--build-arg',
-                        ].forEach((expectedArg, index) => {
-                            expect(args[1][index]).to.equal(expectedArg);
-                        });
+                        expect(args[1])
+                            .to.be.an('array')
+                            .that.has.lengthOf(STD_ARG_COUNT);
 
-                        // Check for build timestamp arg within a range (because
-                        // of timing differences between the test case and
-                        // actual execution)
-                        const [argName, argValue] = args[1][15].split('=');
-                        expect(argName).to.equal('BUILD_TIMESTAMP');
-                        expect(parseInt(argValue)).to.be.within(
-                            startTime - 100,
-                            startTime + 100
-                        );
+                        _verifyCommonBuildArgs(project, args[1]);
 
                         expect(args[2]).to.deep.equal({
                             stdio: 'inherit',
@@ -178,6 +234,69 @@ describe('[PackageContainerTaskBuilder]', () => {
                                 project.rootDir.absolutePath,
                                 jsRootDir
                             ),
+                        });
+                    });
+
+                    [
+                        { arg1: 'value1' },
+                        { arg1: 'value1', arg2: 'value2' },
+                    ].forEach((buildArgs) => {
+                        const customArgCount =
+                            Object.keys(buildArgs).length * 2;
+                        const buildArgList = Object.entries(buildArgs);
+
+                        it(`should invoke docker to package the project (build arg count = ${
+                            customArgCount / 2
+                        })`, async () => {
+                            const {
+                                execaModuleMock: { execa: execaMock },
+                                task,
+                                project,
+                            } = await _createTask(target, repoOverride, {
+                                ...overrides,
+                                [`buildMetadata.container.${target}.buildArgs`]:
+                                    buildArgs,
+                            });
+                            const buildArgCount =
+                                STD_ARG_COUNT + customArgCount;
+                            const dockerBin = 'docker';
+
+                            expect(execaMock).to.not.have.been.called;
+
+                            task();
+
+                            expect(execaMock).to.have.been.calledOnce;
+                            const args = execaMock.getCall(0).args;
+
+                            expect(args[0]).to.equal(dockerBin);
+
+                            expect(args[1])
+                                .to.be.an('array')
+                                .that.has.lengthOf(buildArgCount);
+
+                            _verifyCommonBuildArgs(project, args[1]);
+
+                            buildArgList.forEach((arg, index) => {
+                                const [expectedArg, expectedValue] = arg;
+                                const offsetIndex =
+                                    index * 2 + STD_ARG_COUNT - 1;
+
+                                expect(args[1][offsetIndex]).to.equal(
+                                    '--build-arg'
+                                );
+
+                                expect(args[1][offsetIndex + 1]).to.equal(
+                                    `${expectedArg}=${expectedValue}`
+                                );
+                            });
+
+                            expect(args[2]).to.deep.equal({
+                                stdio: 'inherit',
+                                cwd: _path.join(
+                                    project.rootDir.absolutePath,
+                                    jsRootDir
+                                ),
+                            });
                         });
                     });
                 });
