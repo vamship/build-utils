@@ -167,7 +167,14 @@ export function getSelectedProjectOverrides(projectTypes, maxItems) {
 export function generateGlobPatterns(basePath, dirs, extensions) {
     return dirs
         .map((dir) =>
-            extensions.map((ext) => _path.join(basePath, dir, '**', `*.${ext}`))
+            extensions.map((ext) =>
+                _path.join(
+                    basePath,
+                    dir,
+                    '**',
+                    ext.length > 0 ? `*.${ext}` : '*'
+                )
+            )
         )
         .reduce((result, item) => result.concat(item), []);
 }
