@@ -26,7 +26,7 @@ export function buildProjectDefinition(overrides) {
             requiredEnv: ['ENV_1', 'ENV_2'],
             aws: {
                 stacks: {
-                    mystack: 'foo',
+                    myStack: 'my-stack',
                 },
             },
             staticFilePatterns: ['foo'],
