@@ -5,7 +5,6 @@ import { Project } from '../project.js';
 import { execa as _execa } from 'execa';
 import { config as _dotenvConfig } from 'dotenv';
 import _dotenvExpand from 'dotenv-expand';
-import _path from 'path';
 
 /**
  * Builder function that can be used to generate a gulp task to publish a CDK
