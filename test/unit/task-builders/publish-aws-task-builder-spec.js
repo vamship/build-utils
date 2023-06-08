@@ -30,7 +30,7 @@ describe('[PublishAwsTaskBuilder]', () => {
         'PublishAwsTaskBuilder'
     );
 
-    xdescribe('ctor() <target, repo uri>', () => {
+    describe('ctor() <target, repo uri>', () => {
         getAllButString('').forEach((target) => {
             it(`should throw an error if invoked without a valid target (value=${target})`, async () => {
                 const TaskBuilder = await _importModule();
