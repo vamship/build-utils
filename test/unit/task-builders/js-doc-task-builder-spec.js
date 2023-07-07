@@ -112,7 +112,7 @@ describe('[JsDocTaskBuilder]', () => {
                                 project.name,
                                 project.version
                             ),
-                            template: 'node_modules/docdash'
+                            template: 'node_modules/docdash',
                         },
                     });
 
