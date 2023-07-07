@@ -3,8 +3,6 @@
 import TaskBuilder from '../task-builder.js';
 import { Project } from '../project.js';
 import { execa as _execa } from 'execa';
-import { config as _dotenvConfig } from 'dotenv';
-import _dotenvExpand from 'dotenv-expand';
 import _gulp from 'gulp';
 
 /**
@@ -53,11 +51,6 @@ export class PublishContainerTaskBuilder extends TaskBuilder {
         }
 
         const definition = project.getContainerDefinition(this._target);
-        const infraDir = project.rootDir.getChild('infra');
-        const jsDir =
-            project.language === 'js'
-                ? project.rootDir
-                : project.rootDir.getChild('working');
 
         const tagTask = () =>
             _execa('docker', ['tag', `${definition.name}:${this._tag}`], {
