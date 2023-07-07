@@ -17,20 +17,20 @@ import {
 } from '../../utils/object-builder.js';
 import { injectBuilderInitTests } from '../../utils/task-builder-snippets.js';
 
-describe('[JsDocTaskBuilder]', () => {
+describe('[DocsJsTaskBuilder]', () => {
     const _importModule = createModuleImporter(
-        'src/task-builders/js-doc-task-builder.js',
+        'src/task-builders/docs-js-task-builder.js',
         {
             gulpMock: 'gulp',
             gulpJsDocMock: 'gulp-jsdoc3',
             taskBuilderMock: 'src/task-builder.js',
         },
-        'JsDocTaskBuilder'
+        'DocsJsTaskBuilder'
     );
 
     injectBuilderInitTests(
         _importModule,
-        'js-doc',
+        'docs-js',
         'Generates documentation from code comments in javascript files'
     );
 
@@ -41,14 +41,14 @@ describe('[JsDocTaskBuilder]', () => {
             }));
             const gulpMock = createGulpMock();
 
-            const JsDocTaskBuilder = await _importModule({
+            const DocsJsTaskBuilder = await _importModule({
                 gulpMock,
                 gulpJsDocMock,
             });
 
             const definition = buildProjectDefinition(definitionOverrides);
             const project = new Project(definition);
-            const builder = new JsDocTaskBuilder();
+            const builder = new DocsJsTaskBuilder();
 
             return {
                 gulpMock,

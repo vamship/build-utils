@@ -17,20 +17,20 @@ import {
 } from '../../utils/object-builder.js';
 import { injectBuilderInitTests } from '../../utils/task-builder-snippets.js';
 
-describe('[TsDocTaskBuilder]', () => {
+describe('[DocsTsTaskBuilder]', () => {
     const _importModule = createModuleImporter(
-        'src/task-builders/ts-doc-task-builder.js',
+        'src/task-builders/docs-ts-task-builder.js',
         {
             gulpMock: 'gulp',
             gulpTypeDocMock: 'gulp-typedoc',
             taskBuilderMock: 'src/task-builder.js',
         },
-        'TsDocTaskBuilder'
+        'DocsTsTaskBuilder'
     );
 
     injectBuilderInitTests(
         _importModule,
-        'ts-doc',
+        'docs-ts',
         'Generates documentation from code comments in typescript files'
     );
 
@@ -41,14 +41,14 @@ describe('[TsDocTaskBuilder]', () => {
             }));
             const gulpMock = createGulpMock();
 
-            const TsDocTaskBuilder = await _importModule({
+            const DocsTsTaskBuilder = await _importModule({
                 gulpMock,
                 gulpTypeDocMock,
             });
 
             const definition = buildProjectDefinition(definitionOverrides);
             const project = new Project(definition);
-            const builder = new TsDocTaskBuilder();
+            const builder = new DocsTsTaskBuilder();
 
             return {
                 gulpMock,

@@ -1,22 +1,22 @@
 import _path from 'path';
 import _gulp from 'gulp';
-import _gulpJsdoc from 'gulp-jsdoc3';
+import _gulpTypedoc from 'gulp-typedoc';
 
 import TaskBuilder from '../task-builder.js';
 import { Project } from '../project.js';
 
 /**
  * Builder that can be used to generate a gulp task to generate documentation
- * from code comments in javascript files.
+ * from code comments in typescript files.
  */
-export class JsDocTaskBuilder extends TaskBuilder {
+export class DocsTsTaskBuilder extends TaskBuilder {
     /**
      * Creates a new task builder.
      */
     constructor() {
         super(
-            'js-doc',
-            'Generates documentation from code comments in javascript files'
+            'docs-ts',
+            'Generates documentation from code comments in typescript files'
         );
     }
 
@@ -39,15 +39,12 @@ export class JsDocTaskBuilder extends TaskBuilder {
         const docsDir = rootDir.getChild('docs');
 
         const dirs = ['src'];
-        const extensions = ['js'];
+        const extensions = ['ts'];
         const options = {
-            opts: {
-                readme: rootDir.getFilePath('README.md'),
-                destination: docsDir.getFilePath(
-                    `${name}${_path.sep}${version}`
-                ),
-                template: _path.join('node_modules', 'docdash'),
-            },
+            name: `${project.name} Documentation`,
+            disableOutputCheck: true,
+            readme: rootDir.getFilePath('README.md'),
+            out: docsDir.getFilePath(`${name}${_path.sep}${version}`),
         };
 
         const paths = dirs
@@ -61,7 +58,7 @@ export class JsDocTaskBuilder extends TaskBuilder {
                     allowEmpty: true,
                     base: project.rootDir.globPath,
                 })
-                .pipe(_gulpJsdoc(options));
+                .pipe(_gulpTypedoc(options));
         return task;
     }
 }
