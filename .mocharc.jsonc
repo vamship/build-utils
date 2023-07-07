@@ -1,10 +1,7 @@
 {
     "watch-files": ["src/**/*.js", "test/**/*.js"],
     "spec": [
-        "test/**/project2-spec.js",
-        "test/**/directory-spec.js",
-        "test/**/task-builder-spec.js",
-        "test/**/clean-task-builder-spec.js"
+        "test/**/*.js"
     ],
     "loader": ["esmock"],
     "parallel": true
