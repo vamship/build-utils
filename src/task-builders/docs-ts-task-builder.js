@@ -1,6 +1,5 @@
 import _path from 'path';
-import _gulp from 'gulp';
-import _gulpTypedoc from 'gulp-typedoc';
+import { execa as _execa } from 'execa';
 
 import TaskBuilder from '../task-builder.js';
 import { Project } from '../project.js';
@@ -36,29 +35,17 @@ export class DocsTsTaskBuilder extends TaskBuilder {
         }
 
         const { rootDir, name, version } = project;
-        const docsDir = rootDir.getChild('docs');
-
-        const dirs = ['src'];
-        const extensions = ['ts'];
-        const options = {
-            name: `${project.name} Documentation`,
-            disableOutputCheck: true,
-            readme: rootDir.getFilePath('README.md'),
-            out: docsDir.getFilePath(`${name}${_path.sep}${version}`),
-        };
-
-        const paths = dirs
-            .map((dir) => project.rootDir.getChild(dir))
-            .map((dir) => extensions.map((ext) => dir.getAllFilesGlob(ext)))
-            .reduce((result, arr) => result.concat(arr), []);
+        const docsDir = rootDir.getChild('docs').getFilePath(project.version);
+        const srcDir = rootDir.getChild('src');
 
         const task = () =>
-            _gulp
-                .src(paths, {
-                    allowEmpty: true,
-                    base: project.rootDir.globPath,
-                })
-                .pipe(_gulpTypedoc(options));
+            _execa(
+                'typedoc',
+                ['--out', docsDir, srcDir.absolutePath],
+                {
+                    stdio: 'inherit',
+                }
+            );
         return task;
     }
 }

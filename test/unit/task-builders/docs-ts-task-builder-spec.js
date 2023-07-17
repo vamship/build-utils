@@ -22,7 +22,7 @@ describe('[DocsTsTaskBuilder]', () => {
         'src/task-builders/docs-ts-task-builder.js',
         {
             gulpMock: 'gulp',
-            gulpTypeDocMock: 'gulp-typedoc',
+            execaModuleMock: 'execa',
             taskBuilderMock: 'src/task-builder.js',
         },
         'DocsTsTaskBuilder'
@@ -36,14 +36,13 @@ describe('[DocsTsTaskBuilder]', () => {
 
     describe('[task]', () => {
         async function _createTask(definitionOverrides) {
-            const gulpTypeDocMock = stub().callsFake(() => ({
-                _source: '_typeodc_ret_',
-            }));
-            const gulpMock = createGulpMock();
-
+            const execaModuleMock = {
+                execa: stub().callsFake(() => ({
+                    source: '_execa_ret_',
+                })),
+            };
             const DocsTsTaskBuilder = await _importModule({
-                gulpMock,
-                gulpTypeDocMock,
+                execaModuleMock,
             });
 
             const definition = buildProjectDefinition(definitionOverrides);
@@ -51,8 +50,7 @@ describe('[DocsTsTaskBuilder]', () => {
             const builder = new DocsTsTaskBuilder();
 
             return {
-                gulpMock,
-                gulpTypeDocMock,
+                execaModuleMock,
                 project,
                 task: builder.buildTask(project),
             };
@@ -68,60 +66,46 @@ describe('[DocsTsTaskBuilder]', () => {
 
         getAllProjectOverrides().forEach(({ title, overrides }) => {
             describe(`Verify task (${title})`, () => {
-                it('should inititalize and set the appropriate gulp source files', async () => {
-                    const { gulpMock, task, project } = await _createTask(
-                        overrides
-                    );
-                    const files = createSourceList(project, overrides);
-
-                    expect(gulpMock.src).to.not.have.been.called;
-
-                    task();
-
-                    expect(gulpMock.src).to.have.been.calledOnce;
-                    expect(gulpMock.callSequence[0]).to.equal('src');
-
-                    expect(gulpMock.src.args[0]).to.have.length(2);
-                    expect(gulpMock.src.args[0][0]).to.have.members(files);
-                    expect(gulpMock.src.args[0][1]).to.deep.equal({
-                        allowEmpty: true,
-                        base: project.rootDir.globPath,
-                    });
-                });
-
                 it('should pipe the source files to the document generator to extract docs', async () => {
-                    const { gulpMock, task, gulpTypeDocMock, project } =
-                        await _createTask(overrides);
-
-                    expect(gulpMock.pipe).to.not.have.been.called;
-                    expect(gulpTypeDocMock).to.not.have.been.called;
-
-                    task();
-
-                    expect(gulpTypeDocMock).to.have.been.calledOnce;
-                    expect(gulpTypeDocMock.args[0]).to.have.length(1);
-                    expect(gulpTypeDocMock.args[0][0]).to.deep.equal({
-                        name: `${project.name} Documentation`,
-                        disableOutputCheck: true,
-                        readme: _path.join(
-                            project.rootDir.absolutePath,
-                            'README.md'
-                        ),
-                        out: _path.join(
+                    const {
+                        task,
+                        execaModuleMock: { execa: execaMock },
+                        project,
+                    } = await _createTask(overrides);
+                    const typedocBin = 'typedoc';
+                    const expectedArgs = [
+                        '--out',
+                        _path.join(
                             project.rootDir.absolutePath,
                             'docs',
-                            project.name,
                             project.version
                         ),
+                        _path.join(project.rootDir.absolutePath, 'src') +
+                            _path.sep,
+                    ];
+
+                    expect(execaMock).to.not.have.been.called;
+
+                    task();
+
+                    expect(execaMock).to.have.been.calledOnce;
+                    expect(execaMock.args[0]).to.have.lengthOf(3);
+
+                    // First arg
+                    expect(execaMock.args[0][0]).to.equal(typedocBin);
+
+                    // Second arg
+                    expect(execaMock.args[0][1])
+                        .to.be.an('array')
+                        .and.to.have.length(expectedArgs.length);
+                    expectedArgs.forEach((arg, index) => {
+                        expect(execaMock.args[0][1][index]).to.equal(arg);
                     });
 
-                    expect(gulpMock.pipe).to.have.been.called;
-                    expect(gulpMock.callSequence[1]).to.equal('pipe');
-
-                    expect(gulpMock.pipe.args[0]).to.have.length(1);
-                    expect(gulpMock.pipe.args[0][0]).to.equal(
-                        gulpTypeDocMock.returnValues[0]
-                    );
+                    // Third arg
+                    expect(execaMock.args[0][2]).to.deep.equal({
+                        stdio: 'inherit',
+                    });
                 });
             });
         });
