@@ -47,12 +47,9 @@ export class PackageNpmTaskBuilder extends TaskBuilder {
                 cwd: jsDir.absolutePath,
             });
 
-        const copyTask = () => {
+        const copyTask = () =>
             _gulp.src(srcPath).pipe(_gulp.dest(distDir.absolutePath));
-        };
-        const deleteTask = () => {
-            _delete([srcPath]);
-        };
+        const deleteTask = () => _delete([srcPath]);
 
         const task = _gulp.series([packTask, copyTask, deleteTask]);
         return task;
