@@ -5,17 +5,13 @@ _chai.use(_sinonChai);
 import { stub } from 'sinon';
 import TaskFactory from '../../src/task-factory.js';
 import { Project } from '../../src/project.js';
-import {
-    getAllButObject,
-    getAllProjectOverrides,
-} from '../utils/data-generator.js';
+import { getAllButObject } from '../utils/data-generator.js';
 import { buildProjectDefinition } from '../utils/object-builder.js';
 
 describe('[TaskFactory]', () => {
     describe('ctor()', () => {
         getAllButObject({}).forEach((project) => {
             it(`should throw an error if invoked without a valid project (value=${typeof project})`, () => {
-                const description = 'some task';
                 const wrapper = () => new TaskFactory(project);
                 const error = 'Invalid project (arg #1)';
 

@@ -1,4 +1,3 @@
-import _path from 'path';
 import { execa as _execa } from 'execa';
 
 import TaskBuilder from '../task-builder.js';
@@ -34,18 +33,14 @@ export class DocsTsTaskBuilder extends TaskBuilder {
             throw new Error('Invalid project (arg #1)');
         }
 
-        const { rootDir, name, version } = project;
+        const { rootDir } = project;
         const docsDir = rootDir.getChild('docs').getFilePath(project.version);
         const srcDir = rootDir.getChild('src');
 
         const task = () =>
-            _execa(
-                'typedoc',
-                ['--out', docsDir, srcDir.absolutePath],
-                {
-                    stdio: 'inherit',
-                }
-            );
+            _execa('typedoc', ['--out', docsDir, srcDir.absolutePath], {
+                stdio: 'inherit',
+            });
         return task;
     }
 }
