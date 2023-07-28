@@ -48,6 +48,22 @@ export function getAllButArray(...extras) {
 
 /**
  * Generates an array of sample values of different types - everything except a
+ * boolean.
+ *
+ * @param {Array} extras An array of extra values to append to the original
+ * list.
+ *
+ * @returns {Array} A list of values that contain everything except a boolean,
+ * concatenated with the extras.
+ */
+export function getAllButBoolean(...extras) {
+    return [undefined, null, 123, 'abc', {}, [], () => 0].concat(
+        extras || []
+    );
+}
+
+/**
+ * Generates an array of sample values of different types - everything except a
  * function.
  *
  * @param {Array} extras An array of extra values to append to the original
