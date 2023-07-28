@@ -27,7 +27,7 @@ export class PublishAwsTaskBuilder extends TaskBuilder {
         if (typeof environment !== 'string' || environment.length === 0) {
             throw new Error('Invalid environment (arg #2)');
         }
-        if(typeof requireApproval !== 'boolean') {
+        if (typeof requireApproval !== 'boolean') {
             throw new Error('Invalid requireApproval (arg #3)');
         }
         super('publish-aws', `Publish a CDK project to AWS`);

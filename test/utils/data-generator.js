@@ -57,9 +57,7 @@ export function getAllButArray(...extras) {
  * concatenated with the extras.
  */
 export function getAllButBoolean(...extras) {
-    return [undefined, null, 123, 'abc', {}, [], () => 0].concat(
-        extras || []
-    );
+    return [undefined, null, 123, 'abc', {}, [], () => 0].concat(extras || []);
 }
 
 /**
