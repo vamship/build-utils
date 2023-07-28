@@ -15,14 +15,26 @@ export class PublishAwsTaskBuilder extends TaskBuilder {
      * Creates a new task builder.
      *
      * @param {String} target The name of the CDK stack target
+     * @param {String} environment The name of the environment to use for
+     * sourcing environment variables.
+     * @param {Boolean} requireApproval A flag that indicates whether or not the
+     * publish task requires interactive approval from the user.
      */
-    constructor(target) {
+    constructor(target, environment, requireApproval) {
         if (typeof target !== 'string' || target.length === 0) {
             throw new Error('Invalid target (arg #1)');
+        }
+        if (typeof environment !== 'string' || environment.length === 0) {
+            throw new Error('Invalid environment (arg #2)');
+        }
+        if(typeof requireApproval !== 'boolean') {
+            throw new Error('Invalid requireApproval (arg #3)');
         }
         super('publish-aws', `Publish a CDK project to AWS`);
 
         this._target = target;
+        this._environment = environment;
+        this._requireApproval = requireApproval;
     }
 
     /**
@@ -47,7 +59,7 @@ export class PublishAwsTaskBuilder extends TaskBuilder {
                 : project.rootDir.getChild('working');
 
         const task = () => {
-            [`.env.${process.env.INFRA_ENV}`, '.env']
+            [`.env.${this._environment}`, '.env']
                 .map((envFile) => infraDir.getFileGlob(envFile))
                 .forEach((envFile) => {
                     _dotenvExpand(_dotenvConfig(envFile));
@@ -70,7 +82,7 @@ export class PublishAwsTaskBuilder extends TaskBuilder {
                 jsDir.getChild('infra').getFilePath('index'),
             ];
 
-            if (process.env.INFRA_NO_PROMPT === 'true') {
+            if (this._requireApproval) {
                 args.splice(1, 0, '--require-approval=never');
             }
 

@@ -10,6 +10,7 @@ import _esmock from 'esmock';
 import { Project } from '../../../src/project.js';
 import {
     getAllButString,
+    getAllButBoolean,
     getAllProjectOverrides,
 } from '../../utils/data-generator.js';
 import {
@@ -30,13 +31,41 @@ describe('[PublishAwsTaskBuilder]', () => {
         'PublishAwsTaskBuilder'
     );
 
-    describe('ctor() <target, repo uri>', () => {
+    describe('ctor() <target, env>', () => {
         getAllButString('').forEach((target) => {
             it(`should throw an error if invoked without a valid target (value=${target})`, async () => {
                 const TaskBuilder = await _importModule();
                 const error = 'Invalid target (arg #1)';
-                const repo = undefined;
-                const wrapper = () => new TaskBuilder(target, repo);
+                const requireApproval = false;
+                const environment = 'infra';
+                const wrapper = () =>
+                    new TaskBuilder(target, environment, requireApproval);
+
+                expect(wrapper).to.throw(error);
+            });
+        });
+
+        getAllButString('').forEach((environment) => {
+            it(`should throw an error if invoked without a valid environment (value=${environment})`, async () => {
+                const TaskBuilder = await _importModule();
+                const error = 'Invalid environment (arg #2)';
+                const target = 'myStack'; // myStack is the name of the target populated by default (see object-builder.js)
+                const requireApproval = false;
+                const wrapper = () =>
+                    new TaskBuilder(target, environment, requireApproval);
+
+                expect(wrapper).to.throw(error);
+            });
+        });
+
+        getAllButBoolean('').forEach((requireApproval) => {
+            it(`should throw an error if invoked without a valid requireApproval (value=${requireApproval})`, async () => {
+                const TaskBuilder = await _importModule();
+                const error = 'Invalid requireApproval (arg #3)';
+                const target = 'myStack'; // myStack is the name of the target populated by default (see object-builder.js)
+                const environment = 'infra';
+                const wrapper = () =>
+                    new TaskBuilder(target, environment, requireApproval);
 
                 expect(wrapper).to.throw(error);
             });
@@ -47,7 +76,7 @@ describe('[PublishAwsTaskBuilder]', () => {
         _importModule,
         'publish-aws',
         `Publish a CDK project to AWS`,
-        ['myStack'] // myStack is the name of the target populated by default (see object-builder.js)
+        ['myStack', 'infra', false] // myStack is the name of the target populated by default (see object-builder.js)
     );
 
     getAllProjectOverrides().forEach(({ title, overrides }) => {
@@ -58,7 +87,11 @@ describe('[PublishAwsTaskBuilder]', () => {
                 const project = new Project(definition);
                 const stackName = 'badStack';
 
-                const builder = new PackageContainerTaskBuilder(stackName);
+                const builder = new PackageContainerTaskBuilder(
+                    stackName,
+                    'infra',
+                    false
+                );
 
                 const wrapper = () => builder.buildTask(project);
 
@@ -69,10 +102,20 @@ describe('[PublishAwsTaskBuilder]', () => {
     });
 
     describe('[task]', () => {
-        async function _createTask(definitionOverrides, target) {
+        async function _createTask(definitionOverrides, options) {
+            options = options || {};
+            let { target, environment, requireApproval } = options;
+
             if (typeof target !== 'string' || target.length === 0) {
                 target = 'myStack'; // myStack is the name of the target populated by default (see object-builder.js)
             }
+            if (typeof environment !== 'string') {
+                environment = 'infra';
+            }
+            if (typeof requireApproval !== 'boolean') {
+                requireApproval = false;
+            }
+
             const execaModuleMock = {
                 execa: stub().callsFake(() => ({
                     source: '_execa_ret_',
@@ -91,7 +134,11 @@ describe('[PublishAwsTaskBuilder]', () => {
             });
             const definition = buildProjectDefinition(definitionOverrides);
             const project = new Project(definition);
-            const builder = new PublishAwsTaskBuilder(target);
+            const builder = new PublishAwsTaskBuilder(
+                target,
+                environment,
+                requireApproval
+            );
 
             const checkStub = stub(
                 project,
@@ -100,6 +147,8 @@ describe('[PublishAwsTaskBuilder]', () => {
 
             return {
                 project,
+                environment,
+                requireApproval,
                 execaModuleMock,
                 dotenvModuleMock,
                 dotenvExpandMock,
@@ -107,21 +156,19 @@ describe('[PublishAwsTaskBuilder]', () => {
             };
         }
 
-        getAllProjectOverrides().forEach(({ title, overrides }) => {
+        getAllProjectOverrides(1).forEach(({ title, overrides }) => {
             const language = overrides['buildMetadata.language'];
             const jsRootDir = language == 'js' ? '' : `working${_path.sep}`;
 
             describe(`Verify task - publish to AWS - (${title})`, () => {
                 it('should initialize environment variables required for infrastructure deployment', async () => {
+                    const infraEnv = 'infra-env';
                     const {
                         project,
                         task,
                         dotenvModuleMock: { config },
                         dotenvExpandMock,
-                    } = await _createTask(overrides);
-                    const infraEnv = 'infra-env';
-
-                    process.env.INFRA_ENV = infraEnv;
+                    } = await _createTask(overrides, { environment: infraEnv });
 
                     expect(config).to.not.have.been.called;
                     expect(dotenvExpandMock).to.not.have.been.called;
@@ -154,7 +201,7 @@ describe('[PublishAwsTaskBuilder]', () => {
                         task,
                         dotenvModuleMock: { config },
                         dotenvExpandMock,
-                    } = await _createTask(overrides);
+                    } = await _createTask(overrides, {});
 
                     project.getUndefinedEnvironmentVariables.returns([]);
 
@@ -174,7 +221,7 @@ describe('[PublishAwsTaskBuilder]', () => {
                         task,
                         dotenvModuleMock: { config },
                         dotenvExpandMock,
-                    } = await _createTask(overrides);
+                    } = await _createTask(overrides, {});
                     const missingVars = ['foo', 'bar'];
 
                     project.getUndefinedEnvironmentVariables.returns(
@@ -190,8 +237,8 @@ describe('[PublishAwsTaskBuilder]', () => {
                     );
                 });
 
-                ['', 1, 0, 'false', 'true'].forEach((infraPrompt) => {
-                    it(`should use the AWS CDK cli to publish the project to the cloud (INFRA_NO_PROMPT=${infraPrompt})`, async () => {
+                [true, false].forEach((requireApproval) => {
+                    it(`should use the AWS CDK cli to publish the project to the cloud (requireApproval=${requireApproval})`, async () => {
                         const targetStack = 'stack1';
                         const stackName = 'stack-number-1';
                         const {
@@ -206,16 +253,14 @@ describe('[PublishAwsTaskBuilder]', () => {
                                     [targetStack]: stackName,
                                 },
                             },
-                            targetStack
+                            { target: targetStack, requireApproval }
                         );
-                        process.env.INFRA_NO_PROMPT = infraPrompt;
 
                         // This will be undefined if the env var is not set, and
                         // will be filtered out from the arg list
-                        const infraArg =
-                            infraPrompt === 'true'
-                                ? '--require-approval=never'
-                                : undefined;
+                        const infraArg = requireApproval
+                            ? '--require-approval=never'
+                            : undefined;
 
                         const cdkBin = 'cdk';
                         const expectedArgs = [
