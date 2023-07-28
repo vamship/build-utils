@@ -156,7 +156,7 @@ describe('[PublishAwsTaskBuilder]', () => {
             };
         }
 
-        getAllProjectOverrides(1).forEach(({ title, overrides }) => {
+        getAllProjectOverrides().forEach(({ title, overrides }) => {
             const language = overrides['buildMetadata.language'];
             const jsRootDir = language == 'js' ? '' : `working${_path.sep}`;
 
