@@ -1,9 +1,9 @@
 'use strict';
 
 import _gulp from 'gulp';
-import _fancyLog from 'fancy-log';
 import TaskBuilder from '../task-builder.js';
 import { Project } from '../project.js';
+import { NotSupportedTaskBuilder } from './not-supported-task-builder.js';
 import { BuildJsTaskBuilder } from './build-js-task-builder.js';
 import { BuildTsTaskBuilder } from './build-ts-task-builder.js';
 import { BuildUiTaskBuilder } from './build-ui-task-builder.js';
@@ -55,12 +55,7 @@ export class BuildTaskBuilder extends TaskBuilder {
         if (type === 'ui') {
             return [new BuildUiTaskBuilder(), new CopyFilesTaskBuilder()];
         } else if (type === 'container') {
-            return [
-                {
-                    buildTask: () => () =>
-                        _fancyLog.info('Task not defined for project'),
-                },
-            ];
+            return [new NotSupportedTaskBuilder()];
         } else if (language === 'ts') {
             return [new BuildTsTaskBuilder(), new CopyFilesTaskBuilder()];
         } else {
