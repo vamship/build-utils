@@ -76,6 +76,40 @@ export function createGulpMock() {
 }
 
 /**
+ * Creates and returns a mock object for a task builder.
+ *
+ * @param {String} name The name of the task builder.
+ * @returns {Object} A task builder mock object.
+ */
+export function createTaskBuilderMock(name) {
+    const taskRet = `_${name}_task_ret_`;
+    const task = stub().returns(taskRet);
+    const mock = {
+        _name: name,
+        _ret: taskRet,
+    };
+    mock.ctor = stub().returns(mock);
+    mock.buildTask = stub().returns(task);
+
+    return mock;
+}
+
+/**
+ * Creates and returns a mock for the fancy-log library.
+ *
+ * @returns {Object} A fancy-log mock object.
+ */
+export function createFancyLogMock() {
+    return {
+        log: stub(),
+        dir: stub(),
+        info: stub(),
+        warn: stub(),
+        error: stub(),
+    };
+}
+
+/**
  * Creates an importer function that imports a module with mocks injected into
  * dependencies.
  *
