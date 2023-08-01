@@ -19,3 +19,5 @@ export * from './publish-npm-task-builder.js';
 export * from './test-task-builder.js';
 export * from './test-ui-task-builder.js';
 export * from './watch-task-builder.js';
+export * from './not-supported-task-builder.js';
+export * from './build-task-builder.js';
