@@ -2,7 +2,30 @@ import { setProperty } from 'dot-prop';
 import { stub } from 'sinon';
 import _esmock from 'esmock';
 import _path from 'path';
+import _camelcase from 'camelcase';
 import { fileURLToPath } from 'url';
+
+/**
+ * @private
+ */
+function _prepareSubBuilderMockData(mockNames) {
+    return mockNames
+        .map(
+            (name) => ({
+                name,
+                ref: createTaskBuilderMock(name),
+                refName: _camelcase(name) + 'TaskBuilder',
+            }),
+            {}
+        )
+        .map(({ name, ref, refName }) => ({
+            ref,
+            importRef: `${refName}Mock`,
+            ctor: ref.ctor,
+            className: refName.charAt(0).toUpperCase() + refName.slice(1),
+            importPath: `src/task-builders/${name}-task-builder.js`,
+        }));
+}
 
 /**
  * Creates a default project definition, with the option to override specific
@@ -146,4 +169,64 @@ export function createModuleImporter(modulePath, pathDefinitions, memberName) {
 
         return typeof memberName !== 'string' ? module : module[memberName];
     };
+}
+
+/**
+ * Creates and returns a definition object for sub builder mocks.
+ *
+ * @param {String[]} mockNames The names of the sub builder mocks to create
+ * definitions for.
+ *
+ * @returns {Object} A module import definition map for the sub builder mocks.
+ */
+export function createTaskBuilderImportDefinitions(mockNames) {
+    const mockData = _prepareSubBuilderMockData(mockNames);
+    return mockData.reduce((result, { importRef, importPath }) => {
+        result[importRef] = importPath;
+        return result;
+    }, {});
+}
+
+/**
+ * Creates and returns a set of mocks and their references.
+ *
+ * @param {String[]} mockNames The names of the sub builder mocks to create
+ * definitions for.
+ *
+ * @returns {Object} An object containing the mocks and their references. This
+ * includes:
+ *  - `mocks`: A map of mock names to mock objects.
+ *  - `mockReferences`: A map of mock names to mock references.
+ */
+export function createTaskBuilderImportMocks(mockNames) {
+    const mockData = mockNames
+        .map(
+            (name) => ({
+                ref: createTaskBuilderMock(name),
+                refName: _camelcase(name) + 'TaskBuilder',
+            }),
+            {}
+        )
+        .map(({ ref, refName }) => ({
+            ref,
+            importRef: `${refName}Mock`,
+            ctor: ref.ctor,
+            className: refName.charAt(0).toUpperCase() + refName.slice(1),
+            importPath: `src/task-builders/${refName}-task-builder.js`,
+        }));
+
+    const mocks = mockData.reduce((result, { ref }) => {
+        result[ref._name] = ref;
+        return result;
+    }, {});
+
+    const mockReferences = mockData.reduce(
+        (result, { importRef, ctor, className }) => {
+            result[importRef] = { [className]: ctor };
+            return result;
+        },
+        {}
+    );
+
+    return { mocks, mockReferences };
 }
