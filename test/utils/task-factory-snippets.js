@@ -5,6 +5,7 @@ _chai.use(_sinonChai);
 import { spy } from 'sinon';
 import { getAllButObject } from './data-generator.js';
 import { Project } from '../../src/project.js';
+import { buildFailMessage } from './object-builder.js';
 
 /**
  * Injects default tests that apply to all task factories. This is a utility
@@ -23,13 +24,18 @@ export function injectFactoryInitTests(importModule, project, ctorArgs) {
     }
 
     describe(`ctor() ${JSON.stringify(ctorArgs)}`, () => {
+        const failMessage = buildFailMessage({
+            type: project.type,
+            language: project.language,
+        });
+
         getAllButObject({}).forEach((project) => {
             it(`should throw an error if invoked without a valid project (value=${typeof project})`, async () => {
                 const TaskFactory = await importModule({});
                 const wrapper = () => new TaskFactory(project);
                 const error = 'Invalid project (arg #1)';
 
-                expect(wrapper).to.throw(error);
+                expect(wrapper, failMessage).to.throw(error);
             });
         });
 
@@ -41,11 +47,13 @@ export function injectFactoryInitTests(importModule, project, ctorArgs) {
                 },
             });
 
-            expect(superCtor).not.to.have.been.called;
+            expect(superCtor, failMessage).not.to.have.been.called;
 
             new TaskFactory(project, ...ctorArgs);
 
-            expect(superCtor).to.have.been.calledOnceWithExactly(project);
+            expect(superCtor, failMessage).to.have.been.calledOnceWithExactly(
+                project
+            );
         });
     });
 }
