@@ -4,7 +4,6 @@ _chai.use(_sinonChai);
 
 import { spy } from 'sinon';
 import { getAllButObject } from './data-generator.js';
-import { Project } from '../../src/project.js';
 import { buildFailMessage } from './object-builder.js';
 
 /**

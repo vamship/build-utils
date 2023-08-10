@@ -151,14 +151,8 @@ export function initializeFactoryTaskMocks(taskList) {
         .reduce(
             (map, item) => {
                 const { mockReferences, taskMap } = map;
-                const {
-                    snakeCaseName,
-                    camelCaseName,
-                    className,
-                    importPath,
-                    mockName,
-                    builderMock,
-                } = item;
+                const { snakeCaseName, className, mockName, builderMock } =
+                    item;
 
                 mockReferences[mockName] = {
                     [className]: builderMock.ctor,

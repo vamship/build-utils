@@ -1,4 +1,3 @@
-import { Project } from '../project.js';
 import TaskFactory from '../task-factory.js';
 
 import { CleanTaskBuilder } from '../task-builders/clean-task-builder.js';
