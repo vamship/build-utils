@@ -3,6 +3,29 @@ import { stub } from 'sinon';
 import _esmock from 'esmock';
 import _path from 'path';
 import { fileURLToPath } from 'url';
+import _camelcase from 'camelcase';
+
+/**
+ * @private
+ */
+function _prepareBuilderMockData(builderNames) {
+    return builderNames
+        .map(
+            (name) => ({
+                name,
+                ref: createTaskBuilderMock(name),
+                refName: _camelcase(name) + 'TaskBuilder',
+            }),
+            {}
+        )
+        .map(({ name, ref, refName }) => ({
+            ref,
+            importRef: `${refName}Mock`,
+            ctor: ref.ctor,
+            className: refName.charAt(0).toUpperCase() + refName.slice(1),
+            importPath: `src/task-builders/${name}-task-builder.js`,
+        }));
+}
 
 /**
  * Creates a default project definition, with the option to override specific
@@ -109,6 +132,45 @@ export function createFancyLogMock() {
     };
 }
 
+export function initializeFactoryTaskMocks(taskList) {
+    return taskList
+        .map((taskName) => ({
+            snakeCaseName: taskName,
+            camelCaseName: _camelcase(taskName),
+        }))
+        .map(({ snakeCaseName, camelCaseName }) => ({
+            snakeCaseName,
+            camelCaseName,
+            className: `${camelCaseName.replace(
+                /^./,
+                camelCaseName.charAt(0).toUpperCase()
+            )}TaskBuilder`,
+            mockName: `${camelCaseName}TaskBuilderMock`,
+            builderMock: createTaskBuilderMock(snakeCaseName),
+        }))
+        .reduce(
+            (map, item) => {
+                const { mockReferences, taskMap } = map;
+                const {
+                    snakeCaseName,
+                    camelCaseName,
+                    className,
+                    importPath,
+                    mockName,
+                    builderMock,
+                } = item;
+
+                mockReferences[mockName] = {
+                    [className]: builderMock.ctor,
+                };
+                taskMap[snakeCaseName] = item;
+
+                return map;
+            },
+            { mockReferences: {}, taskMap: {} }
+        );
+}
+
 /**
  * Creates an importer function that imports a module with mocks injected into
  * dependencies.
@@ -146,4 +208,81 @@ export function createModuleImporter(modulePath, pathDefinitions, memberName) {
 
         return typeof memberName !== 'string' ? module : module[memberName];
     };
+}
+
+/**
+ * Creates a dictionary of task definition mocks that can be used to initialize
+ * a module importer.
+ *
+ * @param {Array} builderNames The list of task builders for which the
+ * definition mocks need to be created.
+ *
+ * @returns {Object} An object containing a map of mock names to import paths.
+ */
+export function createTaskBuilderImportDefinitions(builderNames) {
+    const mockData = _prepareBuilderMockData(builderNames);
+    return mockData.reduce((result, { importRef, importPath }) => {
+        result[importRef] = importPath;
+        return result;
+    }, {});
+}
+
+/**
+ * Initializes a collection of objects that can be used to test task lists
+ * generated from task factories.
+ *
+ * @param {Array} taskList The list of tasks for which the objects are to be
+ * created.
+ * @returns {Object} An object containing the following properties:
+ *  - mockReferences: A map of mock references that maps mock objects to
+ *  specific imports for the module.
+ *  - taskMap: A map of objects that contain a superset of information about the
+ *  task mocks.
+ */
+export function createTaskBuilderImportMocks(mockNames) {
+    const mockData = mockNames
+        .map(
+            (name) => ({
+                ref: createTaskBuilderMock(name),
+                refName: _camelcase(name) + 'TaskBuilder',
+            }),
+            {}
+        )
+        .map(({ ref, refName }) => ({
+            ref,
+            importRef: `${refName}Mock`,
+            ctor: ref.ctor,
+            className: refName.charAt(0).toUpperCase() + refName.slice(1),
+            importPath: `src/task-builders/${refName}-task-builder.js`,
+        }));
+
+    const mocks = mockData.reduce((result, { ref }) => {
+        result[ref._name] = ref;
+        return result;
+    }, {});
+
+    const mockReferences = mockData.reduce(
+        (result, { importRef, ctor, className }) => {
+            result[importRef] = { [className]: ctor };
+            return result;
+        },
+        {}
+    );
+
+    return { mocks, mockReferences };
+}
+
+/**
+ * Creates a failure message that includes metadata that can help identify a
+ * failing test case.
+ *
+ * @param {Object} propList A list of objects that contain the metadata to use
+ * when creating the failure message.
+ * @returns {String} A string containing the failure message.
+ */
+export function buildFailMessage(...propList) {
+    const attributes = propList
+        .map((props) => Object.keys(props).map((key) => `${key}=${props[key]}`))
+        .reduce((acc, curr) => acc.concat(curr), []);
+    return `[${attributes.join(', ')}]`;
 }
