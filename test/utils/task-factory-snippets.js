@@ -4,28 +4,14 @@ _chai.use(_sinonChai);
 
 import { spy } from 'sinon';
 import { getAllButObject } from './data-generator.js';
-import { buildFailMessage } from './object-builder.js';
+import {
+    buildFailMessage,
+    createCtorNotCalledChecker,
+} from './object-builder.js';
 import {
     getAllProjectOverrides,
     getSelectedProjectOverrides,
 } from './data-generator.js';
-
-/**
- * Returns a checker function that checks that the mock's constructor was never
- * called.
- *
- * @param {Object} overrides An object that contains overrides for the test
- * case.
- * @returns {Function} A function that performs the check.
- */
-function _createCtorNotCalledChecker(overrides) {
-    return (mock) => {
-        const failMessage = buildFailMessage(overrides, {
-            task: mock._name,
-        });
-        expect(mock.ctor, failMessage).not.to.have.been.called;
-    };
-}
 
 /**
  * Injects default tests that apply to all task factories. This is a utility
@@ -94,13 +80,15 @@ export function injectUnsupportedTasksTests(projectType, createFactory) {
 
     describe(`[Unsupported Project Types]`, () => {
         projectOverrides.forEach(({ title, overrides }) => {
-            const checkCtorNotCalled = _createCtorNotCalledChecker(overrides);
+            const checkCtorNotCalled = createCtorNotCalledChecker(overrides);
 
             it(`should not initialize any task builders for unsupported project types (${title})`, async () => {
                 const { factory, mocks } = await createFactory(overrides);
 
                 Object.values(mocks).forEach(checkCtorNotCalled);
+
                 factory._createTaskBuilders();
+
                 Object.values(mocks).forEach(checkCtorNotCalled);
             });
 
@@ -133,7 +121,7 @@ export function injectTaskBuilderCompositionTests(
 ) {
     getSelectedProjectOverrides([projectType]).forEach(
         ({ title, overrides }) => {
-            const checkCtorNotCalled = _createCtorNotCalledChecker(overrides);
+            const checkCtorNotCalled = createCtorNotCalledChecker(overrides);
 
             describe(`[${title}]`, () => {
                 it(`should initialize the expected task builders`, async () => {

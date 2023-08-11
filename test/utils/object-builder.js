@@ -4,6 +4,7 @@ import _esmock from 'esmock';
 import _path from 'path';
 import { fileURLToPath } from 'url';
 import _camelcase from 'camelcase';
+import { expect } from 'chai';
 
 /**
  * @private
@@ -279,4 +280,21 @@ export function buildFailMessage(...propList) {
         .map((props) => Object.keys(props).map((key) => `${key}=${props[key]}`))
         .reduce((acc, curr) => acc.concat(curr), []);
     return `[${attributes.join(', ')}]`;
+}
+
+/**
+ * Returns a checker function that checks that the mock's constructor was never
+ * called.
+ *
+ * @param {Object} overrides An object that contains overrides for the test
+ * case.
+ * @returns {Function} A function that performs the check.
+ */
+export function createCtorNotCalledChecker(overrides) {
+    return (mock) => {
+        const failMessage = buildFailMessage(overrides, {
+            task: mock._name,
+        });
+        expect(mock.ctor, failMessage).not.to.have.been.called;
+    };
 }

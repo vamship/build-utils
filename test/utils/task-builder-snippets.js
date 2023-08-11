@@ -3,8 +3,12 @@ import _sinonChai from 'sinon-chai';
 _chai.use(_sinonChai);
 
 import { spy } from 'sinon';
-import { buildProjectDefinition } from './object-builder.js';
-import { getAllButObject } from './data-generator.js';
+import {
+    buildProjectDefinition,
+    createCtorNotCalledChecker,
+    buildFailMessage,
+} from './object-builder.js';
+import { getAllButObject, getAllProjectOverrides } from './data-generator.js';
 import { Project } from '../../src/project.js';
 /**
  * Injects default tests that apply to all task builders. This is a utility
@@ -68,6 +72,104 @@ export function injectBuilderInitTests(
             const task = builder._createTask(project);
 
             expect(typeof task).to.equal('function');
+        });
+    });
+}
+
+/**
+ * Injects tests that check the composition of the subtasks included by a
+ * composite task.
+ *
+ * @param {Function} createFactory A function that can be used to initialize a
+ * factory with.
+ * @param {Function} getExpectedTaskBuilders A function that returns the list
+ * of expected task builders for the factory.
+ */
+export function injectSubBuilderCompositionTests(
+    initializeTask,
+    getExpectedSubBuilders
+) {
+    getAllProjectOverrides().forEach(({ title, overrides }) => {
+        const language = overrides['buildMetadata.language'];
+        const type = overrides['buildMetadata.type'];
+        const expectedSubBuilders = getExpectedSubBuilders(type, language);
+        const checkCtorNotCalled = createCtorNotCalledChecker(overrides);
+
+        describe(`[task composition] (${title})`, () => {
+            it(`should initialize appropriate sub builders`, async () => {
+                const { builder, subBuilderMocks } = await initializeTask(
+                    overrides
+                );
+                const definition = buildProjectDefinition(overrides);
+                const project = new Project(definition);
+
+                Object.values(subBuilderMocks).forEach(checkCtorNotCalled);
+
+                const task = builder._createTask(project);
+
+                Object.keys(subBuilderMocks).forEach((mockName) => {
+                    const mock = subBuilderMocks[mockName];
+                    const builder = expectedSubBuilders.find(
+                        (builder) => builder.name === mock._name
+                    );
+                    const ctor = mock.ctor;
+                    const failMessage = buildFailMessage(overrides, {
+                        task: mock._name,
+                    });
+
+                    if (builder) {
+                        expect(ctor, failMessage).to.have.been.calledOnce;
+                        expect(
+                            ctor,
+                            failMessage
+                        ).to.have.been.calledWithExactly(...builder.ctorArgs);
+                        expect(ctor, failMessage).to.have.been.calledWithNew;
+                    } else {
+                        expect(ctor, failMessage).to.not.have.been.called;
+                    }
+                });
+            });
+
+            it(`should create a composite task comprised of subtasks`, async () => {
+                const { gulpMock, builder } = await initializeTask(overrides);
+                const definition = buildProjectDefinition(overrides);
+                const project = new Project(definition);
+
+                expect(gulpMock.series).to.not.have.been.called;
+
+                const task = builder._createTask(project);
+
+                expect(gulpMock.series).to.have.been.calledOnce;
+                expect(gulpMock.series.args[0]).to.have.length(1);
+                expect(gulpMock.series.args[0][0]).to.be.an('array');
+                gulpMock.series.args[0][0].forEach((arg) => {
+                    expect(arg).to.be.a('function');
+                });
+            });
+
+            it(`should use the correct sub tasks for the composite task`, async () => {
+                const { gulpMock, builder, subBuilderMocks } =
+                    await initializeTask(overrides);
+                const definition = buildProjectDefinition(overrides);
+                const project = new Project(definition);
+
+                const task = builder._createTask(project);
+
+                expect(gulpMock.series.args[0][0]).to.have.length(
+                    expectedSubBuilders.length
+                );
+
+                expectedSubBuilders.forEach((builder, index) => {
+                    const mock = subBuilderMocks[builder.name];
+                    const failMessage = buildFailMessage(overrides, {
+                        builder: builder.name,
+                    });
+
+                    expect(gulpMock.series.args[0][0], failMessage).to.include(
+                        mock.buildTask()
+                    );
+                });
+            });
         });
     });
 }
