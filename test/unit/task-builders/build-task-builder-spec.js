@@ -63,15 +63,15 @@ describe('[BuildTaskBuilder]', () => {
         };
     }
 
-    function _getExpectedSubBuilders(type, language) {
-        if (type === 'container') {
+    function _getExpectedSubBuilders(project) {
+        if (project.type === 'container') {
             return [{ name: 'not-supported', ctorArgs: [] }];
-        } else if (type === 'ui') {
+        } else if (project.type === 'ui') {
             return [
                 { name: 'build-ui', ctorArgs: [] },
                 { name: 'copy-files', ctorArgs: [] },
             ];
-        } else if (language === 'js') {
+        } else if (project.language === 'js') {
             return [
                 { name: 'build-js', ctorArgs: [] },
                 { name: 'copy-files', ctorArgs: [] },

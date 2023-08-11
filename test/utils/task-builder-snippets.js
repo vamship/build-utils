@@ -90,9 +90,6 @@ export function injectSubBuilderCompositionTests(
     getExpectedSubBuilders
 ) {
     getAllProjectOverrides().forEach(({ title, overrides }) => {
-        const language = overrides['buildMetadata.language'];
-        const type = overrides['buildMetadata.type'];
-        const expectedSubBuilders = getExpectedSubBuilders(type, language);
         const checkCtorNotCalled = createCtorNotCalledChecker(overrides);
 
         describe(`[task composition] (${title})`, () => {
@@ -102,6 +99,7 @@ export function injectSubBuilderCompositionTests(
                 );
                 const definition = buildProjectDefinition(overrides);
                 const project = new Project(definition);
+                const expectedSubBuilders = getExpectedSubBuilders(project);
 
                 Object.values(subBuilderMocks).forEach(checkCtorNotCalled);
 
@@ -152,6 +150,7 @@ export function injectSubBuilderCompositionTests(
                     await initializeTask(overrides);
                 const definition = buildProjectDefinition(overrides);
                 const project = new Project(definition);
+                const expectedSubBuilders = getExpectedSubBuilders(project);
 
                 builder._createTask(project);
 
