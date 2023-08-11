@@ -105,7 +105,7 @@ export function injectSubBuilderCompositionTests(
 
                 Object.values(subBuilderMocks).forEach(checkCtorNotCalled);
 
-                const task = builder._createTask(project);
+                builder._createTask(project);
 
                 Object.keys(subBuilderMocks).forEach((mockName) => {
                     const mock = subBuilderMocks[mockName];
@@ -137,7 +137,7 @@ export function injectSubBuilderCompositionTests(
 
                 expect(gulpMock.series).to.not.have.been.called;
 
-                const task = builder._createTask(project);
+                builder._createTask(project);
 
                 expect(gulpMock.series).to.have.been.calledOnce;
                 expect(gulpMock.series.args[0]).to.have.length(1);
@@ -153,7 +153,7 @@ export function injectSubBuilderCompositionTests(
                 const definition = buildProjectDefinition(overrides);
                 const project = new Project(definition);
 
-                const task = builder._createTask(project);
+                builder._createTask(project);
 
                 expect(gulpMock.series.args[0][0]).to.have.length(
                     expectedSubBuilders.length
