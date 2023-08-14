@@ -1,6 +1,6 @@
 {
     "name": "@vamship/build-utils",
-    "version": "1.5.3",
+    "version": "1.6.0",
     "description": "Utility library for build tooling",
     "main": "src/index.js",
     "scripts": {
@@ -79,17 +79,6 @@
         "mocha": ">= 10.2.0",
         "nyc": ">= 15.1.0",
         "prettier": ">= 2.8.8"
-    },
-    "peerDependenciesMeta": {
-        "gulp-eslint": {
-            "optional": true
-        },
-        "gulp-typedoc": {
-            "optional": true
-        },
-        "gulp-typescript": {
-            "optional": true
-        }
     },
     "optionalDependencies": {
         "typedoc": ">=0.24.7",

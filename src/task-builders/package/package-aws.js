@@ -41,7 +41,7 @@ module.exports = (project, options) => {
 
     const paths = dirs
         .map((dir) => workingDir.getChild(dir))
-        .map((dir) => dir.getAllFilesGlob())
+        .flatMap((dir) => [dir.getAllFilesGlob(), dir.getAllHiddenFilesGlob()])
         .concat(extras.map((file) => workingDir.getFileGlob(file)));
 
     const zipTask = () =>
