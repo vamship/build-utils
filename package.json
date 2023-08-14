@@ -80,17 +80,6 @@
         "nyc": ">= 15.1.0",
         "prettier": ">= 2.8.8"
     },
-    "peerDependenciesMeta": {
-        "gulp-eslint": {
-            "optional": true
-        },
-        "gulp-typedoc": {
-            "optional": true
-        },
-        "gulp-typescript": {
-            "optional": true
-        }
-    },
     "optionalDependencies": {
         "typedoc": ">=0.24.7",
         "typescript": ">=5.0.4"
