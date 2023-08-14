@@ -261,8 +261,6 @@ export class Project {
      * - repo: The docker repo
      * - buildFile: The name of the build file to use
      * - buildArgs: Arguments to be passed to the docker build
-     * - isDefault: Determines if the current target is the default one
-     * - isDeprecated: Determines if the target uses a deprecated configuration.
      *
      * @return {Array}
      */
