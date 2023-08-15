@@ -79,6 +79,25 @@ export class PackageTaskBuilder extends TaskBuilder {
             });
             return taskBuilderList;
         }
+        // Type cli
+        else if (type === 'cli') {
+            const containerTargetList = project.getContainerTargets();
+
+            if (containerTargetList.length > 0) {
+                const taskBuilderList = [];
+                containerTargetList.forEach((target) => {
+                    taskBuilderList.push(
+                        new PackageContainerTaskBuilder(
+                            target,
+                            project.getContainerDefinition(target).repo // Should test that this is defined
+                        )
+                    );
+                });
+                return taskBuilderList;
+            } else {
+                return [new PackageNpmTaskBuilder()];
+            }
+        }
         // Type undefined or not supported
         return [new NotSupportedTaskBuilder()];
 

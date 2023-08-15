@@ -87,7 +87,6 @@ describe('[PackageTaskBuilder]', () => {
             // Need to test this when multiple containers are defined
             const containerSubBuilders = [];
             containerTargetList.forEach((target) => {
-                console.log(target);
                 containerSubBuilders.push({
                     name: 'package-container',
                     ctorArgs: [target, _container[target].repo],
@@ -95,6 +94,22 @@ describe('[PackageTaskBuilder]', () => {
             });
 
             return containerSubBuilders;
+        }
+        // Type cli
+        else if (type === 'cli') {
+            if (containerTargetList.length > 0) {
+                const containerSubBuilders = [];
+                containerTargetList.forEach((target) => {
+                    containerSubBuilders.push({
+                        name: 'package-container',
+                        ctorArgs: [target, _container[target].repo],
+                    });
+                });
+
+                return containerSubBuilders;
+            } else {
+                return [{ name: 'package-npm', ctorArgs: [] }];
+            }
         }
         // Type undefined or not supported
         return [{ name: 'not-supported', ctorArgs: [] }];
