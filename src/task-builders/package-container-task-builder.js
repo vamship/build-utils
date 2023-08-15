@@ -27,7 +27,7 @@ export class PackageContainerTaskBuilder extends TaskBuilder {
         }
 
         super(
-            'package-container',
+            `package-container-${target}`,
             `Package a project for publishing to a container registry`
         );
         this._target = target;

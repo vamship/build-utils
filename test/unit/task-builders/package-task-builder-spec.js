@@ -76,6 +76,15 @@ describe('[PackageTaskBuilder]', () => {
         else if (type === 'ui') {
             return [{ name: 'not-supported', ctorArgs: [] }];
         }
+        // Type container
+        else if (type === 'container') {
+            // myBuild and my-repo are the names of the target and the repo
+            // respectively that are populated by default (see object-builder.js)
+            return [
+                // Need to test when there are multiple containers defined
+                { name: 'package-container', ctorArgs: ['myBuild', 'my-repo'] },
+            ];
+        }
         // Type undefined or not supported
         return [{ name: 'not-supported', ctorArgs: [] }];
 

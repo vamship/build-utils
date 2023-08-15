@@ -65,14 +65,23 @@ export class PackageTaskBuilder extends TaskBuilder {
         else if (type === 'ui') {
             return [new NotSupportedTaskBuilder()];
         }
+        // Type container
+        else if (type === 'container') {
+            const containerTargetList = project.getContainerTargets();
+            const taskBuilderList = [];
+            containerTargetList.forEach((target) => {
+                taskBuilderList.push(
+                    new PackageContainerTaskBuilder(
+                        target,
+                        project.getContainerDefinition(target).repo // Should test that this is defined
+                    )
+                );
+            });
+            return taskBuilderList;
+        }
         // Type undefined or not supported
         return [new NotSupportedTaskBuilder()];
 
-        // else if (type === 'container') {
-        //     console.log(project.getContainerTargets());
-        //     console.log(project.getContainerTargetRepos());
-        //     return [new PackageContainerTaskBuilder()];
-        // }
         // if (type === 'container') {
         //     return [new NotSupportedTaskBuilder()];
         // } else if (language === 'ts') {
