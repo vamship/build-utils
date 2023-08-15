@@ -63,7 +63,13 @@ describe('[PackageTaskBuilder]', () => {
     }
 
     function _getExpectedSubBuilders(project) {
-        const { type, language } = project;
+        const { type, language, _container } = project;
+
+        const containerTargetList = [];
+        if (_container) {
+            containerTargetList.push(...Object.keys(_container));
+        }
+
         // Type lib
         if (type === 'lib') {
             return [{ name: 'package-npm', ctorArgs: [] }];
@@ -78,12 +84,17 @@ describe('[PackageTaskBuilder]', () => {
         }
         // Type container
         else if (type === 'container') {
-            // myBuild and my-repo are the names of the target and the repo
-            // respectively that are populated by default (see object-builder.js)
-            return [
-                // Need to test when there are multiple containers defined
-                { name: 'package-container', ctorArgs: ['myBuild', 'my-repo'] },
-            ];
+            // Need to test this when multiple containers are defined
+            const containerSubBuilders = [];
+            containerTargetList.forEach((target) => {
+                console.log(target);
+                containerSubBuilders.push({
+                    name: 'package-container',
+                    ctorArgs: [target, _container[target].repo],
+                });
+            });
+
+            return containerSubBuilders;
         }
         // Type undefined or not supported
         return [{ name: 'not-supported', ctorArgs: [] }];
