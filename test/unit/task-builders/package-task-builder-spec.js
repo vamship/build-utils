@@ -97,6 +97,7 @@ describe('[PackageTaskBuilder]', () => {
         }
         // Type cli
         else if (type === 'cli') {
+            // Need to test this conditional functionality by using project overrides
             if (containerTargetList.length > 0) {
                 const containerSubBuilders = [];
                 containerTargetList.forEach((target) => {
@@ -111,20 +112,20 @@ describe('[PackageTaskBuilder]', () => {
                 return [{ name: 'package-npm', ctorArgs: [] }];
             }
         }
+        // Type api
+        else if (type === 'api') {
+            const containerSubBuilders = [];
+            containerTargetList.forEach((target) => {
+                containerSubBuilders.push({
+                    name: 'package-container',
+                    ctorArgs: [target, _container[target].repo],
+                });
+            });
+
+            return containerSubBuilders;
+        }
         // Type undefined or not supported
         return [{ name: 'not-supported', ctorArgs: [] }];
-
-        // if (type === 'ui') {
-        //     return [{ name: 'not-supported', ctorArgs: [] }];
-        // } else if (type === 'aws-microservice') {
-        //     return [
-        //         { name: 'package-aws', ctorArgs: [] },
-        //     ];
-        // } else if (project.getContainerTargets().length > 0) {
-        //     return [
-        //         { name: 'package-container', ctorArgs: [] },
-        //     ];
-        // }
     }
 
     injectBuilderInitTests(

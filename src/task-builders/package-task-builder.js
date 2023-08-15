@@ -53,6 +53,8 @@ export class PackageTaskBuilder extends TaskBuilder {
      */
     _getSubBuilders(project) {
         const { type, language } = project;
+        const containerTargetList = project.getContainerTargets();
+
         // Type lib
         if (type === 'lib') {
             return [new PackageNpmTaskBuilder()];
@@ -67,7 +69,6 @@ export class PackageTaskBuilder extends TaskBuilder {
         }
         // Type container
         else if (type === 'container') {
-            const containerTargetList = project.getContainerTargets();
             const taskBuilderList = [];
             containerTargetList.forEach((target) => {
                 taskBuilderList.push(
@@ -81,8 +82,6 @@ export class PackageTaskBuilder extends TaskBuilder {
         }
         // Type cli
         else if (type === 'cli') {
-            const containerTargetList = project.getContainerTargets();
-
             if (containerTargetList.length > 0) {
                 const taskBuilderList = [];
                 containerTargetList.forEach((target) => {
@@ -97,6 +96,19 @@ export class PackageTaskBuilder extends TaskBuilder {
             } else {
                 return [new PackageNpmTaskBuilder()];
             }
+        }
+        // Type api
+        else if (type === 'api') {
+            const taskBuilderList = [];
+            containerTargetList.forEach((target) => {
+                taskBuilderList.push(
+                    new PackageContainerTaskBuilder(
+                        target,
+                        project.getContainerDefinition(target).repo // Should test that this is defined
+                    )
+                );
+            });
+            return taskBuilderList;
         }
         // Type undefined or not supported
         return [new NotSupportedTaskBuilder()];
