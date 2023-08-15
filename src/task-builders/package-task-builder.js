@@ -53,12 +53,26 @@ export class PackageTaskBuilder extends TaskBuilder {
      */
     _getSubBuilders(project) {
         const { type, language } = project;
+        // Type lib
         if (type === 'lib') {
             return [new PackageNpmTaskBuilder()];
-        } else if (type === 'aws-microservice') {
+        }
+        // Type aws-microservice
+        else if (type === 'aws-microservice') {
             return [new PackageAwsTaskBuilder()];
         }
+        // Type ui
+        else if (type === 'ui') {
+            return [new NotSupportedTaskBuilder()];
+        }
+        // Type undefined or not supported
         return [new NotSupportedTaskBuilder()];
+
+        // else if (type === 'container') {
+        //     console.log(project.getContainerTargets());
+        //     console.log(project.getContainerTargetRepos());
+        //     return [new PackageContainerTaskBuilder()];
+        // }
         // if (type === 'container') {
         //     return [new NotSupportedTaskBuilder()];
         // } else if (language === 'ts') {

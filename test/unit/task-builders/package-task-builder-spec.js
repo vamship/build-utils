@@ -64,13 +64,19 @@ describe('[PackageTaskBuilder]', () => {
 
     function _getExpectedSubBuilders(project) {
         const { type, language } = project;
-        if(type === 'ui') {
-            return [{ name: 'not-supported', ctorArgs: [] }];
-        } else if (type === 'lib') {
+        // Type lib
+        if (type === 'lib') {
             return [{ name: 'package-npm', ctorArgs: [] }];
-        } else if (type === 'aws-microservice') {
-           return [ { name: 'package-aws', ctorArgs: [] } ];
-        } 
+        }
+        // Type aws-microservice
+        else if (type === 'aws-microservice') {
+            return [{ name: 'package-aws', ctorArgs: [] }];
+        }
+        // Type ui
+        else if (type === 'ui') {
+            return [{ name: 'not-supported', ctorArgs: [] }];
+        }
+        // Type undefined or not supported
         return [{ name: 'not-supported', ctorArgs: [] }];
 
         // if (type === 'ui') {
