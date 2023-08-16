@@ -36,9 +36,13 @@ function _prepareBuilderMockData(builderNames) {
  * properties with overridden values. Nested properties may be referenced by
  * using a dot separator between levels.
  *
+ * @param {Array} removals Optional properties to remove from the default seed object.
+ * This is an array of strings. If the key is not found in default object, there will
+ * be no changes.
+ *
  * @returns {Object} The project definition.
  */
-export function buildProjectDefinition(overrides) {
+export function buildProjectDefinition(overrides, removals) {
     overrides = overrides || [];
     const definition = {
         name: 'sample-project',
@@ -65,6 +69,14 @@ export function buildProjectDefinition(overrides) {
             },
         },
     };
+
+    if (removals && removals.length > 0) {
+        removals.forEach((property) => {
+            if (Object.keys(definition.buildMetadata).includes(property)) {
+                delete definition.buildMetadata[property];
+            }
+        });
+    }
 
     Object.keys(overrides).forEach((key) => {
         const value = overrides[key];

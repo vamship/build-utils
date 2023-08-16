@@ -52,7 +52,7 @@ export class PackageTaskBuilder extends TaskBuilder {
      * @private
      */
     _getSubBuilders(project) {
-        const { type, language } = project;
+        const { type } = project;
         const containerTargetList = project.getContainerTargets();
 
         // Type lib
@@ -69,12 +69,16 @@ export class PackageTaskBuilder extends TaskBuilder {
         }
         // Type container
         else if (type === 'container') {
+            if (containerTargetList.length <= 0) {
+                throw new Error('No container builds defined');
+            }
+
             const taskBuilderList = [];
             containerTargetList.forEach((target) => {
                 taskBuilderList.push(
                     new PackageContainerTaskBuilder(
                         target,
-                        project.getContainerDefinition(target).repo // Should test that this is defined
+                        project.getContainerDefinition(target).repo
                     )
                 );
             });
@@ -88,7 +92,7 @@ export class PackageTaskBuilder extends TaskBuilder {
                     taskBuilderList.push(
                         new PackageContainerTaskBuilder(
                             target,
-                            project.getContainerDefinition(target).repo // Should test that this is defined
+                            project.getContainerDefinition(target).repo
                         )
                     );
                 });
@@ -99,12 +103,16 @@ export class PackageTaskBuilder extends TaskBuilder {
         }
         // Type api
         else if (type === 'api') {
+            if (containerTargetList.length <= 0) {
+                throw new Error('No container builds defined');
+            }
+
             const taskBuilderList = [];
             containerTargetList.forEach((target) => {
                 taskBuilderList.push(
                     new PackageContainerTaskBuilder(
                         target,
-                        project.getContainerDefinition(target).repo // Should test that this is defined
+                        project.getContainerDefinition(target).repo
                     )
                 );
             });
@@ -112,15 +120,5 @@ export class PackageTaskBuilder extends TaskBuilder {
         }
         // Type undefined or not supported
         return [new NotSupportedTaskBuilder()];
-
-        // if (type === 'container') {
-        //     return [new NotSupportedTaskBuilder()];
-        // } else if (language === 'ts') {
-        //     return [new PackageNpmTaskBuilder()];
-        // } else if (language === 'ts') {
-        //     return [new PackageContainerTaskBuilder()];
-        // } else {
-        //     return [new PackageNpmTaskBuilder()];
-        // }
     }
 }
