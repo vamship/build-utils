@@ -9,6 +9,8 @@ import { PackageNpmTaskBuilder } from './package-npm-task-builder.js';
 import { PackageContainerTaskBuilder } from './package-container-task-builder.js';
 
 /**
+ * Clarify with Vamshi here and update this comment
+ *
  * General purpose packaging task that configures sub tasks for packaging based
  * on the project. When a project is a container and has multiple container
  * targets, this task will either package the target named "default" or the
