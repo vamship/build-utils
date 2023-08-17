@@ -69,9 +69,9 @@ export class PackageTaskBuilder extends TaskBuilder {
         }
         // Type container
         else if (type === 'container') {
-            if (containerTargetList.length <= 0) {
-                throw new Error('No container builds defined');
-            }
+            // if (containerTargetList.length <= 0) {
+            //     throw new Error('No container builds defined');
+            // }
 
             const taskBuilderList = [];
             containerTargetList.forEach((target) => {
@@ -103,9 +103,9 @@ export class PackageTaskBuilder extends TaskBuilder {
         }
         // Type api
         else if (type === 'api') {
-            if (containerTargetList.length <= 0) {
-                throw new Error('No container builds defined');
-            }
+            // if (containerTargetList.length <= 0) {
+            //     throw new Error('No container builds defined');
+            // }
 
             const taskBuilderList = [];
             containerTargetList.forEach((target) => {

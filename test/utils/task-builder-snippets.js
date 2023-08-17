@@ -93,48 +93,7 @@ export function injectSubBuilderCompositionTests(
     initializeTask,
     getExpectedSubBuilders
 ) {
-    const basicProjectOverrides = getAllProjectOverrides();
-
-    // Used for testing the usecase where multiple containers are defined
-    const multipleContainerOverrides = mapProjectList(({ type, language }) => ({
-        title: `${type} - ${language} - multiple-containers`,
-        overrides: {
-            'buildMetadata.type': type,
-            'buildMetadata.language': language,
-            'buildMetadata.container': {
-                myBuild: {
-                    repo: 'my-repo',
-                    buildFile: 'BuildFile-1',
-                    buildArgs: {
-                        arg1: 'value1',
-                    },
-                },
-                myBuildArm: {
-                    repo: 'my-repo-arm',
-                    buildFile: 'BuildFile-1-arm',
-                    buildArgs: {
-                        arg1: 'value1-arm',
-                    },
-                },
-            },
-        },
-    }));
-
-    // Used for testing the usecase where no containers are defined
-    const noContainerOverrides = mapProjectList(({ type, language }) => ({
-        title: `${type} - ${language} - no-container`,
-        overrides: {
-            'buildMetadata.type': type,
-            'buildMetadata.language': language,
-        },
-        removals: ['container'],
-    }));
-    const allOverrides = basicProjectOverrides.concat(
-        multipleContainerOverrides,
-        noContainerOverrides
-    );
-
-    allOverrides.forEach(({ title, overrides, removals }) => {
+    getAllProjectOverrides().forEach(({ title, overrides }) => {
         const checkCtorNotCalled = createCtorNotCalledChecker(overrides);
 
         describe(`[task composition] (${title})`, () => {
@@ -142,7 +101,7 @@ export function injectSubBuilderCompositionTests(
                 const { builder, subBuilderMocks } = await initializeTask(
                     overrides
                 );
-                const definition = buildProjectDefinition(overrides, removals);
+                const definition = buildProjectDefinition(overrides);
                 const project = new Project(definition);
                 const expectedSubBuilders = getExpectedSubBuilders(project);
 
@@ -161,8 +120,7 @@ export function injectSubBuilderCompositionTests(
                     });
 
                     if (builder) {
-                        // Need to ask Vamshi about this test
-                        // expect(ctor, failMessage).to.have.been.calledOnce;
+                        expect(ctor, failMessage).to.have.been.calledOnce;
                         expect(
                             ctor,
                             failMessage
