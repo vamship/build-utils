@@ -9,12 +9,11 @@ import { PackageNpmTaskBuilder } from './package-npm-task-builder.js';
 import { PackageContainerTaskBuilder } from './package-container-task-builder.js';
 
 /**
- * Clarify with Vamshi here and update this comment
- *
  * General purpose packaging task that configures sub tasks for packaging based
- * on the project. When a project is a container and has multiple container
- * targets, this task will either package the target named "default" or the
- * first target defined for the project.
+ * on the project. When a project is an API or container and has multiple container
+ * targets, this task will package the target named "default". When the project is
+ * a CLI and there is a "default" container defined, this task will package that,
+ * if there is no container defined, it will package using npm.
  */
 export class PackageTaskBuilder extends TaskBuilder {
     /**
@@ -71,54 +70,19 @@ export class PackageTaskBuilder extends TaskBuilder {
         }
         // Type container
         else if (type === 'container') {
-            // if (containerTargetList.length <= 0) {
-            //     throw new Error('No container builds defined');
-            // }
-
-            const taskBuilderList = [];
-            containerTargetList.forEach((target) => {
-                taskBuilderList.push(
-                    new PackageContainerTaskBuilder(
-                        target,
-                        project.getContainerDefinition(target).repo
-                    )
-                );
-            });
-            return taskBuilderList;
+            return [new PackageContainerTaskBuilder()];
         }
         // Type cli
         else if (type === 'cli') {
             if (containerTargetList.length > 0) {
-                const taskBuilderList = [];
-                containerTargetList.forEach((target) => {
-                    taskBuilderList.push(
-                        new PackageContainerTaskBuilder(
-                            target,
-                            project.getContainerDefinition(target).repo
-                        )
-                    );
-                });
-                return taskBuilderList;
+                return [new PackageContainerTaskBuilder()];
             } else {
                 return [new PackageNpmTaskBuilder()];
             }
         }
         // Type api
         else if (type === 'api') {
-            // if (containerTargetList.length <= 0) {
-            //     throw new Error('No container builds defined');
-            // }
-
-            const taskBuilderList = [];
-            containerTargetList.forEach((target) => {
-                taskBuilderList.push(
-                    new PackageContainerTaskBuilder(
-                        target,
-                        project.getContainerDefinition(target).repo
-                    )
-                );
-            });
-            return taskBuilderList;
+            return [new PackageContainerTaskBuilder()];
         }
         // Type undefined or not supported
         return [new NotSupportedTaskBuilder()];

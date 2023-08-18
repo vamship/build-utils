@@ -65,6 +65,10 @@ export class Project {
             throw new Error(`No container builds defined`);
         }
 
+        if (container && !container.default) {
+            throw new Error(`No default container defined`);
+        }
+
         this._name = name;
         this._description = description;
         this._unscopedName = name.replace(/^@[^/]*\//, '');

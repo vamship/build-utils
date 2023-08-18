@@ -5,7 +5,7 @@ _chai.use(_sinonChai);
 import _path from 'path';
 import _camelcase from 'camelcase';
 
-import { stub, spy } from 'sinon';
+import { stub } from 'sinon';
 import _esmock from 'esmock';
 import { Project } from '../../../src/project.js';
 import {
@@ -15,10 +15,11 @@ import {
 } from '../../utils/data-generator.js';
 import {
     buildProjectDefinition,
-    createGulpMock,
     createModuleImporter,
 } from '../../utils/object-builder.js';
 import { injectBuilderInitTests } from '../../utils/task-builder-snippets.js';
+
+const specificContainerTarget = 'myBuildArm'; // This is a second build defined in object-builder.js
 
 describe('[PackageContainerTaskBuilder]', () => {
     const _importModule = createModuleImporter(
@@ -38,7 +39,7 @@ describe('[PackageContainerTaskBuilder]', () => {
     });
 
     describe('ctor() <target, repo uri>', () => {
-        getAllButString('').forEach((target) => {
+        makeOptional(getAllButString('')).forEach((target) => {
             it(`should throw an error if invoked without a valid build target (value=${target})`, async () => {
                 const TaskBuilder = await _importModule();
                 const error = 'Invalid target (arg #1)';
@@ -49,12 +50,28 @@ describe('[PackageContainerTaskBuilder]', () => {
             });
         });
 
+        it('should not throw an error if the target is undefined', async () => {
+            const TaskBuilder = await _importModule();
+            const wrapper = () => new TaskBuilder(undefined, undefined);
+
+            expect(wrapper).to.not.throw();
+        });
+
+        it('shoud not throw an error if the target is undefined with a valid repo', async () => {
+            const TaskBuilder = await _importModule();
+            const error = 'Must define a target for given repo';
+            const repo = 'my-repo';
+            const wrapper = () => new TaskBuilder(undefined, repo);
+
+            expect(wrapper).to.not.throw(error);
+        });
+
         makeOptional(getAllButString('')).forEach((repo) => {
             it(`should throw an error if invoked without a valid repo url (value=${repo})`, async () => {
                 const TaskBuilder = await _importModule();
                 const error = 'Invalid repo (arg #2)';
-                const target = 'my-target';
-                const wrapper = () => new TaskBuilder(target, repo);
+                const wrapper = () =>
+                    new TaskBuilder(specificContainerTarget, repo);
 
                 expect(wrapper).to.throw(error);
             });
@@ -62,22 +79,28 @@ describe('[PackageContainerTaskBuilder]', () => {
 
         it('should not throw an error if the repo is undefined', async () => {
             const TaskBuilder = await _importModule();
-            const wrapper = () => new TaskBuilder('my-target', undefined);
+            const wrapper = () =>
+                new TaskBuilder(specificContainerTarget, undefined);
 
             expect(wrapper).to.not.throw();
         });
     });
 
     [undefined, 'custom-repo'].forEach((repo) => {
-        injectBuilderInitTests(
-            _importModule,
-            'package-container',
-            `Package a project for publishing to a container registry`,
-            ['myBuild', repo] // myBuild is the name of the target populated by default (see object-builder.js)
-        );
+        // Can explicitly state 'default' when overriding target repo or leave undefined
+        ['default', undefined, specificContainerTarget].forEach((target) => {
+            injectBuilderInitTests(
+                _importModule,
+                `package-container${
+                    !target || target === 'default' ? '' : '-' + target // Specifying a non default container creates a named task
+                }`,
+                `Package a project for publishing to a container registry`,
+                [target, repo]
+            );
+        });
     });
 
-    getAllProjectOverrides().forEach(({ title, overrides }) => {
+    getAllProjectOverrides().forEach(({ title }) => {
         describe(`[Task Build] - (${title})`, () => {
             it('should verify that all required build arguments exist in the environment', async () => {
                 const PackageContainerTaskBuilder = await _importModule();
@@ -88,7 +111,7 @@ describe('[PackageContainerTaskBuilder]', () => {
                     'getUndefinedEnvironmentVariables'
                 ).returns([]);
 
-                const builder = new PackageContainerTaskBuilder('myBuild'); // myBuild is the name of the target populated by default (see object-builder.js)
+                const builder = new PackageContainerTaskBuilder();
 
                 expect(checkStub).to.not.have.been.called;
 
@@ -106,7 +129,7 @@ describe('[PackageContainerTaskBuilder]', () => {
                     'getUndefinedEnvironmentVariables'
                 ).returns(['foo', 'bar']);
 
-                const builder = new PackageContainerTaskBuilder('myBuild'); // myBuild is the name of the target populated by default (see object-builder.js)
+                const builder = new PackageContainerTaskBuilder();
 
                 const wrapper = () => builder.buildTask(project);
 
@@ -155,6 +178,13 @@ describe('[PackageContainerTaskBuilder]', () => {
                     ...overrides,
                     description,
                     'buildMetadata.container': {
+                        default: {
+                            repo: 'my-repo',
+                            buildFile: 'BuildFile-1',
+                            buildArgs: {
+                                arg1: 'value1',
+                            },
+                        },
                         [target]: {
                             repo,
                             buildFile,

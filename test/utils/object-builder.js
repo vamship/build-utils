@@ -59,11 +59,18 @@ export function buildProjectDefinition(overrides, removals) {
             },
             staticFilePatterns: ['foo'],
             container: {
-                myBuild: {
+                default: {
                     repo: 'my-repo',
                     buildFile: 'BuildFile-1',
                     buildArgs: {
                         arg1: 'value1',
+                    },
+                },
+                myBuildArm: {
+                    repo: 'my-repo-arm',
+                    buildFile: 'BuildFile-1-arm',
+                    buildArgs: {
+                        arg1: 'value1-arm',
                     },
                 },
             },

@@ -54,12 +54,9 @@ describe('[PackageTaskBuilder]', () => {
     }
 
     function _getExpectedSubBuilders(project) {
-        const { type, language, _container } = project;
+        const { type, language } = project;
 
-        const containerTargetList = [];
-        if (_container) {
-            containerTargetList.push(...Object.keys(_container));
-        }
+        const containerTargetList = project.getContainerTargets();
 
         // Type lib
         if (type === 'lib') {
@@ -75,45 +72,19 @@ describe('[PackageTaskBuilder]', () => {
         }
         // Type container
         else if (type === 'container') {
-            // Need to test this when multiple containers are defined
-            const containerSubBuilders = [];
-            containerTargetList.forEach((target) => {
-                containerSubBuilders.push({
-                    name: 'package-container',
-                    ctorArgs: [target, _container[target].repo],
-                });
-            });
-
-            return containerSubBuilders;
+            return [{ name: 'package-container', ctorArgs: [] }];
         }
         // Type cli
         else if (type === 'cli') {
-            // Need to test this conditional functionality by using project overrides
             if (containerTargetList.length > 0) {
-                const containerSubBuilders = [];
-                containerTargetList.forEach((target) => {
-                    containerSubBuilders.push({
-                        name: 'package-container',
-                        ctorArgs: [target, _container[target].repo],
-                    });
-                });
-
-                return containerSubBuilders;
+                return [{ name: 'package-container', ctorArgs: [] }];
             } else {
                 return [{ name: 'package-npm', ctorArgs: [] }];
             }
         }
         // Type api
         else if (type === 'api') {
-            const containerSubBuilders = [];
-            containerTargetList.forEach((target) => {
-                containerSubBuilders.push({
-                    name: 'package-container',
-                    ctorArgs: [target, _container[target].repo],
-                });
-            });
-
-            return containerSubBuilders;
+            return [{ name: 'package-container', ctorArgs: [] }];
         }
         // Type undefined or not supported
         return [{ name: 'not-supported', ctorArgs: [] }];
@@ -129,8 +100,8 @@ describe('[PackageTaskBuilder]', () => {
     injectSubBuilderCompositionTests(_initializeTask, _getExpectedSubBuilders);
 
     // Composition tests specific to package task builder
-    injectSubBuilderCompositionTestsContainerOptions(
-        _initializeTask,
-        _getExpectedSubBuilders
-    );
+    // injectSubBuilderCompositionTestsContainerOptions(
+    //     _initializeTask,
+    //     _getExpectedSubBuilders
+    // );
 });

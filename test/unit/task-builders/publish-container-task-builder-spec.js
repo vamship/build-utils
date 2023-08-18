@@ -20,6 +20,8 @@ import {
 } from '../../utils/object-builder.js';
 import { injectBuilderInitTests } from '../../utils/task-builder-snippets.js';
 
+const specificContainerTarget = 'myBuildArm'; // This is a second build defined in object-builder.js
+
 describe('[PublishContainerTaskBuilder]', () => {
     const _importModule = createModuleImporter(
         'src/task-builders/publish-container-task-builder.js',
@@ -47,8 +49,8 @@ describe('[PublishContainerTaskBuilder]', () => {
             it(`should throw an error if invoked without a tag (value=${tag})`, async () => {
                 const TaskBuilder = await _importModule();
                 const error = 'Invalid tag (arg #2)';
-                const target = 'myBuild';
-                const wrapper = () => new TaskBuilder(target, tag);
+                const wrapper = () =>
+                    new TaskBuilder(specificContainerTarget, tag);
 
                 expect(wrapper).to.throw(error);
             });
@@ -58,8 +60,8 @@ describe('[PublishContainerTaskBuilder]', () => {
     injectBuilderInitTests(
         _importModule,
         'publish-container',
-        `Publish container image for myBuild:myTag`,
-        ['myBuild', 'myTag'] // myBuild is the name of the target populated by default (see object-builder.js)
+        `Publish container image for myBuildArm:myTag`,
+        [specificContainerTarget, 'myTag'] // myBuildArm is the name of the second target populated by default (see object-builder.js)
     );
 
     getAllProjectOverrides().forEach(({ title, overrides }) => {
@@ -85,9 +87,8 @@ describe('[PublishContainerTaskBuilder]', () => {
                 });
                 const definition = buildProjectDefinition();
                 const project = new Project(definition);
-                const target = 'myBuild'; // myBuild is the name of the target populated by default (see object-builder.js)
 
-                const builder = new TaskBuilder(target);
+                const builder = new TaskBuilder(specificContainerTarget);
 
                 expect(gulpMock.series).to.not.have.been.called;
 
@@ -108,7 +109,7 @@ describe('[PublishContainerTaskBuilder]', () => {
     describe('[task]', () => {
         async function _createTask(definitionOverrides, target, tag) {
             if (typeof target !== 'string' || target.length === 0) {
-                target = 'myBuild'; // myBuild is the name of the target populated by default (see object-builder.js)
+                target = 'default';
             }
             const execaModuleMock = {
                 execa: stub().callsFake(() => ({
@@ -148,6 +149,13 @@ describe('[PublishContainerTaskBuilder]', () => {
                             {
                                 ...overrides,
                                 'buildMetadata.container': {
+                                    default: {
+                                        repo: 'my-repo',
+                                        buildFile: 'BuildFile-1',
+                                        buildArgs: {
+                                            arg1: 'value1',
+                                        },
+                                    },
                                     [target]: buildDefinition,
                                 },
                             },
@@ -197,6 +205,13 @@ describe('[PublishContainerTaskBuilder]', () => {
                             {
                                 ...overrides,
                                 'buildMetadata.container': {
+                                    default: {
+                                        repo: 'my-repo',
+                                        buildFile: 'BuildFile-1',
+                                        buildArgs: {
+                                            arg1: 'value1',
+                                        },
+                                    },
                                     [target]: buildDefinition,
                                 },
                             },
