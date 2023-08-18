@@ -8,11 +8,7 @@ import {
     createCtorNotCalledChecker,
     buildFailMessage,
 } from './object-builder.js';
-import {
-    getAllButObject,
-    getAllProjectOverrides,
-    mapProjectList,
-} from './data-generator.js';
+import { getAllButObject, getAllProjectOverrides } from './data-generator.js';
 import { Project } from '../../src/project.js';
 /**
  * Injects default tests that apply to all task builders. This is a utility

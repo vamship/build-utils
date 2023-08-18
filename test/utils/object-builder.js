@@ -42,7 +42,7 @@ function _prepareBuilderMockData(builderNames) {
  *
  * @returns {Object} The project definition.
  */
-export function buildProjectDefinition(overrides, removals) {
+export function buildProjectDefinition(overrides) {
     overrides = overrides || [];
     const definition = {
         name: 'sample-project',
@@ -76,14 +76,6 @@ export function buildProjectDefinition(overrides, removals) {
             },
         },
     };
-
-    if (removals && removals.length > 0) {
-        removals.forEach((property) => {
-            if (Object.keys(definition.buildMetadata).includes(property)) {
-                delete definition.buildMetadata[property];
-            }
-        });
-    }
 
     Object.keys(overrides).forEach((key) => {
         const value = overrides[key];
