@@ -14,7 +14,6 @@ import {
 import {
     injectBuilderInitTests,
     injectSubBuilderCompositionTests,
-    injectSubBuilderCompositionTestsContainerOptions,
 } from '../../utils/task-builder-snippets.js';
 
 describe('[PackageTaskBuilder]', () => {
@@ -98,10 +97,4 @@ describe('[PackageTaskBuilder]', () => {
 
     // Generalized composition tests
     injectSubBuilderCompositionTests(_initializeTask, _getExpectedSubBuilders);
-
-    // Composition tests specific to package task builder
-    // injectSubBuilderCompositionTestsContainerOptions(
-    //     _initializeTask,
-    //     _getExpectedSubBuilders
-    // );
 });
