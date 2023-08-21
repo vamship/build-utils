@@ -214,8 +214,7 @@ describe('[Project]', () => {
                         'buildMetadata.container': {},
                     });
                     const wrapper = () => new Project(definition);
-                    const error = /No container builds defined/;
-
+                    const error = /Schema validation failed \[.*container.*\]/;
                     expect(wrapper).to.throw(error);
                 });
 
@@ -223,7 +222,20 @@ describe('[Project]', () => {
                     it(`should throw an error if the build name is invalid`, () => {
                         const definition = buildProjectDefinition({
                             'buildMetadata.container': {
-                                [`${buildName}`]: 'foo',
+                                default: {
+                                    repo: 'my-repo',
+                                    buildFile: 'BuildFile-1',
+                                    buildArgs: {
+                                        arg1: 'value1',
+                                    },
+                                },
+                                [`${buildName}`]: {
+                                    repo: 'my-repo-2',
+                                    buildFile: 'BuildFile-2',
+                                    buildArgs: {
+                                        arg1: 'value2',
+                                    },
+                                },
                             },
                         });
                         const wrapper = () => new Project(definition);
@@ -247,8 +259,7 @@ describe('[Project]', () => {
                         },
                     });
                     const wrapper = () => new Project(definition);
-                    const error = /No default container defined/;
-
+                    const error = /Schema validation failed \[.*container.*\]/;
                     expect(wrapper).to.throw(error);
                 });
 
