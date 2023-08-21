@@ -34,7 +34,7 @@ describe('[PublishContainerTaskBuilder]', () => {
     );
 
     describe('ctor() <target, tag>', () => {
-        getAllButString('').forEach((target) => {
+        makeOptional(getAllButString('')).forEach((target) => {
             it(`should throw an error if invoked without a valid target (value=${target})`, async () => {
                 const TaskBuilder = await _importModule();
                 const error = 'Invalid target (arg #1)';
@@ -43,6 +43,21 @@ describe('[PublishContainerTaskBuilder]', () => {
 
                 expect(wrapper).to.throw(error);
             });
+        });
+
+        it('should not throw an error if the target is undefined', async () => {
+            const TaskBuilder = await _importModule();
+            const wrapper = () => new TaskBuilder(undefined, undefined);
+
+            expect(wrapper).to.not.throw();
+        });
+
+        it('shoud not throw an error if the target is undefined with a valid tag', async () => {
+            const TaskBuilder = await _importModule();
+            const tag = 'myTag';
+            const wrapper = () => new TaskBuilder(undefined, tag);
+
+            expect(wrapper).to.not.throw();
         });
 
         makeOptional(getAllButString('')).forEach((tag) => {
@@ -57,12 +72,21 @@ describe('[PublishContainerTaskBuilder]', () => {
         });
     });
 
-    injectBuilderInitTests(
-        _importModule,
-        'publish-container',
-        `Publish container image for myBuildArm:myTag`,
-        [specificContainerTarget, 'myTag'] // myBuildArm is the name of the second target populated by default (see object-builder.js)
-    );
+    [undefined, '1.0.0'].forEach((tag) => {
+        // Can explicitly state 'default' when overriding target repo or leave undefined
+        ['default', undefined, specificContainerTarget].forEach((target) => {
+            injectBuilderInitTests(
+                _importModule,
+                `publish-container${
+                    !target || target === 'default' ? '' : '-' + target // Specifying a non default container creates a named task
+                }`,
+                `Publish container image for ${target || 'default'}:${
+                    tag || 'latest'
+                }`,
+                [target, tag]
+            );
+        });
+    });
 
     getAllProjectOverrides().forEach(({ title, overrides }) => {
         describe(`[Task Build] - (${title})`, () => {
@@ -143,7 +167,6 @@ describe('[PublishContainerTaskBuilder]', () => {
                         };
                         const {
                             execaModuleMock: { execa: execaMock },
-                            project,
                             gulpMock,
                         } = await _createTask(
                             {
@@ -199,7 +222,6 @@ describe('[PublishContainerTaskBuilder]', () => {
                         };
                         const {
                             execaModuleMock: { execa: execaMock },
-                            project,
                             gulpMock,
                         } = await _createTask(
                             {

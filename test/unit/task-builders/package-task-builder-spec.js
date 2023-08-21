@@ -53,7 +53,7 @@ describe('[PackageTaskBuilder]', () => {
     }
 
     function _getExpectedSubBuilders(project) {
-        const { type, language } = project;
+        const { type } = project;
 
         const containerTargetList = project.getContainerTargets();
 
