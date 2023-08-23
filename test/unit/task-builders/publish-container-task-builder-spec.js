@@ -18,7 +18,10 @@ import {
     createModuleImporter,
     createGulpMock,
 } from '../../utils/object-builder.js';
-import { injectBuilderInitTests } from '../../utils/task-builder-snippets.js';
+import {
+    getSemverComponents,
+    injectBuilderInitTests,
+} from '../../utils/task-builder-snippets.js';
 
 const specificContainerTarget = 'myBuildArm'; // This is a second build defined in object-builder.js
 
@@ -52,7 +55,7 @@ describe('[PublishContainerTaskBuilder]', () => {
             expect(wrapper).to.not.throw();
         });
 
-        it('shoud not throw an error if the target is undefined with a valid tag', async () => {
+        it('should not throw an error if the target is undefined with a valid tag', async () => {
             const TaskBuilder = await _importModule();
             const tag = 'myTag';
             const wrapper = () => new TaskBuilder(undefined, tag);
@@ -161,112 +164,112 @@ describe('[PublishContainerTaskBuilder]', () => {
             ['latest', '1', '1.0', '1.0.0'].forEach((tag) => {
                 describe(`Verify task - publish to container registry - (${title})`, () => {
                     it(`should use the docker cli to tag the container image (tag=${tag})`, async () => {
-                        const target = 'containerTarget1';
-                        const buildDefinition = {
-                            repo: 'container-repo-1',
-                        };
+                        const target = 'default';
                         const {
                             execaModuleMock: { execa: execaMock },
                             gulpMock,
                         } = await _createTask(
                             {
                                 ...overrides,
-                                'buildMetadata.container': {
-                                    default: {
-                                        repo: 'my-repo',
-                                        buildFile: 'BuildFile-1',
-                                        buildArgs: {
-                                            arg1: 'value1',
-                                        },
-                                    },
-                                    [target]: buildDefinition,
-                                },
                             },
                             target,
                             tag
                         );
-                        const task = gulpMock.series.args[0][0][0];
-
-                        const dockerBin = 'docker';
-                        const expectedArgs = ['tag', `${target}:${tag}`];
 
                         expect(execaMock).to.not.have.been.called;
 
-                        task();
+                        const semverComponents = getSemverComponents(tag);
+                        semverComponents.forEach((semTag, index) => {
+                            const task = gulpMock.series.args[0][0][index];
 
-                        expect(execaMock).to.have.been.calledOnce;
+                            const dockerBin = 'docker';
+                            const expectedArgs = [
+                                'tag',
+                                target,
+                                `${target}:${semTag}`,
+                            ];
 
-                        expect(execaMock.args[0]).to.have.lengthOf(3);
+                            execaMock.reset();
 
-                        // First arg
-                        expect(execaMock.args[0][0]).to.equal(dockerBin);
+                            task();
 
-                        // Second arg
-                        expect(execaMock.args[0][1])
-                            .to.be.an('array')
-                            .and.to.have.length(expectedArgs.length);
-                        expectedArgs.forEach((arg, index) => {
-                            expect(execaMock.args[0][1][index]).to.equal(arg);
-                        });
+                            expect(execaMock).to.have.been.calledOnce;
 
-                        // Third arg
-                        expect(execaMock.args[0][2]).to.deep.equal({
-                            stdio: 'inherit',
+                            expect(execaMock.args[0]).to.have.lengthOf(3);
+
+                            // First arg
+                            expect(execaMock.args[0][0]).to.equal(dockerBin);
+
+                            // Second arg
+                            expect(execaMock.args[0][1])
+                                .to.be.an('array')
+                                .and.to.have.length(expectedArgs.length);
+                            expectedArgs.forEach((arg, index) => {
+                                expect(execaMock.args[0][1][index]).to.equal(
+                                    arg
+                                );
+                            });
+
+                            // Third arg
+                            expect(execaMock.args[0][2]).to.deep.equal({
+                                stdio: 'inherit',
+                            });
                         });
                     });
 
                     it(`should use the docker cli to publish the image to the cloud (tag=${tag})`, async () => {
-                        const target = 'containerTarget1';
-                        const buildDefinition = {
-                            repo: 'container-repo-1',
-                        };
+                        const target = 'default';
                         const {
                             execaModuleMock: { execa: execaMock },
                             gulpMock,
                         } = await _createTask(
                             {
                                 ...overrides,
-                                'buildMetadata.container': {
-                                    default: {
-                                        repo: 'my-repo',
-                                        buildFile: 'BuildFile-1',
-                                        buildArgs: {
-                                            arg1: 'value1',
-                                        },
-                                    },
-                                    [target]: buildDefinition,
-                                },
                             },
                             target,
                             tag
                         );
-                        const task = gulpMock.series.args[0][0][1];
-
-                        const dockerBin = 'docker';
-                        const expectedArgs = ['push', `${target}:${tag}`];
 
                         expect(execaMock).to.not.have.been.called;
 
-                        task();
+                        const semverComponents = getSemverComponents(tag);
+                        semverComponents.forEach((semTag, index) => {
+                            const task =
+                                gulpMock.series.args[0][0][
+                                    index + semverComponents.length
+                                ];
 
-                        expect(execaMock).to.have.been.calledOnce;
+                            const dockerBin = 'docker';
+                            const expectedArgs = [
+                                'push',
+                                `${target}:${semTag}`,
+                            ];
 
-                        expect(execaMock.args[0]).to.have.lengthOf(3);
+                            execaMock.reset();
 
-                        // First arg
-                        expect(execaMock.args[0][0]).to.equal(dockerBin);
+                            task();
 
-                        // Second arg
-                        expect(execaMock.args[0][1])
-                            .to.be.an('array')
-                            .and.to.have.length(expectedArgs.length);
-                        expectedArgs.forEach((arg, index) => {
-                            expect(execaMock.args[0][1][index]).to.equal(arg);
-                        });
+                            expect(execaMock).to.have.been.calledOnce;
 
-                        // Third arg
-                        expect(execaMock.args[0][2]).to.deep.equal({
-                            stdio: 'inherit',
+                            expect(execaMock.args[0]).to.have.lengthOf(3);
+
+                            // First arg
+                            expect(execaMock.args[0][0]).to.equal(dockerBin);
+
+                            // Second arg
+                            expect(execaMock.args[0][1])
+                                .to.be.an('array')
+                                .and.to.have.length(expectedArgs.length);
+                            expectedArgs.forEach((arg, index) => {
+                                expect(execaMock.args[0][1][index]).to.equal(
+                                    arg
+                                );
+                            });
+
+                            // Third arg
+                            expect(execaMock.args[0][2]).to.deep.equal({
+                                stdio: 'inherit',
+                            });
                         });
                     });
                 });
