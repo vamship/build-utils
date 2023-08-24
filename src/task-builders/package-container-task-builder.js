@@ -12,7 +12,7 @@ export class PackageContainerTaskBuilder extends TaskBuilder {
     /**
      * Creates a new task builder.
      *
-     * @param {String} [target] The name of the container build target
+     * @param {String} target The name of the container build target
      * @param {String} [repo=undefined] The name of the container repo
      */
     constructor(target, repo) {
