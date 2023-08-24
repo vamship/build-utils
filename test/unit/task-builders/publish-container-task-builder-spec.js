@@ -5,7 +5,7 @@ _chai.use(_sinonChai);
 import _path from 'path';
 import _camelcase from 'camelcase';
 
-import { stub, spy } from 'sinon';
+import { stub } from 'sinon';
 import _esmock from 'esmock';
 import { Project } from '../../../src/project.js';
 import {
@@ -18,10 +18,7 @@ import {
     createModuleImporter,
     createGulpMock,
 } from '../../utils/object-builder.js';
-import {
-    getSemverComponents,
-    injectBuilderInitTests,
-} from '../../utils/task-builder-snippets.js';
+import { injectBuilderInitTests } from '../../utils/task-builder-snippets.js';
 
 const specificContainerTarget = 'myBuildArm'; // This is a second build defined in object-builder.js
 
@@ -160,6 +157,13 @@ describe('[PublishContainerTaskBuilder]', () => {
             };
         }
 
+        const semverComponentsObj = {
+            latest: ['latest'],
+            1: ['1.0.0', '1.0', '1', 'latest'],
+            '1.0': ['1.0.0', '1.0', '1', 'latest'],
+            '1.0.0': ['1.0.0', '1.0', '1', 'latest'],
+        };
+
         getAllProjectOverrides().forEach(({ title, overrides }) => {
             ['latest', '1', '1.0', '1.0.0'].forEach((tag) => {
                 describe(`Verify task - publish to container registry - (${title})`, () => {
@@ -178,7 +182,7 @@ describe('[PublishContainerTaskBuilder]', () => {
 
                         expect(execaMock).to.not.have.been.called;
 
-                        const semverComponents = getSemverComponents(tag);
+                        const semverComponents = semverComponentsObj[tag];
                         semverComponents.forEach((semTag, index) => {
                             const task = gulpMock.series.args[0][0][index];
 
@@ -232,7 +236,7 @@ describe('[PublishContainerTaskBuilder]', () => {
 
                         expect(execaMock).to.not.have.been.called;
 
-                        const semverComponents = getSemverComponents(tag);
+                        const semverComponents = semverComponentsObj[tag];
                         semverComponents.forEach((semTag, index) => {
                             const task =
                                 gulpMock.series.args[0][0][

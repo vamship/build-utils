@@ -4,7 +4,7 @@ import TaskBuilder from '../task-builder.js';
 import { Project } from '../project.js';
 import { execa as _execa } from 'execa';
 import _gulp from 'gulp';
-import { getSemverComponents } from '../../test/utils/task-builder-snippets.js';
+import { getSemverComponents } from '../utils/semver-utils.js';
 
 /**
  * Builder function that can be used to generate a gulp task to publish a CDK
