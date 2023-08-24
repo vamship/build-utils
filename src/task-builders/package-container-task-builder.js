@@ -12,14 +12,11 @@ export class PackageContainerTaskBuilder extends TaskBuilder {
     /**
      * Creates a new task builder.
      *
-     * @param {String} [target='default'] The name of the container build target
+     * @param {String} [target] The name of the container build target
      * @param {String} [repo=undefined] The name of the container repo
      */
-    constructor(target = 'default', repo) {
-        if (
-            typeof target !== 'undefined' &&
-            (typeof target !== 'string' || target.length === 0)
-        ) {
+    constructor(target, repo) {
+        if (typeof target !== 'string' || target.length === 0) {
             throw new Error('Invalid target (arg #1)');
         }
         if (

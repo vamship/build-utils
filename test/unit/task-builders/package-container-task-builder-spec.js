@@ -39,7 +39,7 @@ describe('[PackageContainerTaskBuilder]', () => {
     });
 
     describe('ctor() <target, repo uri>', () => {
-        makeOptional(getAllButString('')).forEach((target) => {
+        getAllButString('').forEach((target) => {
             it(`should throw an error if invoked without a valid build target (value=${target})`, async () => {
                 const TaskBuilder = await _importModule();
                 const error = 'Invalid target (arg #1)';
@@ -48,22 +48,6 @@ describe('[PackageContainerTaskBuilder]', () => {
 
                 expect(wrapper).to.throw(error);
             });
-        });
-
-        it('should not throw an error if the target is undefined', async () => {
-            const TaskBuilder = await _importModule();
-            const wrapper = () => new TaskBuilder(undefined, undefined);
-
-            expect(wrapper).to.not.throw();
-        });
-
-        it('shoud not throw an error if the target is undefined with a valid repo', async () => {
-            const TaskBuilder = await _importModule();
-            const error = 'Must define a target for given repo';
-            const repo = 'my-repo';
-            const wrapper = () => new TaskBuilder(undefined, repo);
-
-            expect(wrapper).to.not.throw(error);
         });
 
         makeOptional(getAllButString('')).forEach((repo) => {
@@ -87,12 +71,11 @@ describe('[PackageContainerTaskBuilder]', () => {
     });
 
     [undefined, 'custom-repo'].forEach((repo) => {
-        // Can explicitly state 'default' when overriding target repo or leave undefined
-        ['default', undefined, specificContainerTarget].forEach((target) => {
+        ['default', specificContainerTarget].forEach((target) => {
             injectBuilderInitTests(
                 _importModule,
                 `package-container${
-                    !target || target === 'default' ? '' : '-' + target // Specifying a non default container creates a named task
+                    target === 'default' ? '' : '-' + target // Specifying a non default container creates a named task
                 }`,
                 `Package a project for publishing to a container registry`,
                 [target, repo]
@@ -111,7 +94,7 @@ describe('[PackageContainerTaskBuilder]', () => {
                     'getUndefinedEnvironmentVariables'
                 ).returns([]);
 
-                const builder = new PackageContainerTaskBuilder();
+                const builder = new PackageContainerTaskBuilder('default'); // default is the name of mandatory target populated by default
 
                 expect(checkStub).to.not.have.been.called;
 
@@ -129,7 +112,7 @@ describe('[PackageContainerTaskBuilder]', () => {
                     'getUndefinedEnvironmentVariables'
                 ).returns(['foo', 'bar']);
 
-                const builder = new PackageContainerTaskBuilder();
+                const builder = new PackageContainerTaskBuilder('default'); // default is the name of mandatory target populated by default
 
                 const wrapper = () => builder.buildTask(project);
 

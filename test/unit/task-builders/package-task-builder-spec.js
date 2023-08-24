@@ -71,19 +71,19 @@ describe('[PackageTaskBuilder]', () => {
         }
         // Type container
         else if (type === 'container') {
-            return [{ name: 'package-container', ctorArgs: [] }];
+            return [{ name: 'package-container', ctorArgs: ['default'] }];
         }
         // Type cli
         else if (type === 'cli') {
             if (containerTargetList.length > 0) {
-                return [{ name: 'package-container', ctorArgs: [] }];
+                return [{ name: 'package-container', ctorArgs: ['default'] }];
             } else {
                 return [{ name: 'package-npm', ctorArgs: [] }];
             }
         }
         // Type api
         else if (type === 'api') {
-            return [{ name: 'package-container', ctorArgs: [] }];
+            return [{ name: 'package-container', ctorArgs: ['default'] }];
         }
         // Type undefined or not supported
         return [{ name: 'not-supported', ctorArgs: [] }];

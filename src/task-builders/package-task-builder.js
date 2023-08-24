@@ -70,19 +70,19 @@ export class PackageTaskBuilder extends TaskBuilder {
         }
         // Type container
         else if (type === 'container') {
-            return [new PackageContainerTaskBuilder()];
+            return [new PackageContainerTaskBuilder('default')];
         }
         // Type cli
         else if (type === 'cli') {
             if (containerTargetList.length > 0) {
-                return [new PackageContainerTaskBuilder()];
+                return [new PackageContainerTaskBuilder('default')];
             } else {
                 return [new PackageNpmTaskBuilder()];
             }
         }
         // Type api
         else if (type === 'api') {
-            return [new PackageContainerTaskBuilder()];
+            return [new PackageContainerTaskBuilder('default')];
         }
         // Type undefined or not supported
         return [new NotSupportedTaskBuilder()];
