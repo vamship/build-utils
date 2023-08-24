@@ -14,15 +14,12 @@ export class PublishContainerTaskBuilder extends TaskBuilder {
     /**
      * Creates a new task builder.
      *
-     * @param {String} [target='default'] The name of the CDK stack target
+     * @param {String} target The name of the CDK stack target
      * @param {String} [tag='latest'] An optional tag to apply to the container
      * image.
      */
-    constructor(target = 'default', tag = 'latest') {
-        if (
-            typeof target !== 'undefined' &&
-            (typeof target !== 'string' || target.length === 0)
-        ) {
+    constructor(target, tag = 'latest') {
+        if (typeof target !== 'string' || target.length === 0) {
             throw new Error('Invalid target (arg #1)');
         }
         if (
@@ -35,9 +32,7 @@ export class PublishContainerTaskBuilder extends TaskBuilder {
             // When specifying the container target, if it is not called default, this
             // will create a named task
             `publish-container${target === 'default' ? '' : '-' + target}`,
-            `Publish container image for ${target || 'default'}:${
-                tag || 'latest'
-            }`
+            `Publish container image for ${target}:${tag}`
         );
 
         this._target = target;

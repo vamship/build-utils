@@ -71,19 +71,19 @@ describe('[PublishTaskBuilder]', () => {
         }
         // Type container
         else if (type === 'container') {
-            return [{ name: 'publish-container', ctorArgs: [] }];
+            return [{ name: 'publish-container', ctorArgs: ['default'] }];
         }
         // Type cli
         else if (type === 'cli') {
             if (containerTargetList.length > 0) {
-                return [{ name: 'publish-container', ctorArgs: [] }];
+                return [{ name: 'publish-container', ctorArgs: ['default'] }];
             } else {
                 return [{ name: 'publish-npm', ctorArgs: [] }];
             }
         }
         // Type api
         else if (type === 'api') {
-            return [{ name: 'publish-container', ctorArgs: [] }];
+            return [{ name: 'publish-container', ctorArgs: ['default'] }];
         }
         // Type undefined or not supported
         return [{ name: 'not-supported', ctorArgs: [] }];

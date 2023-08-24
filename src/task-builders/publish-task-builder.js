@@ -67,19 +67,19 @@ export class PublishTaskBuilder extends TaskBuilder {
         }
         // Type container
         else if (type === 'container') {
-            return [new PublishContainerTaskBuilder()];
+            return [new PublishContainerTaskBuilder('default')];
         }
         // Type cli
         else if (type === 'cli') {
             if (containerTargetList.length > 0) {
-                return [new PublishContainerTaskBuilder()];
+                return [new PublishContainerTaskBuilder('default')];
             } else {
                 return [new PublishNpmTaskBuilder()];
             }
         }
         // Type api
         else if (type === 'api') {
-            return [new PublishContainerTaskBuilder()];
+            return [new PublishContainerTaskBuilder('default')];
         }
         // Type undefined or not supported
         return [new NotSupportedTaskBuilder()];
