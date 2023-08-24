@@ -183,6 +183,13 @@ describe('[PublishContainerTaskBuilder]', () => {
                         expect(execaMock).to.not.have.been.called;
 
                         const semverComponents = semverComponentsObj[tag];
+
+                        // The number of tasks should be double the semver components
+                        expect(gulpMock.series.args[0][0]).to.have.lengthOf(
+                            semverComponents.length * 2,
+                            'Number of tasks in gulp series is incorrect'
+                        );
+
                         semverComponents.forEach((semTag, index) => {
                             const task = gulpMock.series.args[0][0][index];
 
@@ -237,6 +244,13 @@ describe('[PublishContainerTaskBuilder]', () => {
                         expect(execaMock).to.not.have.been.called;
 
                         const semverComponents = semverComponentsObj[tag];
+
+                        // The number of tasks should be double the semver components
+                        expect(gulpMock.series.args[0][0]).to.have.lengthOf(
+                            semverComponents.length * 2,
+                            'Number of tasks in gulp series is incorrect'
+                        );
+
                         semverComponents.forEach((semTag, index) => {
                             const task =
                                 gulpMock.series.args[0][0][
