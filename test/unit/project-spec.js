@@ -7,6 +7,7 @@ import {
     getAllButObject,
     getAllButArray,
     makeOptional,
+    createContainerObject,
 } from '../utils/data-generator.js';
 import { buildProjectDefinition } from '../utils/object-builder.js';
 
@@ -213,8 +214,7 @@ describe('[Project]', () => {
                         'buildMetadata.container': {},
                     });
                     const wrapper = () => new Project(definition);
-                    const error = /No container builds defined/;
-
+                    const error = /Schema validation failed \[.*container.*\]/;
                     expect(wrapper).to.throw(error);
                 });
 
@@ -222,7 +222,20 @@ describe('[Project]', () => {
                     it(`should throw an error if the build name is invalid`, () => {
                         const definition = buildProjectDefinition({
                             'buildMetadata.container': {
-                                [`${buildName}`]: 'foo',
+                                default: {
+                                    repo: 'my-repo',
+                                    buildFile: 'BuildFile-1',
+                                    buildArgs: {
+                                        arg1: 'value1',
+                                    },
+                                },
+                                [`${buildName}`]: {
+                                    repo: 'my-repo-2',
+                                    buildFile: 'BuildFile-2',
+                                    buildArgs: {
+                                        arg1: 'value2',
+                                    },
+                                },
                             },
                         });
                         const wrapper = () => new Project(definition);
@@ -233,23 +246,40 @@ describe('[Project]', () => {
                     });
                 });
 
+                it(`should throw an error if no default build is defined`, () => {
+                    const definition = buildProjectDefinition({
+                        'buildMetadata.container': {
+                            myBuild: {
+                                repo: 'my-repo',
+                                buildFile: 'BuildFile-1',
+                                buildArgs: {
+                                    arg1: 'value1',
+                                },
+                            },
+                        },
+                    });
+                    const wrapper = () => new Project(definition);
+                    const error = /Schema validation failed \[.*container.*\]/;
+                    expect(wrapper).to.throw(error);
+                });
+
                 getAllButObject().forEach((buildName) => {
                     it(`should throw an error if invoked without a valid buildMetadata.container[buildName] (value=${typeof buildName})`, () => {
                         const definition = buildProjectDefinition({
-                            'buildMetadata.container.myBuild': buildName,
+                            'buildMetadata.container.default': buildName,
                         });
                         const wrapper = () => new Project(definition);
                         const error =
-                            /Schema validation failed \[.*myBuild.*\]/;
+                            /Schema validation failed \[.*default.*\]/;
 
                         expect(wrapper).to.throw(error);
                     });
                 });
 
                 getAllButString('').forEach((repo) => {
-                    it(`should throw an error if invoked without a valid buildMetadata.container.myBuild.repo (value=${typeof repo})`, () => {
+                    it(`should throw an error if invoked without a valid buildMetadata.container.default.repo (value=${typeof repo})`, () => {
                         const definition = buildProjectDefinition({
-                            'buildMetadata.container.myBuild.repo': repo,
+                            'buildMetadata.container.default.repo': repo,
                         });
                         const wrapper = () => new Project(definition);
                         const error = /Schema validation failed \[.*repo.*\]/;
@@ -259,9 +289,9 @@ describe('[Project]', () => {
                 });
 
                 makeOptional(getAllButString('')).forEach((buildFile) => {
-                    it(`should throw an error if invoked without a valid buildMetadata.container.myBuild.buildFile (value=${typeof buildFile})`, () => {
+                    it(`should throw an error if invoked without a valid buildMetadata.container.default.buildFile (value=${typeof buildFile})`, () => {
                         const definition = buildProjectDefinition({
-                            'buildMetadata.container.myBuild.buildFile':
+                            'buildMetadata.container.default.buildFile':
                                 buildFile,
                         });
                         const wrapper = () => new Project(definition);
@@ -273,9 +303,9 @@ describe('[Project]', () => {
                 });
 
                 makeOptional(getAllButObject()).forEach((buildArgs) => {
-                    it(`should throw an error if invoked without a valid buildMetadata.container.myBuild.buildArgs (value=${typeof buildArgs})`, () => {
+                    it(`should throw an error if invoked without a valid buildMetadata.container.default.buildArgs (value=${typeof buildArgs})`, () => {
                         const definition = buildProjectDefinition({
-                            'buildMetadata.container.myBuild.buildArgs':
+                            'buildMetadata.container.default.buildArgs':
                                 buildArgs,
                         });
                         const wrapper = () => new Project(definition);
@@ -288,7 +318,7 @@ describe('[Project]', () => {
 
                 it('should throw an error if unsupported additional parameters are specified', () => {
                     const definition = buildProjectDefinition();
-                    definition.buildMetadata.container.myBuild.foo = 'bar';
+                    definition.buildMetadata.container.default.foo = 'bar';
                     const wrapper = () => new Project(definition);
                     const error =
                         /Schema validation failed \[.*additional properties.*\]/;
@@ -299,7 +329,7 @@ describe('[Project]', () => {
                 ['$?!', ''].forEach((buildArg) => {
                     it(`should throw an error if the build arg name is invalid`, () => {
                         const definition = buildProjectDefinition({
-                            'buildMetadata.container.myBuild.buildArgs': {
+                            'buildMetadata.container.default.buildArgs': {
                                 [`${buildArg}`]: 'foo',
                             },
                         });
@@ -312,9 +342,9 @@ describe('[Project]', () => {
                 });
 
                 getAllButString().forEach((buildArgValue) => {
-                    it(`should throw an error if invoked without a valid buildMetadata.container.myBuild.buildArgs[buildArgValue] (value=${typeof buildArgValue})`, () => {
+                    it(`should throw an error if invoked without a valid buildMetadata.container.default.buildArgs[buildArgValue] (value=${typeof buildArgValue})`, () => {
                         const definition = buildProjectDefinition({
-                            'buildMetadata.container.myBuild.buildArgs': {
+                            'buildMetadata.container.default.buildArgs': {
                                 foo: buildArgValue,
                             },
                         });
@@ -654,36 +684,23 @@ describe('[Project]', () => {
 
         it('should return the stack keys specified in the project definition', () => {
             const targets = ['foo', 'bar'];
+            const containers = createContainerObject(targets);
             const definition = buildProjectDefinition({
-                'buildMetadata.container': targets.reduce((result, key) => {
-                    result[key] = {
-                        repo: key,
-                        buildFile: 'BuildFile-1',
-                        buildArgs: {
-                            arg1: 'value1',
-                        },
-                    };
-                    return result;
-                }, {}),
+                'buildMetadata.container': containers,
             });
             const project = new Project(definition);
 
-            expect(project.getContainerTargets()).to.deep.equal(targets);
+            expect(project.getContainerTargets()).to.deep.equal([
+                ...targets,
+                'default',
+            ]);
         });
 
         it('should return a copy of the values, not a reference', () => {
             const targets = ['foo', 'bar'];
+            const containers = createContainerObject(targets);
             const definition = buildProjectDefinition({
-                'buildMetadata.container': targets.reduce((result, key) => {
-                    result[key] = {
-                        repo: key,
-                        buildFile: 'BuildFile-1',
-                        buildArgs: {
-                            arg1: 'value1',
-                        },
-                    };
-                    return result;
-                }, {}),
+                'buildMetadata.container': containers,
             });
             const project = new Project(definition);
 
@@ -709,17 +726,10 @@ describe('[Project]', () => {
 
         it('should throw an error if the container target has not been defined', () => {
             const targets = ['foo', 'bar'];
+            const containers = createContainerObject(targets);
+
             const definition = buildProjectDefinition({
-                'buildMetadata.container': targets.reduce((result, key) => {
-                    result[key] = {
-                        repo: 'my-repo',
-                        buildFile: 'BuildFile-1',
-                        buildArgs: {
-                            arg1: 'value1',
-                        },
-                    };
-                    return result;
-                }, {}),
+                'buildMetadata.container': containers,
             });
             const project = new Project(definition);
 
@@ -732,16 +742,8 @@ describe('[Project]', () => {
 
         it('should return container details if the container target has been defined', () => {
             const targets = ['foo', 'bar'];
-            const containers = targets.reduce((result, key) => {
-                result[key] = {
-                    repo: 'my-repo',
-                    buildFile: 'BuildFile-1',
-                    buildArgs: {
-                        arg1: 'value1',
-                    },
-                };
-                return result;
-            }, {});
+            const containers = createContainerObject(targets);
+
             const definition = buildProjectDefinition({
                 'buildMetadata.container': containers,
             });
@@ -758,16 +760,8 @@ describe('[Project]', () => {
 
         it('should return a copy of the definition and not a reference', () => {
             const targets = ['foo', 'bar'];
-            const containers = targets.reduce((result, key) => {
-                result[key] = {
-                    repo: 'my-repo',
-                    buildFile: 'BuildFile-1',
-                    buildArgs: {
-                        arg1: 'value1',
-                    },
-                };
-                return result;
-            }, {});
+            const containers = createContainerObject(targets);
+
             const definition = buildProjectDefinition({
                 'buildMetadata.container': containers,
             });

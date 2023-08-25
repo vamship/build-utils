@@ -114,6 +114,7 @@ export default {
                             additionalProperties: false,
                         },
                     },
+                    required: ['default'],
                     additionalProperties: false,
                 },
 

@@ -192,3 +192,34 @@ export function generateGlobPatterns(basePath, dirs, extensions) {
         )
         .reduce((result, item) => result.concat(item), []);
 }
+
+/**
+ * Generates a testing container object for the project property container based on a list
+ * of container names. Adds the default container as well.
+ *
+ * @param {Array} targetList An array of container names as strings
+ *
+ * @return {Object} An object of containers.
+ */
+export function createContainerObject(targetList) {
+    const containers = targetList.reduce((result, key) => {
+        result[key] = {
+            repo: 'my-repo-2',
+            buildFile: 'BuildFile-2',
+            buildArgs: {
+                arg1: 'value2',
+            },
+        };
+        return result;
+    }, {});
+
+    // Add default container
+    containers.default = {
+        repo: 'my-repo',
+        buildFile: 'BuildFile-1',
+        buildArgs: {
+            arg1: 'value1',
+        },
+    };
+    return containers;
+}

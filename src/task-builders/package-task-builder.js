@@ -10,9 +10,10 @@ import { PackageContainerTaskBuilder } from './package-container-task-builder.js
 
 /**
  * General purpose packaging task that configures sub tasks for packaging based
- * on the project. When a project is a container and has multiple container
- * targets, this task will either package the target named "default" or the
- * first target defined for the project.
+ * on the project. When a project is an API or container and has multiple container
+ * targets, this task will package the target named "default". When the project is
+ * a CLI and there is a "default" container defined, this task will package that,
+ * if there is no container defined, it will package using npm.
  */
 export class PackageTaskBuilder extends TaskBuilder {
     /**
@@ -52,21 +53,38 @@ export class PackageTaskBuilder extends TaskBuilder {
      * @private
      */
     _getSubBuilders(project) {
-        const { type, language } = project;
+        const { type } = project;
+        const containerTargetList = project.getContainerTargets();
+
+        // Type lib
         if (type === 'lib') {
             return [new PackageNpmTaskBuilder()];
-        } else if (type === 'aws-microservice') {
+        }
+        // Type aws-microservice
+        else if (type === 'aws-microservice') {
             return [new PackageAwsTaskBuilder()];
         }
+        // Type ui
+        else if (type === 'ui') {
+            return [new NotSupportedTaskBuilder()];
+        }
+        // Type container
+        else if (type === 'container') {
+            return [new PackageContainerTaskBuilder('default')];
+        }
+        // Type cli
+        else if (type === 'cli') {
+            if (containerTargetList.length > 0) {
+                return [new PackageContainerTaskBuilder('default')];
+            } else {
+                return [new PackageNpmTaskBuilder()];
+            }
+        }
+        // Type api
+        else if (type === 'api') {
+            return [new PackageContainerTaskBuilder('default')];
+        }
+        // Type undefined or not supported
         return [new NotSupportedTaskBuilder()];
-        // if (type === 'container') {
-        //     return [new NotSupportedTaskBuilder()];
-        // } else if (language === 'ts') {
-        //     return [new PackageNpmTaskBuilder()];
-        // } else if (language === 'ts') {
-        //     return [new PackageContainerTaskBuilder()];
-        // } else {
-        //     return [new PackageNpmTaskBuilder()];
-        // }
     }
 }

@@ -1,23 +1,13 @@
-import _chai, { expect } from 'chai';
+import _chai from 'chai';
 import _sinonChai from 'sinon-chai';
 _chai.use(_sinonChai);
 
 import _path from 'path';
 
-import { stub, spy } from 'sinon';
 import _esmock from 'esmock';
-import { Project } from '../../../src/project.js';
 import {
-    getAllButString,
-    getAllProjectOverrides,
-    generateGlobPatterns,
-} from '../../utils/data-generator.js';
-import {
-    buildProjectDefinition,
     createGulpMock,
-    createFancyLogMock,
     createModuleImporter,
-    createTaskBuilderMock,
     createTaskBuilderImportDefinitions,
     createTaskBuilderImportMocks,
 } from '../../utils/object-builder.js';
@@ -64,26 +54,39 @@ describe('[PackageTaskBuilder]', () => {
 
     function _getExpectedSubBuilders(project) {
         const { type, language } = project;
-        if(type === 'ui') {
-            return [{ name: 'not-supported', ctorArgs: [] }];
-        } else if (type === 'lib') {
-            return [{ name: 'package-npm', ctorArgs: [] }];
-        } else if (type === 'aws-microservice') {
-           return [ { name: 'package-aws', ctorArgs: [] } ];
-        } 
-        return [{ name: 'not-supported', ctorArgs: [] }];
 
-        // if (type === 'ui') {
-        //     return [{ name: 'not-supported', ctorArgs: [] }];
-        // } else if (type === 'aws-microservice') {
-        //     return [
-        //         { name: 'package-aws', ctorArgs: [] },
-        //     ];
-        // } else if (project.getContainerTargets().length > 0) {
-        //     return [
-        //         { name: 'package-container', ctorArgs: [] },
-        //     ];
-        // }
+        const containerTargetList = project.getContainerTargets();
+
+        // Type lib
+        if (type === 'lib') {
+            return [{ name: 'package-npm', ctorArgs: [] }];
+        }
+        // Type aws-microservice
+        else if (type === 'aws-microservice') {
+            return [{ name: 'package-aws', ctorArgs: [] }];
+        }
+        // Type ui
+        else if (type === 'ui') {
+            return [{ name: 'not-supported', ctorArgs: [] }];
+        }
+        // Type container
+        else if (type === 'container') {
+            return [{ name: 'package-container', ctorArgs: ['default'] }];
+        }
+        // Type cli
+        else if (type === 'cli') {
+            if (containerTargetList.length > 0) {
+                return [{ name: 'package-container', ctorArgs: ['default'] }];
+            } else {
+                return [{ name: 'package-npm', ctorArgs: [] }];
+            }
+        }
+        // Type api
+        else if (type === 'api') {
+            return [{ name: 'package-container', ctorArgs: ['default'] }];
+        }
+        // Type undefined or not supported
+        return [{ name: 'not-supported', ctorArgs: [] }];
     }
 
     injectBuilderInitTests(
@@ -92,5 +95,6 @@ describe('[PackageTaskBuilder]', () => {
         `Packages project build files for publishing to a repository`
     );
 
+    // Generalized composition tests
     injectSubBuilderCompositionTests(_initializeTask, _getExpectedSubBuilders);
 });
