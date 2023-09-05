@@ -4,6 +4,7 @@ import TaskBuilder from '../task-builder.js';
 import { Project } from '../project.js';
 import { execa as _execa } from 'execa';
 import _gulp from 'gulp';
+import { getSemverComponents } from '../utils/semver-utils.js';
 
 /**
  * Builder function that can be used to generate a gulp task to publish a CDK
@@ -17,7 +18,7 @@ export class PublishContainerTaskBuilder extends TaskBuilder {
      * @param {String} [tag='latest'] An optional tag to apply to the container
      * image.
      */
-    constructor(target, tag) {
+    constructor(target, tag = 'latest') {
         if (typeof target !== 'string' || target.length === 0) {
             throw new Error('Invalid target (arg #1)');
         }
@@ -28,7 +29,9 @@ export class PublishContainerTaskBuilder extends TaskBuilder {
             throw new Error('Invalid tag (arg #2)');
         }
         super(
-            'publish-container',
+            // When specifying the container target, if it is not called default, this
+            // will create a named task
+            `publish-container${target === 'default' ? '' : '-' + target}`,
             `Publish container image for ${target}:${tag}`
         );
 
@@ -52,16 +55,29 @@ export class PublishContainerTaskBuilder extends TaskBuilder {
 
         const definition = project.getContainerDefinition(this._target);
 
-        const tagTask = () =>
-            _execa('docker', ['tag', `${definition.name}:${this._tag}`], {
-                stdio: 'inherit',
-            });
-        const pushTask = () =>
-            _execa('docker', ['push', `${definition.name}:${this._tag}`], {
-                stdio: 'inherit',
-            });
+        const semverComponents = getSemverComponents(this._tag);
+        const tagTaskList = semverComponents.map((tag) => {
+            const tagTask = () =>
+                // Per docker docs `docker tag SOURCE_IMAGE[:TAG] TARGET_IMAGE[:TAG]`
+                _execa(
+                    'docker',
+                    ['tag', definition.name, `${definition.name}:${tag}`],
+                    {
+                        stdio: 'inherit',
+                    }
+                );
+            return tagTask;
+        });
+        const pushTaskList = semverComponents.map((tag) => {
+            const pushTask = () =>
+                // Per docker docs `docker push [OPTIONS] NAME[:TAG]`
+                _execa('docker', ['push', `${definition.name}:${tag}`], {
+                    stdio: 'inherit',
+                });
+            return pushTask;
+        });
 
-        const task = _gulp.series([tagTask, pushTask]);
+        const task = _gulp.series([...tagTaskList, ...pushTaskList]);
         return task;
     }
 }

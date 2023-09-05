@@ -16,22 +16,22 @@ import {
     injectSubBuilderCompositionTests,
 } from '../../utils/task-builder-snippets.js';
 
-describe('[PackageTaskBuilder]', () => {
+describe('[PublishTaskBuilder]', () => {
     const _subBuilders = [
-        'package-npm',
-        'package-aws',
-        'package-container',
+        'publish-npm',
+        'publish-aws',
+        'publish-container',
         'not-supported',
     ];
     const _importDefinitions = createTaskBuilderImportDefinitions(_subBuilders);
     const _importModule = createModuleImporter(
-        'src/task-builders/package-task-builder.js',
+        'src/task-builders/publish-task-builder.js',
         {
             taskBuilderMock: 'src/task-builder.js',
             gulpMock: 'gulp',
             ..._importDefinitions,
         },
-        'PackageTaskBuilder'
+        'PublishTaskBuilder'
     );
 
     async function _initializeTask() {
@@ -59,11 +59,11 @@ describe('[PackageTaskBuilder]', () => {
 
         // Type lib
         if (type === 'lib') {
-            return [{ name: 'package-npm', ctorArgs: [] }];
+            return [{ name: 'publish-npm', ctorArgs: [] }];
         }
         // Type aws-microservice
         else if (type === 'aws-microservice') {
-            return [{ name: 'package-aws', ctorArgs: [] }];
+            return [{ name: 'publish-aws', ctorArgs: [] }];
         }
         // Type ui
         else if (type === 'ui') {
@@ -71,19 +71,19 @@ describe('[PackageTaskBuilder]', () => {
         }
         // Type container
         else if (type === 'container') {
-            return [{ name: 'package-container', ctorArgs: ['default'] }];
+            return [{ name: 'publish-container', ctorArgs: ['default'] }];
         }
         // Type cli
         else if (type === 'cli') {
             if (containerTargetList.length > 0) {
-                return [{ name: 'package-container', ctorArgs: ['default'] }];
+                return [{ name: 'publish-container', ctorArgs: ['default'] }];
             } else {
-                return [{ name: 'package-npm', ctorArgs: [] }];
+                return [{ name: 'publish-npm', ctorArgs: [] }];
             }
         }
         // Type api
         else if (type === 'api') {
-            return [{ name: 'package-container', ctorArgs: ['default'] }];
+            return [{ name: 'publish-container', ctorArgs: ['default'] }];
         }
         // Type undefined or not supported
         return [{ name: 'not-supported', ctorArgs: [] }];
@@ -91,8 +91,8 @@ describe('[PackageTaskBuilder]', () => {
 
     injectBuilderInitTests(
         _importModule,
-        'package',
-        `Packages project build files for publishing to a repository`
+        'publish',
+        `Publishes project to a repository`
     );
 
     // Generalized composition tests
