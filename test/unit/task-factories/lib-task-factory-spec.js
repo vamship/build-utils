@@ -1,23 +1,16 @@
-import _chai, { expect } from 'chai';
+import _chai from 'chai';
 import _sinonChai from 'sinon-chai';
 _chai.use(_sinonChai);
 
-import { stub } from 'sinon';
 import { LibTaskFactory } from '../../../src/task-factories/lib-task-factory.js';
 import { Project } from '../../../src/project.js';
 import {
     buildProjectDefinition,
     createModuleImporter,
-    createTaskBuilderMock,
     createTaskBuilderImportDefinitions,
     createTaskBuilderImportMocks,
-    buildFailMessage,
 } from '../../utils/object-builder.js';
 
-import {
-    getAllProjectOverrides,
-    getSelectedProjectOverrides,
-} from '../../utils/data-generator.js';
 import {
     injectFactoryInitTests,
     injectUnsupportedTasksTests,
@@ -30,13 +23,10 @@ describe('[LibTaskFactory]', () => {
         'format',
         'lint',
         'lint-fix',
-        'package-npm',
-        'publish-npm',
-
+        'docs',
         'build',
-
-        'docs-js',
-        'docs-ts',
+        'package',
+        'publish',
     ];
     const importDefinitions = createTaskBuilderImportDefinitions(_builderNames);
 
@@ -55,21 +45,18 @@ describe('[LibTaskFactory]', () => {
     );
 
     function _getExpectedTaskBuilders(project) {
-        const builders = {
-            common: [
-                { name: 'clean', ctorArgs: [] },
-                { name: 'format', ctorArgs: [] },
-                { name: 'lint', ctorArgs: [] },
-                { name: 'lint-fix', ctorArgs: [] },
-                { name: 'build', ctorArgs: [project] },
-                { name: 'package-npm', ctorArgs: [] },
-                { name: 'publish-npm', ctorArgs: [] },
-            ],
-            js: [{ name: 'docs-js', ctorArgs: [] }],
-            ts: [{ name: 'docs-ts', ctorArgs: [] }],
-        };
+        const builders = [
+            { name: 'clean', ctorArgs: [] },
+            { name: 'format', ctorArgs: [] },
+            { name: 'lint', ctorArgs: [] },
+            { name: 'lint-fix', ctorArgs: [] },
+            { name: 'docs', ctorArgs: [project] },
+            { name: 'build', ctorArgs: [project] },
+            { name: 'package', ctorArgs: [project] },
+            { name: 'publish', ctorArgs: [project] },
+        ];
 
-        return builders.common.concat(builders[project.language]);
+        return builders;
     }
 
     describe('_createTaskBuilders()', () => {

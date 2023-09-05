@@ -4,12 +4,10 @@ import { CleanTaskBuilder } from '../task-builders/clean-task-builder.js';
 import { FormatTaskBuilder } from '../task-builders/format-task-builder.js';
 import { LintTaskBuilder } from '../task-builders/lint-task-builder.js';
 import { LintFixTaskBuilder } from '../task-builders/lint-fix-task-builder.js';
-import { PackageNpmTaskBuilder } from '../task-builders/package-npm-task-builder.js';
-import { PublishNpmTaskBuilder } from '../task-builders/publish-npm-task-builder.js';
 import { BuildTaskBuilder } from '../task-builders/build-task-builder.js';
-
-import { DocsJsTaskBuilder } from '../task-builders/docs-js-task-builder.js';
-import { DocsTsTaskBuilder } from '../task-builders/docs-ts-task-builder.js';
+import { PackageTaskBuilder } from '../task-builders/package-task-builder.js';
+import { PublishTaskBuilder } from '../task-builders/publish-task-builder.js';
+import { DocsTaskBuilder } from '../task-builders/docs-task-builder.js';
 
 /**
  * Represents a factory that generates a set of build tasks for a given project
@@ -32,14 +30,10 @@ export class LibTaskFactory extends TaskFactory {
      * @returns {Array} An array of task builders.
      */
     _createTaskBuilders() {
-        const { language, type } = this._project;
+        const { type } = this._project;
         if (type !== 'lib') {
             return [];
         }
-        const additionalTasks =
-            language === 'js'
-                ? [new DocsJsTaskBuilder()]
-                : [new DocsTsTaskBuilder()];
 
         return [
             new CleanTaskBuilder(),
@@ -47,9 +41,10 @@ export class LibTaskFactory extends TaskFactory {
             new LintTaskBuilder(),
             new LintFixTaskBuilder(),
 
+            new DocsTaskBuilder(this._project),
             new BuildTaskBuilder(this._project),
-            new PackageNpmTaskBuilder(),
-            new PublishNpmTaskBuilder(),
-        ].concat(additionalTasks);
+            new PackageTaskBuilder(this._project),
+            new PublishTaskBuilder(this._project),
+        ];
     }
 }
