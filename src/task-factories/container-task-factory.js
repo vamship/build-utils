@@ -42,7 +42,6 @@ export class ContainerTaskFactory extends TaskFactory {
             new LintFixTaskBuilder(),
 
             new DocsTaskBuilder(this._project),
-            new BuildTaskBuilder(this._project),
             new PackageTaskBuilder(this._project),
             new PublishTaskBuilder(this._project),
         ];

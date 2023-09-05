@@ -24,7 +24,6 @@ describe('[ContainerTaskFactory]', () => {
         'lint',
         'lint-fix',
         'docs',
-        'build',
         'package',
         'publish',
     ];
@@ -51,7 +50,6 @@ describe('[ContainerTaskFactory]', () => {
             { name: 'lint', ctorArgs: [] },
             { name: 'lint-fix', ctorArgs: [] },
             { name: 'docs', ctorArgs: [project] },
-            { name: 'build', ctorArgs: [project] },
             { name: 'package', ctorArgs: [project] },
             { name: 'publish', ctorArgs: [project] },
         ];
