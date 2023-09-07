@@ -9,6 +9,7 @@ import { PublishTaskBuilder } from '../task-builders/publish-task-builder.js';
 import { DocsTaskBuilder } from '../task-builders/docs-task-builder.js';
 import { PackageContainerTaskBuilder } from '../task-builders/package-container-task-builder.js';
 import { PublishContainerTaskBuilder } from '../task-builders/publish-container-task-builder.js';
+import { generateAdditionalContainerTasks } from '../utils/task-factory-utils.js';
 
 /**
  * Represents a factory that generates a set of build tasks for a given project
@@ -36,21 +37,18 @@ export class ContainerTaskFactory extends TaskFactory {
             return [];
         }
 
-        const additionalTasks = [];
-        const containerTargets = this._project.getContainerTargets();
-
-        // > 1 since default container
-        if (containerTargets.length > 1) {
-            containerTargets
-                .filter((x) => x !== 'default')
-                .forEach((target) => {
-                    const specificTargetTasks = [
-                        new PackageContainerTaskBuilder(target),
-                        new PublishContainerTaskBuilder(target),
-                    ];
-                    additionalTasks.push(...specificTargetTasks);
-                });
-        }
+        // Helper function to generate the set of tasks for each additional container
+        // if needed
+        const additionalTaskList = (target) => {
+            return [
+                new PackageContainerTaskBuilder(target),
+                new PublishContainerTaskBuilder(target),
+            ];
+        };
+        const additionalTasks = generateAdditionalContainerTasks(
+            this._project,
+            additionalTaskList
+        );
 
         return [
             new CleanTaskBuilder(),
