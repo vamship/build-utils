@@ -188,3 +188,30 @@ export function injectTaskBuilderCompositionTests(
         }
     );
 }
+
+/**
+ * Generates an array of objects for testing if a project has more than just
+ * a default container defined. Testing for packaging and publishing.
+ *
+ * @param {Project} project The input project
+ * @returns {Array} Array of builder objects for testing
+ */
+export function getAdditionalContainerBuilders(project) {
+    const builders = [];
+    const containerTargets = project.getContainerTargets();
+
+    // > 1 since default container
+    if (containerTargets.length > 1) {
+        containerTargets
+            .filter((x) => x !== 'default')
+            .forEach((target) => {
+                const specificTargetBuilders = [
+                    { name: 'package-container', ctorArgs: [target] },
+                    { name: 'publish-container', ctorArgs: [target] },
+                ];
+                builders.push(...specificTargetBuilders);
+            });
+    }
+
+    return builders;
+}

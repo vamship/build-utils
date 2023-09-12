@@ -4,17 +4,19 @@ import { CleanTaskBuilder } from '../task-builders/clean-task-builder.js';
 import { FormatTaskBuilder } from '../task-builders/format-task-builder.js';
 import { LintTaskBuilder } from '../task-builders/lint-task-builder.js';
 import { LintFixTaskBuilder } from '../task-builders/lint-fix-task-builder.js';
-import { BuildTaskBuilder } from '../task-builders/build-task-builder.js';
 import { PackageTaskBuilder } from '../task-builders/package-task-builder.js';
 import { PublishTaskBuilder } from '../task-builders/publish-task-builder.js';
 import { DocsTaskBuilder } from '../task-builders/docs-task-builder.js';
+import { PackageContainerTaskBuilder } from '../task-builders/package-container-task-builder.js';
+import { PublishContainerTaskBuilder } from '../task-builders/publish-container-task-builder.js';
+import { generateAdditionalContainerTasks } from '../utils/task-factory-utils.js';
 
 /**
  * Represents a factory that generates a set of build tasks for a given project
  * type. This is an abstract class that must be extended to provide a list of
  * task builders for a given project type.
  */
-export class LibTaskFactory extends TaskFactory {
+export class ContainerTaskFactory extends TaskFactory {
     /**
      * Creates a new instance of TaskFactory, initialized for a given project.
      * @param {Project} project The project to generate build tasks for.
@@ -31,9 +33,22 @@ export class LibTaskFactory extends TaskFactory {
      */
     _createTaskBuilders() {
         const { type } = this._project;
-        if (type !== 'lib') {
+        if (type !== 'container') {
             return [];
         }
+
+        // Helper function to generate the set of tasks for each additional container
+        // if needed
+        const additionalTaskList = (target) => {
+            return [
+                new PackageContainerTaskBuilder(target),
+                new PublishContainerTaskBuilder(target),
+            ];
+        };
+        const additionalTasks = generateAdditionalContainerTasks(
+            this._project,
+            additionalTaskList
+        );
 
         return [
             new CleanTaskBuilder(),
@@ -42,9 +57,8 @@ export class LibTaskFactory extends TaskFactory {
             new LintFixTaskBuilder(),
 
             new DocsTaskBuilder(this._project),
-            new BuildTaskBuilder(this._project),
             new PackageTaskBuilder(this._project),
             new PublishTaskBuilder(this._project),
-        ];
+        ].concat(additionalTasks);
     }
 }

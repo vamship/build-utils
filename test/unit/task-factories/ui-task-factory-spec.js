@@ -2,7 +2,7 @@ import _chai from 'chai';
 import _sinonChai from 'sinon-chai';
 _chai.use(_sinonChai);
 
-import { LibTaskFactory } from '../../../src/task-factories/lib-task-factory.js';
+import { UiTaskFactory } from '../../../src/task-factories/ui-task-factory.js';
 import { Project } from '../../../src/project.js';
 import {
     buildProjectDefinition,
@@ -17,7 +17,7 @@ import {
     injectTaskBuilderCompositionTests,
 } from '../../utils/task-factory-snippets.js';
 
-describe('[LibTaskFactory]', () => {
+describe('[UiTaskFactory]', () => {
     const _builderNames = [
         'clean',
         'format',
@@ -25,18 +25,16 @@ describe('[LibTaskFactory]', () => {
         'lint-fix',
         'docs',
         'build',
-        'package',
-        'publish',
     ];
     const importDefinitions = createTaskBuilderImportDefinitions(_builderNames);
 
     const _importModule = createModuleImporter(
-        'src/task-factories/lib-task-factory.js',
+        'src/task-factories/ui-task-factory.js',
         {
             taskFactoryMock: 'src/task-factory.js',
             ...importDefinitions,
         },
-        'LibTaskFactory'
+        'UiTaskFactory'
     );
 
     injectFactoryInitTests(
@@ -52,15 +50,13 @@ describe('[LibTaskFactory]', () => {
             { name: 'lint-fix', ctorArgs: [] },
             { name: 'docs', ctorArgs: [project] },
             { name: 'build', ctorArgs: [project] },
-            { name: 'package', ctorArgs: [project] },
-            { name: 'publish', ctorArgs: [project] },
         ];
 
         return builders;
     }
 
     describe('_createTaskBuilders()', () => {
-        const PROJECT_TYPE = 'lib';
+        const PROJECT_TYPE = 'ui';
         async function _createFactory(overrides) {
             const { mocks, mockReferences } =
                 createTaskBuilderImportMocks(_builderNames);

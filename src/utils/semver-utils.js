@@ -8,6 +8,7 @@ import semver from 'semver';
  * If the tag is not a semantic version, such as 'latest' simply returns ['latest']
  *
  * @param {String} tag String input for tag name of docker image
+ * @returns {Array} Array of tag strings
  */
 export function getSemverComponents(tag) {
     const semTag = semver.coerce(tag);

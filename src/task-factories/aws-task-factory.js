@@ -14,7 +14,7 @@ import { DocsTaskBuilder } from '../task-builders/docs-task-builder.js';
  * type. This is an abstract class that must be extended to provide a list of
  * task builders for a given project type.
  */
-export class LibTaskFactory extends TaskFactory {
+export class AwsTaskFactory extends TaskFactory {
     /**
      * Creates a new instance of TaskFactory, initialized for a given project.
      * @param {Project} project The project to generate build tasks for.
@@ -31,7 +31,7 @@ export class LibTaskFactory extends TaskFactory {
      */
     _createTaskBuilders() {
         const { type } = this._project;
-        if (type !== 'lib') {
+        if (type !== 'aws-microservice') {
             return [];
         }
 
