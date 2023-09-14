@@ -27,11 +27,7 @@ import {
 } from '../../utils/task-builder-snippets.js';
 
 describe('[DocsTaskBuilder]', () => {
-    const _subBuilders = [
-        'docs-js',
-        'docs-ts',
-        'not-supported',
-    ];
+    const _subBuilders = ['docs-js', 'docs-ts', 'not-supported'];
     const _importDefinitions = createTaskBuilderImportDefinitions(_subBuilders);
     const _importModule = createModuleImporter(
         'src/task-builders/docs-task-builder.js',
@@ -67,13 +63,9 @@ describe('[DocsTaskBuilder]', () => {
         if (type === 'container') {
             return [{ name: 'not-supported', ctorArgs: [] }];
         } else if (language === 'js') {
-            return [
-                { name: 'docs-js', ctorArgs: [] },
-            ];
+            return [{ name: 'docs-js', ctorArgs: [] }];
         } else {
-            return [
-                { name: 'docs-ts', ctorArgs: [] },
-            ];
+            return [{ name: 'docs-ts', ctorArgs: [] }];
         }
     }
 
