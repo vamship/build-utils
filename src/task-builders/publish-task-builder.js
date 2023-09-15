@@ -61,10 +61,6 @@ export class PublishTaskBuilder extends TaskBuilder {
         else if (type === 'aws-microservice') {
             return [new PublishAwsTaskBuilder()];
         }
-        // Type ui
-        else if (type === 'ui') {
-            return [new NotSupportedTaskBuilder()];
-        }
         // Type container
         else if (type === 'container') {
             return [new PublishContainerTaskBuilder('default')];
@@ -81,7 +77,9 @@ export class PublishTaskBuilder extends TaskBuilder {
         else if (type === 'api') {
             return [new PublishContainerTaskBuilder('default')];
         }
-        // Type undefined or not supported
-        return [new NotSupportedTaskBuilder()];
+        // Type ui (and potentially others that are not supported)
+        else {
+            return [new NotSupportedTaskBuilder()];
+        }
     }
 }

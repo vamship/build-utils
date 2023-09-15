@@ -146,7 +146,11 @@ describe('[PublishContainerTaskBuilder]', () => {
             '1.0.0': ['1.0.0', '1.0', '1', 'latest'],
         };
 
-        getAllProjectOverrides().forEach(({ title, overrides }) => {
+        const projectList = getAllProjectOverrides().filter(
+            ({ containerSpecified }) => containerSpecified
+        );
+
+        projectList.forEach(({ title, overrides }) => {
             ['latest', '1', '1.0', '1.0.0'].forEach((tag) => {
                 describe(`Verify task - publish to container registry - (${title})`, () => {
                     it(`should use the docker cli to tag the container image (tag=${tag})`, async () => {

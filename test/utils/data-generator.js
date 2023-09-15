@@ -1,5 +1,22 @@
 import _path from 'path';
 
+function _transformOverrides({ type, language, noContainer }) {
+    const overrides = {
+        title: `${type} - ${language}${noContainer ? ' [no container]' : ''}`,
+        overrides: {
+            'buildMetadata.type': type,
+            'buildMetadata.language': language,
+        },
+        containerSpecified: !noContainer,
+    };
+
+    if (!!noContainer) {
+        overrides.overrides['buildMetadata.container'] = undefined;
+    }
+
+    return overrides;
+}
+
 /**
  * Generates an array of sample values of different types - everything except a
  * string.
@@ -102,6 +119,10 @@ export function mapProjectList(transform) {
     return ['lib', 'cli', 'api', 'ui', 'container', 'aws-microservice']
         .map((type) => ['js', 'ts'].map((language) => ({ language, type })))
         .reduce((result, item) => result.concat(item), [])
+        .concat([
+            { language: 'js', type: 'cli', noContainer: true },
+            { language: 'ts', type: 'cli', noContainer: true },
+        ])
         .map(transform)
         .filter((item) => !!item);
 }
@@ -123,13 +144,9 @@ export function getAllProjectOverrides(maxItems) {
         maxItems = -1;
     }
 
-    return mapProjectList(({ type, language }) => ({
-        title: `${type} - ${language}`,
-        overrides: {
-            'buildMetadata.type': type,
-            'buildMetadata.language': language,
-        },
-    })).filter((_, index) => maxItems < 0 || index < maxItems);
+    return mapProjectList(_transformOverrides).filter(
+        (_, index) => maxItems < 0 || index < maxItems
+    );
 }
 
 /**
@@ -155,17 +172,13 @@ export function getSelectedProjectOverrides(projectTypes, maxItems) {
         maxItems = -1;
     }
 
-    return mapProjectList(({ type, language }) => {
-        return !projectTypes || projectTypes.indexOf(type) >= 0
-            ? {
-                  title: `${type} - ${language}`,
-                  overrides: {
-                      'buildMetadata.type': type,
-                      'buildMetadata.language': language,
-                  },
-              }
-            : undefined;
-    }).filter((_, index) => maxItems < 0 || index < maxItems);
+    return mapProjectList(_transformOverrides)
+        .filter(
+            ({ overrides }) =>
+                !projectTypes ||
+                projectTypes.indexOf(overrides['buildMetadata.type']) >= 0
+        )
+        .filter((_, index) => maxItems < 0 || index < maxItems);
 }
 
 /**
