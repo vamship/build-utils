@@ -61,10 +61,6 @@ export class Project {
             throw new Error(`No AWS stacks defined`);
         }
 
-        if (container && Object.keys(container).length <= 0) {
-            throw new Error(`No container builds defined`);
-        }
-
         this._name = name;
         this._description = description;
         this._unscopedName = name.replace(/^@[^/]*\//, '');
