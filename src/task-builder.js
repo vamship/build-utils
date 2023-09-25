@@ -70,4 +70,31 @@ export default class TaskBuilder {
         task.description = this._description;
         return task;
     }
+
+    /**
+     * Returns an array of paths that should be watched for changes when
+     * enabling watch (monitor and execute tasks). No watch tasks will be
+     * created if this method returns a falsy value or an empty array
+     *
+     * The default implementation returns an array that watches source files.
+     * This implementation can be overridden by child classes to provide
+     * specific paths for the task.
+     *
+     * @param {Object} project The project used to generate watch tasks.
+     * @returns {Array} An array of paths to watch.
+     */
+    getWatchPaths(project) {
+        if (!(project instanceof Project)) {
+            throw new Error('Invalid project (arg #1)');
+        }
+        const dirs = ['src', 'test', 'infra'];
+        const exts = ['md', 'html', 'json', 'js', 'jsx', 'ts', 'tsx'];
+        return dirs
+            .map((dir) =>
+                exts.map((ext) =>
+                    project.rootDir.getChild(dir).getAllFilesGlob(ext),
+                ),
+            )
+            .flat();
+    }
 }

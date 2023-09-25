@@ -5,10 +5,37 @@ _chai.use(_sinonChai);
 import { stub } from 'sinon';
 import TaskBuilder from '../../src/task-builder.js';
 import { Project } from '../../src/project.js';
-import { getAllButObject, getAllButString } from '../utils/data-generator.js';
+import {
+    getAllButObject,
+    getAllButString,
+    generateGlobPatterns,
+} from '../utils/data-generator.js';
 import { buildProjectDefinition } from '../utils/object-builder.js';
 
 describe('[TaskBuilder]', () => {
+    class MockTaskBuilder extends TaskBuilder {
+        constructor(name, description) {
+            name = name || 'mock-task';
+            description = description || 'mock-description';
+            super(name, description);
+            this._task = () => undefined;
+            this._createTaskSpy = stub();
+            this._createTaskSpy.returns(this._task);
+        }
+
+        get task() {
+            return this._task;
+        }
+
+        get createTaskSpy() {
+            return this._createTaskSpy;
+        }
+
+        _createTask(project) {
+            return this._createTaskSpy(project);
+        }
+    }
+
     function _createInstance(name, description) {
         name = name || 'do-something';
         description = description || 'Dummy task that does not do anything';
@@ -78,29 +105,6 @@ describe('[TaskBuilder]', () => {
     });
 
     describe('buildTask()', () => {
-        class MockTaskBuilder extends TaskBuilder {
-            constructor(name, description) {
-                name = name || 'mock-task';
-                description = description || 'mock-description';
-                super(name, description);
-                this._task = () => undefined;
-                this._createTaskSpy = stub();
-                this._createTaskSpy.returns(this._task);
-            }
-
-            get task() {
-                return this._task;
-            }
-
-            get createTaskSpy() {
-                return this._createTaskSpy;
-            }
-
-            _createTask(project) {
-                return this._createTaskSpy(project);
-            }
-        }
-
         getAllButObject({}).forEach((project) => {
             it(`should throw an error if invoked without valid project (value=${typeof project})`, async () => {
                 const error = 'Invalid project (arg #1)';
@@ -121,7 +125,7 @@ describe('[TaskBuilder]', () => {
 
             expect(instance.createTaskSpy).to.have.been.calledOnce;
             expect(instance.createTaskSpy).to.have.been.calledWithExactly(
-                project
+                project,
             );
         });
 
@@ -144,6 +148,39 @@ describe('[TaskBuilder]', () => {
 
             expect(ret.displayName).to.equal(displayName);
             expect(ret.description).to.equal(description);
+        });
+    });
+
+    describe('getWatchPaths()', () => {
+        function createPathList(project) {
+            const dirs = ['src', 'test', 'infra'];
+            const extensions = ['md', 'html', 'json', 'js', 'jsx', 'ts', 'tsx'];
+            const rootDir = project.rootDir.absolutePath;
+
+            return generateGlobPatterns(rootDir, dirs, extensions);
+        }
+
+        getAllButObject({}).forEach((project) => {
+            it(`should throw an error if invoked without valid project (value=${typeof project})`, async () => {
+                const error = 'Invalid project (arg #1)';
+                const builder = _createInstance();
+                const wrapper = () => builder.getWatchPaths(project);
+
+                expect(wrapper).to.throw(error);
+            });
+        });
+
+        it('should return an array of source paths', () => {
+            const builder = _createInstance();
+            const project = new Project(buildProjectDefinition());
+
+            const ret = builder.getWatchPaths(project);
+
+            const rootDir = project.rootDir.absolutePath;
+            const paths = createPathList(project);
+
+            expect(ret).to.have.lengthOf(paths.length);
+            expect(ret).to.have.members(paths);
         });
     });
 });
