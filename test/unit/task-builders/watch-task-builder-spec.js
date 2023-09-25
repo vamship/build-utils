@@ -16,6 +16,7 @@ import {
     createGulpMock,
     createModuleImporter,
 } from '../../utils/object-builder.js';
+import { injectBuilderInitTests } from '../../utils/task-builder-snippets.js';
 
 describe('[WatchTaskBuilder]', () => {
     const _importModule = createModuleImporter(
@@ -24,12 +25,12 @@ describe('[WatchTaskBuilder]', () => {
             taskBuilderMock: 'src/task-builder.js',
             gulpMock: 'gulp',
         },
-        'WatchTaskBuilder'
+        'WatchTaskBuilder',
     );
 
     function _createInnerTask(name, description) {
         name = name || 'some-task';
-        describe = description || 'some task description';
+        description = description || 'some task description';
 
         const task = spy();
         task.displayName = name;
@@ -37,49 +38,36 @@ describe('[WatchTaskBuilder]', () => {
 
         return task;
     }
+    injectBuilderInitTests(
+        _importModule,
+        'watch-some-task',
+        '[Monitor and execute] some task description',
+        [
+            _createInnerTask('some-task', 'some task description'),
+            ['/absolute/path/1', 'relative/path/2'],
+        ],
+    );
 
-    getAllButFunction({}).forEach((task) => {
-        it(`should throw an error if invoked without valid task (value=${typeof task})`, async () => {
-            const WatchTaskBuilder = await _importModule();
-            const error = 'Invalid task (arg #1)';
-            const paths = ['/test/path/1', 'test/path/2'];
-            const wrapper = () => new WatchTaskBuilder(task, paths);
-
-            expect(wrapper).to.throw(error);
+    describe('ctor()', () => {
+        getAllButFunction({}).forEach((task) => {
+            it(`should throw an error if invoked without valid task (value=${typeof task})`, async () => {
+                const WatchTaskBuilder = await _importModule();
+                const error = 'Invalid task (arg #1)';
+                const paths = ['/test/path/1', 'test/path/2'];
+                const wrapper = () => new WatchTaskBuilder(task, paths);
+                expect(wrapper).to.throw(error);
+            });
         });
-    });
 
-    getAllButArray({}).forEach((paths) => {
-        it(`should throw an error if invoked without valid paths (value=${typeof paths})`, async () => {
-            const WatchTaskBuilder = await _importModule();
-            const error = 'Invalid paths (arg #2)';
-            const task = _createInnerTask();
-            const wrapper = () => new WatchTaskBuilder(task, paths);
-
-            expect(wrapper).to.throw(error);
+        getAllButArray({}).forEach((paths) => {
+            it(`should throw an error if invoked without valid paths (value=${typeof paths})`, async () => {
+                const WatchTaskBuilder = await _importModule();
+                const error = 'Invalid paths (arg #2)';
+                const task = _createInnerTask();
+                const wrapper = () => new WatchTaskBuilder(task, paths);
+                expect(wrapper).to.throw(error);
+            });
         });
-    });
-
-    it('should invoke the super constructor with an appropriately modified name and description', async () => {
-        const superCtor = spy();
-        const WatchTaskBuilder = await _importModule({
-            taskBuilderMock: {
-                default: superCtor,
-            },
-        });
-        const task = _createInnerTask('some-task', 'some task description');
-        const expectedName = 'watch-some-task';
-        const expectedDescription =
-            '[Monitor and execute] some task description';
-
-        expect(superCtor).not.to.have.been.called;
-
-        new WatchTaskBuilder(task, ['/some/path/1']);
-
-        expect(superCtor).to.have.been.calledOnceWithExactly(
-            expectedName,
-            expectedDescription
-        );
     });
 
     describe('_createTask()', () => {
@@ -108,6 +96,37 @@ describe('[WatchTaskBuilder]', () => {
             const task = builder._createTask(project);
 
             expect(typeof task).to.equal('function');
+        });
+
+        it('should compose a series task that includes start and end methods', async () => {
+            const paths = ['/absolute/path/1', 'relative/path/2'];
+            const innerTask = _createInnerTask();
+            const gulpMock = createGulpMock();
+            const WatchTaskBuilder = await _importModule({
+                gulpMock,
+            });
+
+            const definition = buildProjectDefinition();
+            const project = new Project(definition);
+            const builder = new WatchTaskBuilder(innerTask, paths);
+
+            expect(gulpMock.series).to.not.have.been.called;
+
+            // Just construct the task, do
+            const task = builder.buildTask(project);
+
+            expect(gulpMock.series).to.have.been.calledOnce;
+            expect(gulpMock.callSequence[0]).to.equal('series');
+            expect(gulpMock.series.args[0]).to.have.lengthOf(3);
+
+            // Log message before task execution
+            expect(gulpMock.series.args[0][0]).to.be.a('function');
+
+            // Task to execute
+            expect(gulpMock.series.args[0][1]).to.equal(innerTask);
+
+            // Log message after task execution
+            expect(gulpMock.series.args[0][2]).to.be.a('function');
         });
     });
 
@@ -145,10 +164,10 @@ describe('[WatchTaskBuilder]', () => {
             task();
 
             expect(gulpMock.watch).to.have.been.calledOnce;
-            expect(gulpMock.callSequence[0]).to.equal('watch');
+            expect(gulpMock.callSequence[1]).to.equal('watch');
             expect(gulpMock.watch).to.have.been.calledOnceWithExactly(
                 paths,
-                innerTask
+                innerTask,
             );
         });
     });
