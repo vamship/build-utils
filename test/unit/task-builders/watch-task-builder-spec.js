@@ -25,7 +25,7 @@ describe('[WatchTaskBuilder]', () => {
             taskBuilderMock: 'src/task-builder.js',
             gulpMock: 'gulp',
         },
-        'WatchTaskBuilder',
+        'WatchTaskBuilder'
     );
 
     function _createInnerTask(name, description) {
@@ -45,7 +45,7 @@ describe('[WatchTaskBuilder]', () => {
         [
             _createInnerTask('some-task', 'some task description'),
             ['/absolute/path/1', 'relative/path/2'],
-        ],
+        ]
     );
 
     describe('ctor()', () => {
@@ -167,7 +167,7 @@ describe('[WatchTaskBuilder]', () => {
             expect(gulpMock.callSequence[1]).to.equal('watch');
             expect(gulpMock.watch).to.have.been.calledOnceWithExactly(
                 paths,
-                innerTask,
+                innerTask
             );
         });
     });

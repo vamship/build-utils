@@ -24,7 +24,7 @@ export class WatchTaskBuilder extends TaskBuilder {
         }
         super(
             `watch-${task.displayName}`,
-            `[Monitor and execute] ${task.description}`,
+            `[Monitor and execute] ${task.description}`
         );
 
         this._task = task;
@@ -48,7 +48,7 @@ export class WatchTaskBuilder extends TaskBuilder {
         const task = _gulp.series(
             async () => _fancyLog(`Running task ${taskName}`),
             this._task,
-            async () => _fancyLog('Task completed'),
+            async () => _fancyLog('Task completed')
         );
         return () => _gulp.watch(this._paths, this._task);
     }
