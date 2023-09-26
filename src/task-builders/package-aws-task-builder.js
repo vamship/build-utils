@@ -70,4 +70,25 @@ export class PackageAwsTaskBuilder extends TaskBuilder {
         const task = _gulp.series([installTask, zipTask]);
         return task;
     }
+
+    /**
+     * @override
+     */
+    getWatchPaths(project) {
+        if (!(project instanceof Project)) {
+            throw new Error('Invalid project (arg #1)');
+        }
+        const dirs = ['src', 'test', 'infra'];
+        const exts = ['md', 'html', 'json', 'js', 'jsx', 'ts', 'tsx'];
+        const rootDir =
+            project.language === 'ts'
+                ? project.rootDir.getChild('working')
+                : project.rootDir;
+
+        return dirs
+            .map((dir) =>
+                exts.map((ext) => rootDir.getChild(dir).getAllFilesGlob(ext)),
+            )
+            .flat();
+    }
 }
