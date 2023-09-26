@@ -10,6 +10,8 @@ import _esmock from 'esmock';
 import { Project } from '../../../src/project.js';
 import {
     getAllButString,
+    getAllButObject,
+    generateGlobPatterns,
     getAllProjectOverrides,
 } from '../../utils/data-generator.js';
 import {
@@ -76,6 +78,46 @@ describe('[TestUiTaskBuilder]', () => {
                         { stdio: 'inherit' }
                     );
                 });
+            });
+        });
+    });
+
+    describe('getWatchPaths()', () => {
+        function createPathList(project) {
+            const dirs = ['src', 'test', 'infra'];
+            const extensions = ['md', 'html', 'json', 'js', 'jsx', 'ts', 'tsx'];
+            const rootDir =
+                project.language === 'ts'
+                    ? _path.join(project.rootDir.absolutePath, 'working')
+                    : project.rootDir.absolutePath;
+
+            return generateGlobPatterns(rootDir, dirs, extensions);
+        }
+
+        getAllButObject({}).forEach((project) => {
+            it(`should throw an error if invoked without valid project (value=${typeof project})`, async () => {
+                const TaskBuilder = await _importModule();
+                const error = 'Invalid project (arg #1)';
+                const builder = new TaskBuilder();
+                const wrapper = () => builder.getWatchPaths(project);
+
+                expect(wrapper).to.throw(error);
+            });
+        });
+
+        getAllProjectOverrides().forEach(({ title, overrides }) => {
+            it(`should return an array of paths to watch ${title}`, async () => {
+                const TaskBuilder = await _importModule();
+                const builder = new TaskBuilder();
+                const project = new Project(buildProjectDefinition(overrides));
+
+                const ret = builder.getWatchPaths(project);
+
+                const rootDir = project.rootDir.absolutePath;
+                const paths = createPathList(project);
+
+                expect(ret).to.have.lengthOf(paths.length);
+                expect(ret).to.have.members(paths);
             });
         });
     });
