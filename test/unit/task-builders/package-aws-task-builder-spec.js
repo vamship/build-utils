@@ -239,9 +239,9 @@ describe('[PackageAwsTaskBuilder]', () => {
 
         getAllButObject({}).forEach((project) => {
             it(`should throw an error if invoked without valid project (value=${typeof project})`, async () => {
-                const BuildTsTaskBuilder = await _importModule();
+                const TaskBuilder = await _importModule();
                 const error = 'Invalid project (arg #1)';
-                const builder = new BuildTsTaskBuilder('unit');
+                const builder = new TaskBuilder();
                 const wrapper = () => builder.getWatchPaths(project);
 
                 expect(wrapper).to.throw(error);
@@ -250,8 +250,8 @@ describe('[PackageAwsTaskBuilder]', () => {
 
         getAllProjectOverrides().forEach(({ title, overrides }) => {
             it(`should return an array of paths to watch ${title}`, async () => {
-                const BuildTsTaskBuilder = await _importModule();
-                const builder = new BuildTsTaskBuilder('unit');
+                const TaskBuilder = await _importModule();
+                const builder = new TaskBuilder();
                 const project = new Project(buildProjectDefinition(overrides));
 
                 const ret = builder.getWatchPaths(project);

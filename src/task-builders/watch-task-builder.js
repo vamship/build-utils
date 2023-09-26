@@ -52,4 +52,14 @@ export class WatchTaskBuilder extends TaskBuilder {
         );
         return () => _gulp.watch(this._paths, task);
     }
+
+    /**
+     * @override
+     */
+    getWatchPaths(project) {
+        if (!(project instanceof Project)) {
+            throw new Error('Invalid project (arg #1)');
+        }
+        return [];
+    }
 }

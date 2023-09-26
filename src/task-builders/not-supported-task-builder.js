@@ -35,4 +35,14 @@ export class NotSupportedTaskBuilder extends TaskBuilder {
         }
         return () => _fancyLog.warn('Task not defined for project');
     }
+
+    /**
+     * @override
+     */
+    getWatchPaths(project) {
+        if (!(project instanceof Project)) {
+            throw new Error('Invalid project (arg #1)');
+        }
+        return [];
+    }
 }

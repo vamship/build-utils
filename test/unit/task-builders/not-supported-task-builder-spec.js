@@ -6,7 +6,10 @@ import _path from 'path';
 import { spy } from 'sinon';
 import _esmock from 'esmock';
 import { Project } from '../../../src/project.js';
-import { getAllProjectOverrides } from '../../utils/data-generator.js';
+import {
+    getAllProjectOverrides,
+    getAllButObject,
+} from '../../utils/data-generator.js';
 import {
     buildProjectDefinition,
     createModuleImporter,
@@ -21,13 +24,13 @@ describe('[NotSupportedTaskBuilder]', () => {
             fancyLogMock: 'fancy-log',
             taskBuilderMock: 'src/task-builder.js',
         },
-        'NotSupportedTaskBuilder'
+        'NotSupportedTaskBuilder',
     );
 
     injectBuilderInitTests(
         _importModule,
         'not-supported',
-        'Task that does nothing - used to indicate that a task is not supported for a project type.'
+        'Task that does nothing - used to indicate that a task is not supported for a project type.',
     );
 
     describe('[task]', () => {
@@ -58,11 +61,36 @@ describe('[NotSupportedTaskBuilder]', () => {
                     task();
 
                     expect(
-                        fancyLogMock.warn
+                        fancyLogMock.warn,
                     ).to.have.been.calledOnceWithExactly(
-                        'Task not defined for project'
+                        'Task not defined for project',
                     );
                 });
+            });
+        });
+    });
+
+    describe('getWatchPaths()', () => {
+        getAllButObject({}).forEach((project) => {
+            it(`should throw an error if invoked without valid project (value=${typeof project})`, async () => {
+                const TaskBuilder = await _importModule();
+                const error = 'Invalid project (arg #1)';
+                const builder = new TaskBuilder();
+                const wrapper = () => builder.getWatchPaths(project);
+
+                expect(wrapper).to.throw(error);
+            });
+        });
+
+        getAllProjectOverrides().forEach(({ title, overrides }) => {
+            it(`should return an array of paths to watch ${title}`, async () => {
+                const TaskBuilder = await _importModule();
+                const builder = new TaskBuilder();
+                const project = new Project(buildProjectDefinition(overrides));
+
+                const ret = builder.getWatchPaths(project);
+
+                expect(ret).to.deep.equal([]);
             });
         });
     });

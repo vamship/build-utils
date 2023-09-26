@@ -10,6 +10,7 @@ import {
     getAllButFunction,
     getAllButObject,
     getAllButArray,
+    getAllProjectOverrides,
 } from '../../utils/data-generator.js';
 import {
     buildProjectDefinition,
@@ -25,7 +26,7 @@ describe('[WatchTaskBuilder]', () => {
             taskBuilderMock: 'src/task-builder.js',
             gulpMock: 'gulp',
         },
-        'WatchTaskBuilder'
+        'WatchTaskBuilder',
     );
 
     function _createInnerTask(name, description) {
@@ -45,7 +46,7 @@ describe('[WatchTaskBuilder]', () => {
         [
             _createInnerTask('some-task', 'some task description'),
             ['/absolute/path/1', 'relative/path/2'],
-        ]
+        ],
     );
 
     describe('ctor()', () => {
@@ -167,8 +168,41 @@ describe('[WatchTaskBuilder]', () => {
             expect(gulpMock.callSequence[1]).to.equal('watch');
             expect(gulpMock.watch).to.have.been.calledOnceWithExactly(
                 paths,
-                gulpMock.series.returnValues[0]
+                gulpMock.series.returnValues[0],
             );
+        });
+    });
+
+    describe('getWatchPaths()', () => {
+        getAllButObject({}).forEach((project) => {
+            it(`should throw an error if invoked without valid project (value=${typeof project})`, async () => {
+                const TaskBuilder = await _importModule();
+                const task = _createInnerTask();
+                const error = 'Invalid project (arg #1)';
+                const builder = new TaskBuilder(task, [
+                    '/absolute/path/1',
+                    'relative/path/2',
+                ]);
+                const wrapper = () => builder.getWatchPaths(project);
+
+                expect(wrapper).to.throw(error);
+            });
+        });
+
+        getAllProjectOverrides().forEach(({ title, overrides }) => {
+            it(`should return an array of paths to watch ${title}`, async () => {
+                const TaskBuilder = await _importModule();
+                const task = _createInnerTask();
+                const builder = new TaskBuilder(task, [
+                    '/absolute/path/1',
+                    'relative/path/2',
+                ]);
+                const project = new Project(buildProjectDefinition(overrides));
+
+                const ret = builder.getWatchPaths(project);
+
+                expect(ret).to.deep.equal([]);
+            });
         });
     });
 });
