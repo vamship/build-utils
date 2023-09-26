@@ -80,4 +80,14 @@ export class PublishContainerTaskBuilder extends TaskBuilder {
         const task = _gulp.series([...tagTaskList, ...pushTaskList]);
         return task;
     }
+
+    /**
+     * @override
+     */
+    getWatchPaths(project) {
+        if (!(project instanceof Project)) {
+            throw new Error('Invalid project (arg #1)');
+        }
+        return [];
+    }
 }

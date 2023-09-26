@@ -42,4 +42,14 @@ export class PublishNpmTaskBuilder extends TaskBuilder {
 
         return task;
     }
+
+    /**
+     * @override
+     */
+    getWatchPaths(project) {
+        if (!(project instanceof Project)) {
+            throw new Error('Invalid project (arg #1)');
+        }
+        return [];
+    }
 }

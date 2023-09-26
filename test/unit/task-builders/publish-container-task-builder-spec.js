@@ -11,6 +11,7 @@ import { Project } from '../../../src/project.js';
 import {
     getAllButString,
     getAllProjectOverrides,
+    getAllButObject,
     makeOptional,
 } from '../../utils/data-generator.js';
 import {
@@ -277,6 +278,31 @@ describe('[PublishContainerTaskBuilder]', () => {
                         });
                     });
                 });
+            });
+        });
+    });
+
+    describe('getWatchPaths()', () => {
+        getAllButObject({}).forEach((project) => {
+            it(`should throw an error if invoked without valid project (value=${typeof project})`, async () => {
+                const TaskBuilder = await _importModule();
+                const error = 'Invalid project (arg #1)';
+                const builder = new TaskBuilder('latest');
+                const wrapper = () => builder.getWatchPaths(project);
+
+                expect(wrapper).to.throw(error);
+            });
+        });
+
+        getAllProjectOverrides().forEach(({ title, overrides }) => {
+            it(`should return an array of paths to watch ${title}`, async () => {
+                const TaskBuilder = await _importModule();
+                const builder = new TaskBuilder('latest');
+                const project = new Project(buildProjectDefinition(overrides));
+
+                const ret = builder.getWatchPaths(project);
+
+                expect(ret).to.deep.equal([]);
             });
         });
     });
