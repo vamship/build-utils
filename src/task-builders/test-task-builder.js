@@ -54,4 +54,25 @@ export class TestTaskBuilder extends TaskBuilder {
         const task = () => _execa(c8Bin, args, { stdio: 'inherit' });
         return task;
     }
+
+    /**
+     * @override
+     */
+    getWatchPaths(project) {
+        if (!(project instanceof Project)) {
+            throw new Error('Invalid project (arg #1)');
+        }
+        const dirs = ['src', 'test', 'infra'];
+        const exts = ['md', 'html', 'json', 'js', 'jsx', 'ts', 'tsx'];
+        const rootDir =
+            project.language === 'ts'
+                ? project.rootDir.getChild('working')
+                : project.rootDir;
+
+        return dirs
+            .map((dir) =>
+                exts.map((ext) => rootDir.getChild(dir).getAllFilesGlob(ext)),
+            )
+            .flat();
+    }
 }

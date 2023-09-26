@@ -11,6 +11,8 @@ import { Project } from '../../../src/project.js';
 import {
     getAllButString,
     getAllProjectOverrides,
+    getAllButObject,
+    generateGlobPatterns,
 } from '../../utils/data-generator.js';
 import {
     buildProjectDefinition,
@@ -25,7 +27,7 @@ describe('[TestTaskBuilder]', () => {
             execaModuleMock: 'execa',
             taskBuilderMock: 'src/task-builder.js',
         },
-        'TestTaskBuilder'
+        'TestTaskBuilder',
     );
 
     describe('ctor() <test type>', () => {
@@ -45,8 +47,8 @@ describe('[TestTaskBuilder]', () => {
             _importModule,
             `test-${testType}`,
             `Execute ${testType} tests`,
-            [testType]
-        )
+            [testType],
+        ),
     );
 
     describe('[task]', () => {
@@ -84,8 +86,8 @@ describe('[TestTaskBuilder]', () => {
                                 project.rootDir.absolutePath,
                                 'node_modules',
                                 '.bin',
-                                bin
-                            )
+                                bin,
+                            ),
                         );
 
                         const specPath = _path.join(
@@ -94,7 +96,7 @@ describe('[TestTaskBuilder]', () => {
                             'test',
                             testType,
                             '**',
-                            '*.js'
+                            '*.js',
                         );
                         expect(execaMock).to.not.have.been.called;
                         task();
@@ -106,11 +108,51 @@ describe('[TestTaskBuilder]', () => {
                                 '--loader=esmock',
                                 specPath,
                             ],
-                            { stdio: 'inherit' }
+                            { stdio: 'inherit' },
                         );
                     });
                 });
-            })
+            }),
         );
+    });
+
+    describe('getWatchPaths()', () => {
+        function createPathList(project) {
+            const dirs = ['src', 'test', 'infra'];
+            const extensions = ['md', 'html', 'json', 'js', 'jsx', 'ts', 'tsx'];
+            const rootDir =
+                project.language === 'ts'
+                    ? _path.join(project.rootDir.absolutePath, 'working')
+                    : project.rootDir.absolutePath;
+
+            return generateGlobPatterns(rootDir, dirs, extensions);
+        }
+
+        getAllButObject({}).forEach((project) => {
+            it(`should throw an error if invoked without valid project (value=${typeof project})`, async () => {
+                const BuildTsTaskBuilder = await _importModule();
+                const error = 'Invalid project (arg #1)';
+                const builder = new BuildTsTaskBuilder('unit');
+                const wrapper = () => builder.getWatchPaths(project);
+
+                expect(wrapper).to.throw(error);
+            });
+        });
+
+        getAllProjectOverrides().forEach(({ title, overrides }) => {
+            it(`should return an array of paths to watch ${title}`, async () => {
+                const BuildTsTaskBuilder = await _importModule();
+                const builder = new BuildTsTaskBuilder('unit');
+                const project = new Project(buildProjectDefinition(overrides));
+
+                const ret = builder.getWatchPaths(project);
+
+                const rootDir = project.rootDir.absolutePath;
+                const paths = createPathList(project);
+
+                expect(ret).to.have.lengthOf(paths.length);
+                expect(ret).to.have.members(paths);
+            });
+        });
     });
 });
