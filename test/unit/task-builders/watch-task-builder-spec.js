@@ -167,7 +167,7 @@ describe('[WatchTaskBuilder]', () => {
             expect(gulpMock.callSequence[1]).to.equal('watch');
             expect(gulpMock.watch).to.have.been.calledOnceWithExactly(
                 paths,
-                innerTask
+                gulpMock.series.returnValues[0]
             );
         });
     });

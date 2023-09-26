@@ -50,6 +50,6 @@ export class WatchTaskBuilder extends TaskBuilder {
             this._task,
             async () => _fancyLog('Task completed')
         );
-        return () => _gulp.watch(this._paths, this._task);
+        return () => _gulp.watch(this._paths, task);
     }
 }
