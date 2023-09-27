@@ -26,7 +26,7 @@ export function injectBuilderInitTests(
     importModule,
     taskName,
     taskDescription,
-    ctorArgs
+    ctorArgs,
 ) {
     if (!(ctorArgs instanceof Array)) {
         ctorArgs = [];
@@ -47,7 +47,7 @@ export function injectBuilderInitTests(
 
             expect(superCtor).to.have.been.calledOnceWithExactly(
                 taskName,
-                taskDescription
+                taskDescription,
             );
         });
     });
@@ -87,16 +87,15 @@ export function injectBuilderInitTests(
  */
 export function injectSubBuilderCompositionTests(
     initializeTask,
-    getExpectedSubBuilders
+    getExpectedSubBuilders,
 ) {
     getAllProjectOverrides().forEach(({ title, overrides }) => {
         const checkCtorNotCalled = createCtorNotCalledChecker(overrides);
 
         describe(`[task composition] (${title})`, () => {
             it(`should initialize appropriate sub builders`, async () => {
-                const { builder, subBuilderMocks } = await initializeTask(
-                    overrides
-                );
+                const { builder, subBuilderMocks } =
+                    await initializeTask(overrides);
                 const definition = buildProjectDefinition(overrides);
                 const project = new Project(definition);
                 const expectedSubBuilders = getExpectedSubBuilders(project);
@@ -108,7 +107,7 @@ export function injectSubBuilderCompositionTests(
                 Object.keys(subBuilderMocks).forEach((mockName) => {
                     const mock = subBuilderMocks[mockName];
                     const builder = expectedSubBuilders.find(
-                        (builder) => builder.name === mock._name
+                        (builder) => builder.name === mock._name,
                     );
                     const ctor = mock.ctor;
                     const failMessage = buildFailMessage(overrides, {
@@ -119,7 +118,7 @@ export function injectSubBuilderCompositionTests(
                         expect(ctor, failMessage).to.have.been.calledOnce;
                         expect(
                             ctor,
-                            failMessage
+                            failMessage,
                         ).to.have.been.calledWithExactly(...builder.ctorArgs);
                         expect(ctor, failMessage).to.have.been.calledWithNew;
                     } else {
@@ -155,7 +154,7 @@ export function injectSubBuilderCompositionTests(
                 builder._createTask(project);
 
                 expect(gulpMock.series.args[0][0]).to.have.length(
-                    expectedSubBuilders.length
+                    expectedSubBuilders.length,
                 );
 
                 expectedSubBuilders.forEach((builder, index) => {
@@ -165,8 +164,88 @@ export function injectSubBuilderCompositionTests(
                     });
 
                     expect(gulpMock.series.args[0][0], failMessage).to.include(
-                        mock.buildTask()
+                        mock.buildTask(),
                     );
+                });
+            });
+        });
+    });
+}
+
+/**
+ * Injects tests that check the generation of watch paths from sub builders used
+ * by the builder.
+ *
+ * @param {Function} createFactory A function that can be used to initialize a
+ * factory with.
+ * @param {Function} getExpectedTaskBuilders A function that returns the list
+ * of expected task builders for the factory.
+ */
+export function injectWatchPathsCompositionTests(
+    initializeTask,
+    getExpectedSubBuilders,
+) {
+    describe(`getWatchPaths()`, () => {
+        getAllButObject({}).forEach((project) => {
+            it(`should throw an error if invoked without valid project (value=${typeof project})`, async () => {
+                const { builder } = await initializeTask();
+                const error = 'Invalid project (arg #1)';
+                const wrapper = () => builder.getWatchPaths(project);
+
+                expect(wrapper).to.throw(error);
+            });
+        });
+
+        getAllProjectOverrides().forEach(({ title, overrides }) => {
+            describe(`[path generation] (${title})`, () => {
+                it(`should obtain watch watch paths from sub builders`, async () => {
+                    const { builder, subBuilderMocks } =
+                        await initializeTask(overrides);
+                    const definition = buildProjectDefinition(overrides);
+                    const project = new Project(definition);
+                    const expectedSubBuilders = getExpectedSubBuilders(project);
+
+                    Object.values(subBuilderMocks).forEach((mock) => {
+                        const failMessage = buildFailMessage(overrides, {
+                            task: `${mock._name} (watch paths)`,
+                        });
+                        expect(mock.getWatchPaths, failMessage).to.not.have.been
+                            .called;
+                    });
+
+                    builder.getWatchPaths(project);
+
+                    expectedSubBuilders.forEach((builder, index) => {
+                        const mock = subBuilderMocks[builder.name];
+                        const failMessage = buildFailMessage(overrides, {
+                            task: `${mock._name} (watch paths)`,
+                        });
+                        expect(
+                            mock.getWatchPaths,
+                            failMessage,
+                        ).to.have.been.calledOnceWithExactly(project);
+                    });
+                });
+
+                it(`should consoldiate all watch paths into a unique list`, async () => {
+                    const { builder, subBuilderMocks } =
+                        await initializeTask(overrides);
+                    const definition = buildProjectDefinition(overrides);
+                    const project = new Project(definition);
+                    const expectedSubBuilders = getExpectedSubBuilders(project);
+
+                    const paths = builder.getWatchPaths(project);
+
+                    const pathList = expectedSubBuilders
+                        .map((builder) => {
+                            const mock = subBuilderMocks[builder.name];
+                            return mock.getWatchPaths(project);
+                        })
+                        .flat();
+                    const expectedPaths = [...new Set(pathList)];
+
+                    expect(paths).to.have.length(expectedPaths.length);
+                    expect(paths).to.have.members(expectedPaths);
                 });
             });
         });

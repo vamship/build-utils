@@ -17,7 +17,7 @@ function _prepareBuilderMockData(builderNames) {
                 ref: createTaskBuilderMock(name),
                 refName: _camelcase(name) + 'TaskBuilder',
             }),
-            {}
+            {},
         )
         .map(({ name, ref, refName }) => ({
             ref,
@@ -102,7 +102,7 @@ export function createGulpMock() {
             result[method] = mock;
             return result;
         },
-        { callSequence: [] }
+        { callSequence: [] },
     );
 }
 
@@ -118,9 +118,11 @@ export function createTaskBuilderMock(name) {
     const mock = {
         _name: name,
         _ret: taskRet,
+        _watchPaths: ['/foo/path', `/bar/path/${name}`],
     };
     mock.ctor = stub().returns(mock);
     mock.buildTask = stub().returns(task);
+    mock.getWatchPaths = stub().returns(mock._watchPaths);
 
     return mock;
 }
@@ -151,7 +153,7 @@ export function initializeFactoryTaskMocks(taskList) {
             camelCaseName,
             className: `${camelCaseName.replace(
                 /^./,
-                camelCaseName.charAt(0).toUpperCase()
+                camelCaseName.charAt(0).toUpperCase(),
             )}TaskBuilder`,
             mockName: `${camelCaseName}TaskBuilderMock`,
             builderMock: createTaskBuilderMock(snakeCaseName),
@@ -169,7 +171,7 @@ export function initializeFactoryTaskMocks(taskList) {
 
                 return map;
             },
-            { mockReferences: {}, taskMap: {} }
+            { mockReferences: {}, taskMap: {} },
         );
 }
 
@@ -196,7 +198,7 @@ export function createModuleImporter(modulePath, pathDefinitions, memberName) {
         const mocks = Object.keys({ ...mockDefs }).reduce((result, key) => {
             if (!pathDefinitions[key]) {
                 throw new Error(
-                    `[Module Importer] Import path not defined for module: ${key}`
+                    `[Module Importer] Import path not defined for module: ${key}`,
                 );
             }
             result[transform(pathDefinitions[key])] = mockDefs[key];
@@ -205,7 +207,7 @@ export function createModuleImporter(modulePath, pathDefinitions, memberName) {
 
         const module = await _esmock(
             _path.resolve(basePath, transform(modulePath)),
-            mocks
+            mocks,
         );
 
         return typeof memberName !== 'string' ? module : module[memberName];
@@ -248,7 +250,7 @@ export function createTaskBuilderImportMocks(mockNames) {
                 ref: createTaskBuilderMock(name),
                 refName: _camelcase(name) + 'TaskBuilder',
             }),
-            {}
+            {},
         )
         .map(({ ref, refName }) => ({
             ref,
@@ -268,7 +270,7 @@ export function createTaskBuilderImportMocks(mockNames) {
             result[importRef] = { [className]: ctor };
             return result;
         },
-        {}
+        {},
     );
 
     return { mocks, mockReferences };

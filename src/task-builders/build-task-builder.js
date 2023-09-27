@@ -20,7 +20,7 @@ export class BuildTaskBuilder extends TaskBuilder {
     constructor() {
         super(
             'build',
-            `Builds the project making it ready for execution/packaging`
+            `Builds the project making it ready for execution/packaging`,
         );
     }
 
@@ -39,7 +39,7 @@ export class BuildTaskBuilder extends TaskBuilder {
         }
 
         const builders = this._getSubBuilders(project).map((builder) =>
-            builder.buildTask(project)
+            builder.buildTask(project),
         );
 
         const task = _gulp.series(builders);
@@ -61,5 +61,18 @@ export class BuildTaskBuilder extends TaskBuilder {
         } else {
             return [new BuildJsTaskBuilder(), new CopyFilesTaskBuilder()];
         }
+    }
+
+    /**
+     * @override
+     */
+    getWatchPaths(project) {
+        if (!(project instanceof Project)) {
+            throw new Error('Invalid project (arg #1)');
+        }
+        const paths = this._getSubBuilders(project)
+            .map((builder) => builder.getWatchPaths(project))
+            .flat();
+        return [ ...new Set(paths) ];
     }
 }

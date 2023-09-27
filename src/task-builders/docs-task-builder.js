@@ -58,4 +58,17 @@ export class DocsTaskBuilder extends TaskBuilder {
             return [new DocsJsTaskBuilder()];
         }
     }
+
+    /**
+     * @override
+     */
+    getWatchPaths(project) {
+        if (!(project instanceof Project)) {
+            throw new Error('Invalid project (arg #1)');
+        }
+        const paths = this._getSubBuilders(project)
+            .map((builder) => builder.getWatchPaths(project))
+            .flat();
+        return [ ...new Set(paths) ];
+    }
 }

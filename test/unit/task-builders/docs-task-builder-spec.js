@@ -24,6 +24,7 @@ import {
 import {
     injectBuilderInitTests,
     injectSubBuilderCompositionTests,
+    injectWatchPathsCompositionTests,
 } from '../../utils/task-builder-snippets.js';
 
 describe('[DocsTaskBuilder]', () => {
@@ -76,4 +77,6 @@ describe('[DocsTaskBuilder]', () => {
     );
 
     injectSubBuilderCompositionTests(_initializeTask, _getExpectedSubBuilders);
+
+    injectWatchPathsCompositionTests(_initializeTask, _getExpectedSubBuilders);
 });

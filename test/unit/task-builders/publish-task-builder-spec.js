@@ -14,6 +14,7 @@ import {
 import {
     injectBuilderInitTests,
     injectSubBuilderCompositionTests,
+    injectWatchPathsCompositionTests,
 } from '../../utils/task-builder-snippets.js';
 
 describe('[PublishTaskBuilder]', () => {
@@ -97,4 +98,6 @@ describe('[PublishTaskBuilder]', () => {
 
     // Generalized composition tests
     injectSubBuilderCompositionTests(_initializeTask, _getExpectedSubBuilders);
+
+    injectWatchPathsCompositionTests(_initializeTask, _getExpectedSubBuilders);
 });
