@@ -3,6 +3,7 @@ import { CleanTaskBuilder } from './task-builders/clean-task-builder.js';
 import { FormatTaskBuilder } from './task-builders/format-task-builder.js';
 import { LintTaskBuilder } from './task-builders/lint-task-builder.js';
 import { LintFixTaskBuilder } from './task-builders/lint-fix-task-builder.js';
+import { WatchTaskBuilder } from './task-builders/watch-task-builder.js';
 
 /**
  * Represents a factory that generates a set of build tasks for a given project
@@ -37,8 +38,16 @@ export default class TaskFactory {
      * @returns {Array} An array of gulp tasks.
      */
     createTasks() {
-        return this._createTaskBuilders().map((builder) =>
-            builder.buildTask(this._project)
-        );
+        const project = this._project;
+        const tasks = this._createTaskBuilders();
+        const watchTasks = tasks
+            .filter((task) => task.getWatchPaths().length > 0)
+            .map(
+                (task) =>
+                    new WatchTaskBuilder(task, task.getWatchPaths(project)),
+            );
+        return tasks
+            .concat(watchTasks)
+            .map((builder) => builder.buildTask(project));
     }
 }

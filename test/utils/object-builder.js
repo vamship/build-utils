@@ -110,15 +110,22 @@ export function createGulpMock() {
  * Creates and returns a mock object for a task builder.
  *
  * @param {String} name The name of the task builder.
+ * @param {Array} watchPaths The list of watch paths for the task builder. This
+ * will be defaulted to a non empty array if omitted.
  * @returns {Object} A task builder mock object.
  */
-export function createTaskBuilderMock(name) {
+export function createTaskBuilderMock(name, watchPaths) {
+    if(!watchPaths) {
+        watchPaths = ['/foo/path', `/bar/path/${name}`];
+    }
     const taskRet = `_${name}_task_ret_`;
     const task = stub().returns(taskRet);
+    task._name = name;
     const mock = {
         _name: name,
         _ret: taskRet,
-        _watchPaths: ['/foo/path', `/bar/path/${name}`],
+        _watchPaths: watchPaths,
+        _task: task,
     };
     mock.ctor = stub().returns(mock);
     mock.buildTask = stub().returns(task);
