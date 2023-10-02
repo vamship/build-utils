@@ -56,14 +56,6 @@ describe('[TaskFactory]', () => {
             const tasks = taskInfo.map(({ name, watchPaths }) =>
                 createTaskBuilderMock(name, watchPaths),
             );
-            // const tasks = taskInfo.map(({ name, watchPaths }) => {
-            //     return {
-            //         _name: name,
-            //         _watchPaths: watchPaths,
-            //         buildTask: stub().returns(name),
-            //         getWatchPaths: stub().returns(watchPaths),
-            //     };
-            // });
 
             class TestTaskFactory extends TaskFactory {
                 constructor(project) {
@@ -114,6 +106,46 @@ describe('[TaskFactory]', () => {
             });
         });
 
+        it('should invoke buildTask() to create a new task for watching tasks that have non empty watch paths', async () => {
+            const taskInfo = [
+                { name: 'task1', watchPaths: [] },
+                { name: 'task2', watchPaths: ['path1', 'path2'] },
+                { name: 'task3', watchPaths: ['path3', 'path4'] },
+                { name: 'task4', watchPaths: [] },
+            ];
+            const { tasks, factory, project, watchTaskBuilderMock } =
+                await _initializeFactory(taskInfo);
+            const tasksWithPaths = tasks.filter(
+                (task) => task._watchPaths.length > 0,
+            );
+            const tasksWithoutPaths = tasks.filter(
+                (task) => task._watchPaths.length === 0,
+            );
+
+            tasksWithoutPaths.forEach((task) => {
+                expect(task.buildTask).to.not.have.been.called;
+            });
+            tasksWithPaths.forEach((task) => {
+                expect(task.buildTask).to.not.have.been.called;
+            });
+
+            const ret = factory.createTasks();
+
+            tasksWithPaths.forEach((task) => {
+                expect(task.buildTask).to.have.been.calledTwice;
+                task.buildTask.args.forEach((args) => {
+                    expect(args).to.have.lengthOf(1);
+                    expect(args[0]).to.equal(project);
+                });
+            });
+
+            tasksWithoutPaths.forEach((task) =>
+                expect(task.buildTask).to.have.been.calledOnceWithExactly(
+                    project,
+                ),
+            );
+        });
+
         it('should create a watch task for each task that returns non empty watch paths', async () => {
             const taskInfo = [
                 { name: 'task1', watchPaths: [] },
@@ -137,7 +169,7 @@ describe('[TaskFactory]', () => {
             );
             watchTaskBuilderMock.ctor.args.forEach(([task, paths], index) => {
                 const taskMock = tasksWithPaths[index];
-                expect(task).to.equal(taskMock);
+                expect(task).to.equal(taskMock._task);
                 expect(paths).to.deep.equal(taskMock._watchPaths);
             });
         });
@@ -162,8 +194,17 @@ describe('[TaskFactory]', () => {
 
             const ret = factory.createTasks();
 
-            tasks.forEach(({ buildTask }) => {
-                expect(buildTask).to.have.been.calledOnceWithExactly(project);
+            tasks.forEach((task) => {
+                const { buildTask } = task;
+                if(tasksWithPaths.includes(task)) {
+                    expect(buildTask).to.have.been.calledTwice;
+                    buildTask.args.forEach((args) => {
+                        expect(args).to.have.lengthOf(1);
+                        expect(args[0]).to.equal(project);
+                    });
+                } else {
+                    expect(buildTask).to.have.been.calledOnceWithExactly(project);
+                }
             });
 
             expect(watchTaskBuilderMock.buildTask).to.have.been.called;

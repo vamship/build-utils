@@ -39,15 +39,18 @@ export default class TaskFactory {
      */
     createTasks() {
         const project = this._project;
-        const tasks = this._createTaskBuilders();
-        const watchTasks = tasks
-            .filter((task) => task.getWatchPaths().length > 0)
+        const builders = this._createTaskBuilders();
+        const watchBuilders = builders
+            .filter((builder) => builder.getWatchPaths(project).length > 0)
             .map(
-                (task) =>
-                    new WatchTaskBuilder(task, task.getWatchPaths(project)),
+                (builder) =>
+                    new WatchTaskBuilder(
+                        builder.buildTask(project),
+                        builder.getWatchPaths(project),
+                    ),
             );
-        return tasks
-            .concat(watchTasks)
+        return builders
+            .concat(watchBuilders)
             .map((builder) => builder.buildTask(project));
     }
 }
