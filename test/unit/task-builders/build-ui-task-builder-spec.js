@@ -20,7 +20,7 @@ import {
 } from '../../utils/object-builder.js';
 import { injectBuilderInitTests } from '../../utils/task-builder-snippets.js';
 
-describe('[BuildUiTaskBuilder]', () => {
+describe('[BuildUiTaskBuilder]', function() {
     const _importModule = createModuleImporter(
         'src/task-builders/build-ui-task-builder.js',
         {
@@ -32,7 +32,7 @@ describe('[BuildUiTaskBuilder]', () => {
 
     injectBuilderInitTests(_importModule, 'build-ui', 'Build web ui project');
 
-    describe('[task]', () => {
+    describe('[task]', function() {
         async function _createTask(definitionOverrides) {
             const execaModuleMock = {
                 execa: stub().callsFake(() => ({
@@ -63,8 +63,8 @@ describe('[BuildUiTaskBuilder]', () => {
         }
 
         getAllProjectOverrides(1).forEach(({ title, overrides }) => {
-            describe(`Verify task (${title})`, () => {
-                it('should invoke vite to build the web project', async () => {
+            describe(`Verify task (${title})`, function() {
+                it('should invoke vite to build the web project', async function() {
                     const {
                         execaModuleMock: { execa: execaMock },
                         project,

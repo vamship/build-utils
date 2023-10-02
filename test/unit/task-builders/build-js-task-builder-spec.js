@@ -19,7 +19,7 @@ import {
 } from '../../utils/object-builder.js';
 import { injectBuilderInitTests } from '../../utils/task-builder-snippets.js';
 
-describe('[BuildJsTaskBuilder]', () => {
+describe('[BuildJsTaskBuilder]', function() {
     const _importModule = createModuleImporter(
         'src/task-builders/build-js-task-builder.js',
         {
@@ -35,7 +35,7 @@ describe('[BuildJsTaskBuilder]', () => {
         'Copies javascript files from source to destination directories'
     );
 
-    describe('[task]', () => {
+    describe('[task]', function() {
         async function _createTask(definitionOverrides) {
             const gulpMock = createGulpMock();
             const BuildJsTaskBuilder = await _importModule({
@@ -62,8 +62,8 @@ describe('[BuildJsTaskBuilder]', () => {
         }
 
         getAllProjectOverrides().forEach(({ title, overrides }) => {
-            describe(`Verify task (${title})`, () => {
-                it('should inititalize and set the appropriate gulp source files', async () => {
+            describe(`Verify task (${title})`, function() {
+                it('should inititalize and set the appropriate gulp source files', async function() {
                     const { gulpMock, task, project } = await _createTask(
                         overrides
                     );
@@ -83,7 +83,7 @@ describe('[BuildJsTaskBuilder]', () => {
                     });
                 });
 
-                it('should write the source files to the working directories', async () => {
+                it('should write the source files to the working directories', async function() {
                     const { gulpMock, task, project } = await _createTask(
                         overrides
                     );

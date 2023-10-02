@@ -20,7 +20,7 @@ import {
 } from '../../utils/object-builder.js';
 import { injectBuilderInitTests } from '../../utils/task-builder-snippets.js';
 
-describe('[PublishAwsTaskBuilder]', () => {
+describe('[PublishAwsTaskBuilder]', function() {
     const _importModule = createModuleImporter(
         'src/task-builders/publish-aws-task-builder.js',
         {
@@ -32,9 +32,9 @@ describe('[PublishAwsTaskBuilder]', () => {
         'PublishAwsTaskBuilder'
     );
 
-    describe('ctor() <target, env>', () => {
+    describe('ctor() <target, env>', function() {
         getAllButString('').forEach((target) => {
-            it(`should throw an error if invoked without a valid target (value=${target})`, async () => {
+            it(`should throw an error if invoked without a valid target (value=${target})`, async function() {
                 const TaskBuilder = await _importModule();
                 const error = 'Invalid target (arg #1)';
                 const requireApproval = false;
@@ -47,7 +47,7 @@ describe('[PublishAwsTaskBuilder]', () => {
         });
 
         getAllButString('').forEach((environment) => {
-            it(`should throw an error if invoked without a valid environment (value=${environment})`, async () => {
+            it(`should throw an error if invoked without a valid environment (value=${environment})`, async function() {
                 const TaskBuilder = await _importModule();
                 const error = 'Invalid environment (arg #2)';
                 const target = 'myStack'; // myStack is the name of the target populated by default (see object-builder.js)
@@ -60,7 +60,7 @@ describe('[PublishAwsTaskBuilder]', () => {
         });
 
         getAllButBoolean('').forEach((requireApproval) => {
-            it(`should throw an error if invoked without a valid requireApproval (value=${requireApproval})`, async () => {
+            it(`should throw an error if invoked without a valid requireApproval (value=${requireApproval})`, async function() {
                 const TaskBuilder = await _importModule();
                 const error = 'Invalid requireApproval (arg #3)';
                 const target = 'myStack'; // myStack is the name of the target populated by default (see object-builder.js)
@@ -81,8 +81,8 @@ describe('[PublishAwsTaskBuilder]', () => {
     );
 
     getAllProjectOverrides().forEach(({ title, overrides }) => {
-        describe(`[Task Build] - (${title})`, () => {
-            it('should throw an error if the specified stack has not been defined', async () => {
+        describe(`[Task Build] - (${title})`, function() {
+            it('should throw an error if the specified stack has not been defined', async function() {
                 const PackageContainerTaskBuilder = await _importModule();
                 const definition = buildProjectDefinition();
                 const project = new Project(definition);
@@ -102,7 +102,7 @@ describe('[PublishAwsTaskBuilder]', () => {
         });
     });
 
-    describe('[task]', () => {
+    describe('[task]', function() {
         async function _createTask(definitionOverrides, options) {
             options = options || {};
             let { target, environment, requireApproval } = options;
@@ -161,8 +161,8 @@ describe('[PublishAwsTaskBuilder]', () => {
             const language = overrides['buildMetadata.language'];
             const jsRootDir = language == 'js' ? '' : `working${_path.sep}`;
 
-            describe(`Verify task - publish to AWS - (${title})`, () => {
-                it('should initialize environment variables required for infrastructure deployment', async () => {
+            describe(`Verify task - publish to AWS - (${title})`, function() {
+                it('should initialize environment variables required for infrastructure deployment', async function() {
                     const infraEnv = 'infra-env';
                     const {
                         project,
@@ -196,7 +196,7 @@ describe('[PublishAwsTaskBuilder]', () => {
                     );
                 });
 
-                it('should verify that all required build arguments exist in the environment', async () => {
+                it('should verify that all required build arguments exist in the environment', async function() {
                     const {
                         project,
                         task,
@@ -216,7 +216,7 @@ describe('[PublishAwsTaskBuilder]', () => {
                     ).to.have.been.calledOnceWith();
                 });
 
-                it('should throw an error if any required build arguments are missing', async () => {
+                it('should throw an error if any required build arguments are missing', async function() {
                     const {
                         project,
                         task,
@@ -239,7 +239,7 @@ describe('[PublishAwsTaskBuilder]', () => {
                 });
 
                 [true, false].forEach((requireApproval) => {
-                    it(`should use the AWS CDK cli to publish the project to the cloud (requireApproval=${requireApproval})`, async () => {
+                    it(`should use the AWS CDK cli to publish the project to the cloud (requireApproval=${requireApproval})`, async function() {
                         const targetStack = 'stack1';
                         const stackName = 'stack-number-1';
                         const {
@@ -310,9 +310,9 @@ describe('[PublishAwsTaskBuilder]', () => {
         });
     });
 
-    describe('getWatchPaths()', () => {
+    describe('getWatchPaths()', function() {
         getAllButObject({}).forEach((project) => {
-            it(`should throw an error if invoked without valid project (value=${typeof project})`, async () => {
+            it(`should throw an error if invoked without valid project (value=${typeof project})`, async function() {
                 const TaskBuilder = await _importModule();
                 const error = 'Invalid project (arg #1)';
                 const builder = new TaskBuilder('default', 'infra', false);
@@ -323,7 +323,7 @@ describe('[PublishAwsTaskBuilder]', () => {
         });
 
         getAllProjectOverrides().forEach(({ title, overrides }) => {
-            it(`should return an array of paths to watch ${title}`, async () => {
+            it(`should return an array of paths to watch ${title}`, async function() {
                 const TaskBuilder = await _importModule();
                 const builder = new TaskBuilder('default', 'infra', false);
                 const project = new Project(buildProjectDefinition(overrides));

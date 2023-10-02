@@ -18,7 +18,7 @@ import {
     getAdditionalContainerBuilders,
 } from '../../utils/task-factory-snippets.js';
 
-describe('[CliTaskFactory]', () => {
+describe('[CliTaskFactory]', function() {
     const _builderNames = [
         'clean',
         'format',
@@ -63,7 +63,7 @@ describe('[CliTaskFactory]', () => {
         return builders;
     }
 
-    describe('_createTaskBuilders()', () => {
+    describe('_createTaskBuilders()', function() {
         const PROJECT_TYPE = 'cli';
         async function _createFactory(overrides) {
             const { mocks, mockReferences } =

@@ -21,7 +21,7 @@ import {
 } from '../../utils/object-builder.js';
 import { injectBuilderInitTests } from '../../utils/task-builder-snippets.js';
 
-describe('[PackageAwsTaskBuilder]', () => {
+describe('[PackageAwsTaskBuilder]', function() {
     const _importModule = createModuleImporter(
         'src/task-builders/package-aws-task-builder.js',
         {
@@ -39,8 +39,8 @@ describe('[PackageAwsTaskBuilder]', () => {
         `Package a project for publishing to AWS`
     );
 
-    describe('[task composition]', () => {
-        it('should create a task composed of three subtasks', async () => {
+    describe('[task composition]', function() {
+        it('should create a task composed of three subtasks', async function() {
             const gulpMock = createGulpMock();
             const TaskBuilder = await _importModule({
                 gulpMock,
@@ -61,7 +61,7 @@ describe('[PackageAwsTaskBuilder]', () => {
         });
     });
 
-    describe('[task]', () => {
+    describe('[task]', function() {
         async function _createTask(definitionOverrides) {
             const gulpMock = createGulpMock();
             const execaModuleMock = {
@@ -111,8 +111,8 @@ describe('[PackageAwsTaskBuilder]', () => {
             const language = overrides['buildMetadata.language'];
             const jsRootDir = language == 'js' ? '' : `working${_path.sep}`;
 
-            describe(`Verify task (${title})`, () => {
-                it('should invoke npm to install project dependencies', async () => {
+            describe(`Verify task (${title})`, function() {
+                it('should invoke npm to install project dependencies', async function() {
                     const {
                         execaModuleMock: { execa: execaMock },
                         project,
@@ -139,7 +139,7 @@ describe('[PackageAwsTaskBuilder]', () => {
                     );
                 });
 
-                it('should inititalize and set the appropriate gulp source files for packaging', async () => {
+                it('should inititalize and set the appropriate gulp source files for packaging', async function() {
                     const {
                         execaModuleMock: { execa: execaMock },
                         project,
@@ -164,7 +164,7 @@ describe('[PackageAwsTaskBuilder]', () => {
                     });
                 });
 
-                it('should pipe the source files to the zip task for packaging', async () => {
+                it('should pipe the source files to the zip task for packaging', async function() {
                     const {
                         execaModuleMock: { execa: execaMock },
                         project,
@@ -191,7 +191,7 @@ describe('[PackageAwsTaskBuilder]', () => {
                     );
                 });
 
-                it('should write the packaged file to the distribution directory', async () => {
+                it('should write the packaged file to the distribution directory', async function() {
                     const {
                         execaModuleMock: { execa: execaMock },
                         project,
@@ -225,7 +225,7 @@ describe('[PackageAwsTaskBuilder]', () => {
         });
     });
 
-    describe('getWatchPaths()', () => {
+    describe('getWatchPaths()', function() {
         function createPathList(project) {
             const dirs = ['src', 'test', 'infra'];
             const extensions = ['md', 'html', 'json', 'js', 'jsx', 'ts', 'tsx'];
@@ -238,7 +238,7 @@ describe('[PackageAwsTaskBuilder]', () => {
         }
 
         getAllButObject({}).forEach((project) => {
-            it(`should throw an error if invoked without valid project (value=${typeof project})`, async () => {
+            it(`should throw an error if invoked without valid project (value=${typeof project})`, async function() {
                 const TaskBuilder = await _importModule();
                 const error = 'Invalid project (arg #1)';
                 const builder = new TaskBuilder();
@@ -249,7 +249,7 @@ describe('[PackageAwsTaskBuilder]', () => {
         });
 
         getAllProjectOverrides().forEach(({ title, overrides }) => {
-            it(`should return an array of paths to watch ${title}`, async () => {
+            it(`should return an array of paths to watch ${title}`, async function() {
                 const TaskBuilder = await _importModule();
                 const builder = new TaskBuilder();
                 const project = new Project(buildProjectDefinition(overrides));

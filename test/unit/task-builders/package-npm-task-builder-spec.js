@@ -21,7 +21,7 @@ import {
 } from '../../utils/object-builder.js';
 import { injectBuilderInitTests } from '../../utils/task-builder-snippets.js';
 
-describe('[PackageNpmTaskBuilder]', () => {
+describe('[PackageNpmTaskBuilder]', function() {
     const _importModule = createModuleImporter(
         'src/task-builders/package-npm-task-builder.js',
         {
@@ -39,8 +39,8 @@ describe('[PackageNpmTaskBuilder]', () => {
         `Package a project for publishing to NPM`
     );
 
-    describe('[task composition]', () => {
-        it('should create a task composed of three subtasks', async () => {
+    describe('[task composition]', function() {
+        it('should create a task composed of three subtasks', async function() {
             const gulpMock = createGulpMock();
             const TaskBuilder = await _importModule({
                 gulpMock,
@@ -61,7 +61,7 @@ describe('[PackageNpmTaskBuilder]', () => {
         });
     });
 
-    describe('[task]', () => {
+    describe('[task]', function() {
         async function _createTask(definitionOverrides) {
             const execaModuleMock = {
                 execa: stub().callsFake(() => ({
@@ -91,8 +91,8 @@ describe('[PackageNpmTaskBuilder]', () => {
             const language = overrides['buildMetadata.language'];
             const jsRootDir = language == 'js' ? '' : `working${_path.sep}`;
 
-            describe(`Verify task - package, copy, delete old - (${title})`, () => {
-                it('should invoke npm to package the project', async () => {
+            describe(`Verify task - package, copy, delete old - (${title})`, function() {
+                it('should invoke npm to package the project', async function() {
                     const {
                         execaModuleMock: { execa: execaMock },
                         project,
@@ -119,7 +119,7 @@ describe('[PackageNpmTaskBuilder]', () => {
                     );
                 });
 
-                it('should use gulp to copy the package to the distribution directory', async () => {
+                it('should use gulp to copy the package to the distribution directory', async function() {
                     const { project, gulpMock } = await _createTask(overrides);
                     const [_first, task] = gulpMock.series.args[0][0];
                     const packageName = `${project.kebabCasedName}-${project.version}.tgz`;
@@ -139,7 +139,7 @@ describe('[PackageNpmTaskBuilder]', () => {
                     );
                 });
 
-                it('should write package archive to the distribution directory', async () => {
+                it('should write package archive to the distribution directory', async function() {
                     const { gulpMock, project } = await _createTask(overrides);
                     const [_first, task] = gulpMock.series.args[0][0];
 
@@ -169,7 +169,7 @@ describe('[PackageNpmTaskBuilder]', () => {
                     );
                 });
 
-                it('should delete the original package file from the source', async () => {
+                it('should delete the original package file from the source', async function() {
                     const { gulpMock, deleteMock, project } = await _createTask(
                         overrides
                     );
@@ -193,7 +193,7 @@ describe('[PackageNpmTaskBuilder]', () => {
         });
     });
 
-    describe('getWatchPaths()', () => {
+    describe('getWatchPaths()', function() {
         function createPathList(project) {
             const dirs = ['src', 'test', 'infra'];
             const extensions = ['md', 'html', 'json', 'js', 'jsx', 'ts', 'tsx'];
@@ -206,7 +206,7 @@ describe('[PackageNpmTaskBuilder]', () => {
         }
 
         getAllButObject({}).forEach((project) => {
-            it(`should throw an error if invoked without valid project (value=${typeof project})`, async () => {
+            it(`should throw an error if invoked without valid project (value=${typeof project})`, async function() {
                 const TaskBuilder = await _importModule();
                 const error = 'Invalid project (arg #1)';
                 const builder = new TaskBuilder();
@@ -217,7 +217,7 @@ describe('[PackageNpmTaskBuilder]', () => {
         });
 
         getAllProjectOverrides().forEach(({ title, overrides }) => {
-            it(`should return an array of paths to watch ${title}`, async () => {
+            it(`should return an array of paths to watch ${title}`, async function() {
                 const TaskBuilder = await _importModule();
                 const builder = new TaskBuilder();
                 const project = new Project(buildProjectDefinition(overrides));

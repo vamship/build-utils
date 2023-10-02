@@ -17,7 +17,7 @@ import {
 } from '../../utils/object-builder.js';
 import { injectBuilderInitTests } from '../../utils/task-builder-snippets.js';
 
-describe('[NotSupportedTaskBuilder]', () => {
+describe('[NotSupportedTaskBuilder]', function() {
     const _importModule = createModuleImporter(
         'src/task-builders/not-supported-task-builder.js',
         {
@@ -33,7 +33,7 @@ describe('[NotSupportedTaskBuilder]', () => {
         'Task that does nothing - used to indicate that a task is not supported for a project type.',
     );
 
-    describe('[task]', () => {
+    describe('[task]', function() {
         async function _createTask(definitionOverrides) {
             const fancyLogMock = createFancyLogMock();
             const NotSupportedTaskBuilder = await _importModule({
@@ -52,8 +52,8 @@ describe('[NotSupportedTaskBuilder]', () => {
         }
 
         getAllProjectOverrides().forEach(({ title, overrides }) => {
-            describe(`Verify task (${title})`, () => {
-                it(`should show a log message on the screen`, async () => {
+            describe(`Verify task (${title})`, function() {
+                it(`should show a log message on the screen`, async function() {
                     const { task, fancyLogMock } = await _createTask(overrides);
 
                     expect(fancyLogMock.info).to.not.have.been.called;
@@ -70,9 +70,9 @@ describe('[NotSupportedTaskBuilder]', () => {
         });
     });
 
-    describe('getWatchPaths()', () => {
+    describe('getWatchPaths()', function() {
         getAllButObject({}).forEach((project) => {
-            it(`should throw an error if invoked without valid project (value=${typeof project})`, async () => {
+            it(`should throw an error if invoked without valid project (value=${typeof project})`, async function() {
                 const TaskBuilder = await _importModule();
                 const error = 'Invalid project (arg #1)';
                 const builder = new TaskBuilder();
@@ -83,7 +83,7 @@ describe('[NotSupportedTaskBuilder]', () => {
         });
 
         getAllProjectOverrides().forEach(({ title, overrides }) => {
-            it(`should return an array of paths to watch ${title}`, async () => {
+            it(`should return an array of paths to watch ${title}`, async function() {
                 const TaskBuilder = await _importModule();
                 const builder = new TaskBuilder();
                 const project = new Project(buildProjectDefinition(overrides));

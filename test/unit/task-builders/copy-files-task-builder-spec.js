@@ -19,7 +19,7 @@ import {
 } from '../../utils/object-builder.js';
 import { injectBuilderInitTests } from '../../utils/task-builder-snippets.js';
 
-describe('[CopyFilesTaskBuilder]', () => {
+describe('[CopyFilesTaskBuilder]', function() {
     const _importModule = createModuleImporter(
         'src/task-builders/copy-files-task-builder.js',
         {
@@ -35,7 +35,7 @@ describe('[CopyFilesTaskBuilder]', () => {
         'Copies project files from source to build directories'
     );
 
-    describe('[task]', () => {
+    describe('[task]', function() {
         async function _createTask(definitionOverrides) {
             const gulpMock = createGulpMock();
             const CopyFilesTaskBuilder = await _importModule({
@@ -131,8 +131,8 @@ describe('[CopyFilesTaskBuilder]', () => {
             }));
 
         projectOverrides.forEach(({ title, overrides }) => {
-            describe(`Verify task (${title})`, () => {
-                it('should inititalize and set the appropriate gulp source files', async () => {
+            describe(`Verify task (${title})`, function() {
+                it('should inititalize and set the appropriate gulp source files', async function() {
                     const { gulpMock, task, project } = await _createTask(
                         overrides
                     );
@@ -152,7 +152,7 @@ describe('[CopyFilesTaskBuilder]', () => {
                     });
                 });
 
-                it('should include static file patters from project configuration', async () => {
+                it('should include static file patters from project configuration', async function() {
                     const staticFilePatterns = ['pat1', 'pat2'];
                     overrides = {
                         ...overrides,
@@ -177,7 +177,7 @@ describe('[CopyFilesTaskBuilder]', () => {
                     });
                 });
 
-                it('should write the source files to the working directories', async () => {
+                it('should write the source files to the working directories', async function() {
                     const { gulpMock, task, project } = await _createTask(
                         overrides
                     );

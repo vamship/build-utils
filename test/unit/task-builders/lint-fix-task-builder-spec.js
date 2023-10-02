@@ -17,7 +17,7 @@ import {
 } from '../../utils/object-builder.js';
 import { injectBuilderInitTests } from '../../utils/task-builder-snippets.js';
 
-describe('[LintFixTaskBuilder]', () => {
+describe('[LintFixTaskBuilder]', function() {
     const _importModule = createModuleImporter(
         'src/task-builders/lint-fix-task-builder.js',
         {
@@ -34,7 +34,7 @@ describe('[LintFixTaskBuilder]', () => {
         'Lints all source files and applies automatic fixes where possible'
     );
 
-    describe('[task]', () => {
+    describe('[task]', function() {
         async function _createTask(definitionOverrides) {
             const gulpEslintMock = stub().callsFake(() => ({
                 _source: '_eslint_ret_',
@@ -79,8 +79,8 @@ describe('[LintFixTaskBuilder]', () => {
         }
 
         getAllProjectOverrides().forEach(({ title, overrides }) => {
-            describe(`Verify task (${title})`, () => {
-                it('should inititalize and set the appropriate gulp source files', async () => {
+            describe(`Verify task (${title})`, function() {
+                it('should inititalize and set the appropriate gulp source files', async function() {
                     const { gulpMock, task, project } = await _createTask(
                         overrides
                     );
@@ -100,7 +100,7 @@ describe('[LintFixTaskBuilder]', () => {
                     });
                 });
 
-                it('should pipe the source files to the eslint task for linting', async () => {
+                it('should pipe the source files to the eslint task for linting', async function() {
                     const { gulpMock, task, gulpEslintMock } =
                         await _createTask(overrides);
 
@@ -125,7 +125,7 @@ describe('[LintFixTaskBuilder]', () => {
                     );
                 });
 
-                it('should pipe the source files to the eslint fix task for auto fixes', async () => {
+                it('should pipe the source files to the eslint fix task for auto fixes', async function() {
                     const { gulpMock, task, gulpEslintMock } =
                         await _createTask(overrides);
 
@@ -144,7 +144,7 @@ describe('[LintFixTaskBuilder]', () => {
                     );
                 });
 
-                it('should pipe the source files to the eslint format task for linting', async () => {
+                it('should pipe the source files to the eslint format task for linting', async function() {
                     const { gulpMock, task, gulpEslintMock } =
                         await _createTask(overrides);
 
@@ -163,7 +163,7 @@ describe('[LintFixTaskBuilder]', () => {
                     );
                 });
 
-                it('should force eslint to report an error if linting fails', async () => {
+                it('should force eslint to report an error if linting fails', async function() {
                     const { gulpMock, task, gulpEslintMock } =
                         await _createTask(overrides);
 

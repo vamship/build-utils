@@ -17,7 +17,7 @@ import {
 } from '../../utils/object-builder.js';
 import { injectBuilderInitTests } from '../../utils/task-builder-snippets.js';
 
-describe('[FormatTaskBuilder]', () => {
+describe('[FormatTaskBuilder]', function() {
     const _importModule = createModuleImporter(
         'src/task-builders/format-task-builder.js',
         {
@@ -34,7 +34,7 @@ describe('[FormatTaskBuilder]', () => {
         'Formats all source files, README.md and build scripts'
     );
 
-    describe('[task]', () => {
+    describe('[task]', function() {
         async function _createTask(definitionOverrides) {
             const gulpPrettierMock = stub().callsFake(() => ({
                 _source: '_prettier_ret_',
@@ -70,8 +70,8 @@ describe('[FormatTaskBuilder]', () => {
         }
 
         getAllProjectOverrides().forEach(({ title, overrides }) => {
-            describe(`Verify task (${title})`, () => {
-                it('should inititalize and set the appropriate gulp source files', async () => {
+            describe(`Verify task (${title})`, function() {
+                it('should inititalize and set the appropriate gulp source files', async function() {
                     const { gulpMock, task, project } = await _createTask(
                         overrides
                     );
@@ -92,7 +92,7 @@ describe('[FormatTaskBuilder]', () => {
                     });
                 });
 
-                it('should pipe the source files to the prettier task for formatting', async () => {
+                it('should pipe the source files to the prettier task for formatting', async function() {
                     const { gulpMock, task, gulpPrettierMock } =
                         await _createTask(overrides);
 
@@ -109,7 +109,7 @@ describe('[FormatTaskBuilder]', () => {
                     );
                 });
 
-                it('should overwrite the source file with formatted contents', async () => {
+                it('should overwrite the source file with formatted contents', async function() {
                     const { gulpMock, task, project } = await _createTask(
                         overrides
                     );

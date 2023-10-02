@@ -17,7 +17,7 @@ import {
 } from '../../utils/object-builder.js';
 import { injectBuilderInitTests } from '../../utils/task-builder-snippets.js';
 
-describe('[DocsTsTaskBuilder]', () => {
+describe('[DocsTsTaskBuilder]', function() {
     const _importModule = createModuleImporter(
         'src/task-builders/docs-ts-task-builder.js',
         {
@@ -34,7 +34,7 @@ describe('[DocsTsTaskBuilder]', () => {
         'Generates documentation from code comments in typescript files'
     );
 
-    describe('[task]', () => {
+    describe('[task]', function() {
         async function _createTask(definitionOverrides) {
             const execaModuleMock = {
                 execa: stub().callsFake(() => ({
@@ -65,8 +65,8 @@ describe('[DocsTsTaskBuilder]', () => {
         }
 
         getAllProjectOverrides().forEach(({ title, overrides }) => {
-            describe(`Verify task (${title})`, () => {
-                it('should pipe the source files to the document generator to extract docs', async () => {
+            describe(`Verify task (${title})`, function() {
+                it('should pipe the source files to the document generator to extract docs', async function() {
                     const {
                         task,
                         execaModuleMock: { execa: execaMock },

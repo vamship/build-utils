@@ -17,7 +17,7 @@ import {
     injectTaskBuilderCompositionTests,
 } from '../../utils/task-factory-snippets.js';
 
-describe('[UiTaskFactory]', () => {
+describe('[UiTaskFactory]', function() {
     const _builderNames = [
         'clean',
         'format',
@@ -55,7 +55,7 @@ describe('[UiTaskFactory]', () => {
         return builders;
     }
 
-    describe('_createTaskBuilders()', () => {
+    describe('_createTaskBuilders()', function() {
         const PROJECT_TYPE = 'ui';
         async function _createFactory(overrides) {
             const { mocks, mockReferences } =

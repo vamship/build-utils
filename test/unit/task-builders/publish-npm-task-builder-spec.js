@@ -20,7 +20,7 @@ import {
 } from '../../utils/object-builder.js';
 import { injectBuilderInitTests } from '../../utils/task-builder-snippets.js';
 
-describe('[PublishNpmTaskBuilder]', () => {
+describe('[PublishNpmTaskBuilder]', function() {
     const _importModule = createModuleImporter(
         'src/task-builders/publish-npm-task-builder.js',
         {
@@ -37,7 +37,7 @@ describe('[PublishNpmTaskBuilder]', () => {
         `Publish a project to an NPM registry`
     );
 
-    describe('[task]', () => {
+    describe('[task]', function() {
         async function _createTask(definitionOverrides) {
             const execaModuleMock = {
                 execa: stub().callsFake(() => ({
@@ -63,8 +63,8 @@ describe('[PublishNpmTaskBuilder]', () => {
         getAllProjectOverrides().forEach(({ title, overrides }) => {
             const language = overrides['buildMetadata.language'];
 
-            describe(`Verify task - (${title})`, () => {
-                it('should invoke npm to publish the project', async () => {
+            describe(`Verify task - (${title})`, function() {
+                it('should invoke npm to publish the project', async function() {
                     const {
                         execaModuleMock: { execa: execaMock },
                         project,
@@ -96,9 +96,9 @@ describe('[PublishNpmTaskBuilder]', () => {
         });
     });
 
-    describe('getWatchPaths()', () => {
+    describe('getWatchPaths()', function() {
         getAllButObject({}).forEach((project) => {
-            it(`should throw an error if invoked without valid project (value=${typeof project})`, async () => {
+            it(`should throw an error if invoked without valid project (value=${typeof project})`, async function() {
                 const TaskBuilder = await _importModule();
                 const error = 'Invalid project (arg #1)';
                 const builder = new TaskBuilder();
@@ -109,7 +109,7 @@ describe('[PublishNpmTaskBuilder]', () => {
         });
 
         getAllProjectOverrides().forEach(({ title, overrides }) => {
-            it(`should return an array of paths to watch ${title}`, async () => {
+            it(`should return an array of paths to watch ${title}`, async function() {
                 const TaskBuilder = await _importModule();
                 const builder = new TaskBuilder();
                 const project = new Project(buildProjectDefinition(overrides));

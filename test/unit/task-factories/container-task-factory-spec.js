@@ -18,7 +18,7 @@ import {
     getAdditionalContainerBuilders,
 } from '../../utils/task-factory-snippets.js';
 
-describe('[ContainerTaskFactory]', () => {
+describe('[ContainerTaskFactory]', function() {
     const _builderNames = [
         'clean',
         'format',
@@ -61,7 +61,7 @@ describe('[ContainerTaskFactory]', () => {
         return builders;
     }
 
-    describe('_createTaskBuilders()', () => {
+    describe('_createTaskBuilders()', function() {
         const PROJECT_TYPE = 'container';
         async function _createFactory(overrides) {
             const { mocks, mockReferences } =

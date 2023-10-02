@@ -23,7 +23,7 @@ import { injectBuilderInitTests } from '../../utils/task-builder-snippets.js';
 
 const specificContainerTarget = 'myBuildArm'; // This is a second build defined in object-builder.js
 
-describe('[PublishContainerTaskBuilder]', () => {
+describe('[PublishContainerTaskBuilder]', function() {
     const _importModule = createModuleImporter(
         'src/task-builders/publish-container-task-builder.js',
         {
@@ -34,9 +34,9 @@ describe('[PublishContainerTaskBuilder]', () => {
         'PublishContainerTaskBuilder'
     );
 
-    describe('ctor() <target, tag>', () => {
+    describe('ctor() <target, tag>', function() {
         getAllButString('').forEach((target) => {
-            it(`should throw an error if invoked without a valid target (value=${target})`, async () => {
+            it(`should throw an error if invoked without a valid target (value=${target})`, async function() {
                 const TaskBuilder = await _importModule();
                 const error = 'Invalid target (arg #1)';
                 const tag = undefined;
@@ -47,7 +47,7 @@ describe('[PublishContainerTaskBuilder]', () => {
         });
 
         makeOptional(getAllButString('')).forEach((tag) => {
-            it(`should throw an error if invoked without a tag (value=${tag})`, async () => {
+            it(`should throw an error if invoked without a tag (value=${tag})`, async function() {
                 const TaskBuilder = await _importModule();
                 const error = 'Invalid tag (arg #2)';
                 const wrapper = () =>
@@ -72,8 +72,8 @@ describe('[PublishContainerTaskBuilder]', () => {
     });
 
     getAllProjectOverrides().forEach(({ title, overrides }) => {
-        describe(`[Task Build] - (${title})`, () => {
-            it('should throw an error if the specified target has not been defined', async () => {
+        describe(`[Task Build] - (${title})`, function() {
+            it('should throw an error if the specified target has not been defined', async function() {
                 const TaskBuilder = await _importModule();
                 const definition = buildProjectDefinition();
                 const project = new Project(definition);
@@ -87,7 +87,7 @@ describe('[PublishContainerTaskBuilder]', () => {
                 expect(wrapper).to.throw(new RegExp(`.*${target}.*`));
             });
 
-            it('should invoke gulp to chain the tag and publish tasks', async () => {
+            it('should invoke gulp to chain the tag and publish tasks', async function() {
                 const gulpMock = createGulpMock();
                 const TaskBuilder = await _importModule({
                     gulpMock,
@@ -113,7 +113,7 @@ describe('[PublishContainerTaskBuilder]', () => {
         });
     });
 
-    describe('[task]', () => {
+    describe('[task]', function() {
         async function _createTask(definitionOverrides, target, tag) {
             if (typeof target !== 'string' || target.length === 0) {
                 target = 'default';
@@ -153,8 +153,8 @@ describe('[PublishContainerTaskBuilder]', () => {
 
         projectList.forEach(({ title, overrides }) => {
             ['latest', '1', '1.0', '1.0.0'].forEach((tag) => {
-                describe(`Verify task - publish to container registry - (${title})`, () => {
-                    it(`should use the docker cli to tag the container image (tag=${tag})`, async () => {
+                describe(`Verify task - publish to container registry - (${title})`, function() {
+                    it(`should use the docker cli to tag the container image (tag=${tag})`, async function() {
                         const target = 'default';
                         const {
                             execaModuleMock: { execa: execaMock },
@@ -215,7 +215,7 @@ describe('[PublishContainerTaskBuilder]', () => {
                         });
                     });
 
-                    it(`should use the docker cli to publish the image to the cloud (tag=${tag})`, async () => {
+                    it(`should use the docker cli to publish the image to the cloud (tag=${tag})`, async function() {
                         const target = 'default';
                         const {
                             execaModuleMock: { execa: execaMock },
@@ -282,9 +282,9 @@ describe('[PublishContainerTaskBuilder]', () => {
         });
     });
 
-    describe('getWatchPaths()', () => {
+    describe('getWatchPaths()', function() {
         getAllButObject({}).forEach((project) => {
-            it(`should throw an error if invoked without valid project (value=${typeof project})`, async () => {
+            it(`should throw an error if invoked without valid project (value=${typeof project})`, async function() {
                 const TaskBuilder = await _importModule();
                 const error = 'Invalid project (arg #1)';
                 const builder = new TaskBuilder('latest');
@@ -295,7 +295,7 @@ describe('[PublishContainerTaskBuilder]', () => {
         });
 
         getAllProjectOverrides().forEach(({ title, overrides }) => {
-            it(`should return an array of paths to watch ${title}`, async () => {
+            it(`should return an array of paths to watch ${title}`, async function() {
                 const TaskBuilder = await _importModule();
                 const builder = new TaskBuilder('latest');
                 const project = new Project(buildProjectDefinition(overrides));
