@@ -6,6 +6,7 @@ import { LintTaskBuilder } from '../task-builders/lint-task-builder.js';
 import { LintFixTaskBuilder } from '../task-builders/lint-fix-task-builder.js';
 import { BuildTaskBuilder } from '../task-builders/build-task-builder.js';
 import { DocsTaskBuilder } from '../task-builders/docs-task-builder.js';
+import { TestUiTaskBuilder } from '../task-builders/test-ui-task-builder.js';
 
 /**
  * Represents a factory that generates a set of build tasks for a given project
@@ -38,6 +39,7 @@ export class UiTaskFactory extends TaskFactory {
             new FormatTaskBuilder(),
             new LintTaskBuilder(),
             new LintFixTaskBuilder(),
+            new TestUiTaskBuilder(),
 
             new DocsTaskBuilder(this._project),
             new BuildTaskBuilder(this._project),

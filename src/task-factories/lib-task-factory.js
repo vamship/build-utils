@@ -4,6 +4,7 @@ import { CleanTaskBuilder } from '../task-builders/clean-task-builder.js';
 import { FormatTaskBuilder } from '../task-builders/format-task-builder.js';
 import { LintTaskBuilder } from '../task-builders/lint-task-builder.js';
 import { LintFixTaskBuilder } from '../task-builders/lint-fix-task-builder.js';
+import { TestTaskBuilder } from '../task-builders/test-task-builder.js';
 import { BuildTaskBuilder } from '../task-builders/build-task-builder.js';
 import { PackageTaskBuilder } from '../task-builders/package-task-builder.js';
 import { PublishTaskBuilder } from '../task-builders/publish-task-builder.js';
@@ -40,6 +41,7 @@ export class LibTaskFactory extends TaskFactory {
             new FormatTaskBuilder(),
             new LintTaskBuilder(),
             new LintFixTaskBuilder(),
+            new TestTaskBuilder('unit'),
 
             new DocsTaskBuilder(this._project),
             new BuildTaskBuilder(this._project),

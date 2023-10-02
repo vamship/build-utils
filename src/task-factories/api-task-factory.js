@@ -11,6 +11,7 @@ import { DocsTaskBuilder } from '../task-builders/docs-task-builder.js';
 import { PackageContainerTaskBuilder } from '../task-builders/package-container-task-builder.js';
 import { PublishContainerTaskBuilder } from '../task-builders/publish-container-task-builder.js';
 import { generateAdditionalContainerTasks } from '../utils/task-factory-utils.js';
+import { TestTaskBuilder } from '../task-builders/test-task-builder.js';
 
 /**
  * Represents a factory that generates a set of build tasks for an api type project
@@ -54,6 +55,8 @@ export class ApiTaskFactory extends TaskFactory {
             new FormatTaskBuilder(),
             new LintTaskBuilder(),
             new LintFixTaskBuilder(),
+            new TestTaskBuilder('unit'),
+            new TestTaskBuilder('api'),
 
             new DocsTaskBuilder(this._project),
             new BuildTaskBuilder(this._project),

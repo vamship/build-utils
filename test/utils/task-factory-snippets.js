@@ -58,7 +58,7 @@ export function injectFactoryInitTests(importModule, project, ctorArgs) {
             new TaskFactory(project, ...ctorArgs);
 
             expect(superCtor, failMessage).to.have.been.calledOnceWithExactly(
-                project
+                project,
             );
         });
     });
@@ -75,7 +75,7 @@ export function injectFactoryInitTests(importModule, project, ctorArgs) {
  */
 export function injectUnsupportedTasksTests(projectType, createFactory) {
     const projectOverrides = getAllProjectOverrides().filter(
-        ({ overrides }) => overrides['buildMetadata.type'] !== projectType
+        ({ overrides }) => overrides['buildMetadata.type'] !== projectType,
     );
 
     describe(`[Unsupported Project Types]`, () => {
@@ -117,7 +117,7 @@ export function injectUnsupportedTasksTests(projectType, createFactory) {
 export function injectTaskBuilderCompositionTests(
     projectType,
     createFactory,
-    getExpectedTaskBuilders
+    getExpectedTaskBuilders,
 ) {
     getSelectedProjectOverrides([projectType]).forEach(
         ({ title, overrides }) => {
@@ -125,36 +125,43 @@ export function injectTaskBuilderCompositionTests(
 
             describe(`[${title}]`, () => {
                 it(`should initialize the expected task builders`, async () => {
-                    const { project, factory, mocks } = await createFactory(
-                        overrides
-                    );
+                    const { project, factory, mocks } =
+                        await createFactory(overrides);
 
-                    const expectedBuilders = getExpectedTaskBuilders(project);
+                    const expectedBuilders = getExpectedTaskBuilders(
+                        project,
+                    ).concat([]);
 
                     Object.values(mocks).forEach(checkCtorNotCalled);
 
                     factory._createTaskBuilders();
 
-                    Object.keys(mocks).forEach((subBuilderMock) => {
-                        const mock = mocks[subBuilderMock];
-                        const builder = expectedBuilders.find(
-                            (builder) => builder.name === mock._name
-                        );
+                    Object.keys(mocks).forEach((key) => {
+                        const mock = mocks[key];
                         const ctor = mock.ctor;
                         const failMessage = buildFailMessage(overrides, {
                             task: mock._name,
                         });
+                        const matchingBuilders = expectedBuilders.filter(
+                            (builder) => builder.name === mock._name,
+                        );
 
-                        if (builder) {
-                            expect(ctor, failMessage).to.have.been.calledOnce;
-                            expect(
-                                ctor,
-                                failMessage
-                            ).to.have.been.calledWithExactly(
-                                ...builder.ctorArgs
+                        if (matchingBuilders.length > 0) {
+                            expect(ctor, failMessage).to.have.been.called;
+                            expect(ctor.callCount, failMessage).to.equal(
+                                matchingBuilders.length,
                             );
-                            expect(ctor, failMessage).to.have.been
-                                .calledWithNew;
+
+                            ctor.args.forEach((args, index) => {
+                                const { ctorArgs } = matchingBuilders[index];
+                                const call = ctor.getCall(index);
+
+                                expect(args, failMessage).to.deep.equal(
+                                    ctorArgs,
+                                );
+                                expect(call, failMessage).to.have.been
+                                    .calledWithNew;
+                            });
                         } else {
                             expect(ctor, failMessage).to.not.have.been.called;
                         }
@@ -162,9 +169,8 @@ export function injectTaskBuilderCompositionTests(
                 });
 
                 it(`should return the expected task builders`, async () => {
-                    const { project, factory, mocks } = await createFactory(
-                        overrides
-                    );
+                    const { project, factory, mocks } =
+                        await createFactory(overrides);
                     const failMessage = buildFailMessage(overrides);
 
                     const expectedBuilders = getExpectedTaskBuilders(project);
@@ -185,7 +191,7 @@ export function injectTaskBuilderCompositionTests(
                     });
                 });
             });
-        }
+        },
     );
 }
 

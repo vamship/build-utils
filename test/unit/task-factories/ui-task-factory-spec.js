@@ -23,6 +23,7 @@ describe('[UiTaskFactory]', function() {
         'format',
         'lint',
         'lint-fix',
+        'test-ui',
         'docs',
         'build',
     ];
@@ -48,6 +49,7 @@ describe('[UiTaskFactory]', function() {
             { name: 'format', ctorArgs: [] },
             { name: 'lint', ctorArgs: [] },
             { name: 'lint-fix', ctorArgs: [] },
+            { name: 'test-ui', ctorArgs: [] },
             { name: 'docs', ctorArgs: [project] },
             { name: 'build', ctorArgs: [project] },
         ];
