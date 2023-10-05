@@ -39,7 +39,7 @@ function _prepareBuilderMockData(builderNames) {
  * @returns {Object} The project definition.
  */
 export function buildProjectDefinition(overrides) {
-    overrides = overrides || [];
+    overrides = overrides || {};
     const definition = {
         name: 'sample-project',
         description: 'Sample project description',
