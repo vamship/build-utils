@@ -4,21 +4,27 @@ _chai.use(_sinonChai);
 
 import { stub } from 'sinon';
 import { Project } from '../../src/project.js';
-import { getAllButObject } from '../utils/data-generator.js';
+import {
+    getAllButObject,
+    getAllProjectOverrides,
+} from '../utils/data-generator.js';
 import {
     buildProjectDefinition,
     createModuleImporter,
     createTaskBuilderMock,
 } from '../utils/object-builder.js';
 
-describe('[TaskFactory]', function() {
-    const _importModule = createModuleImporter('src/task-factory.js', {
-        watchTaskBuilderMock: 'src/task-builders/watch-task-builder.js',
-    });
+describe('[TaskFactory]', function () {
+    const _importModule = createModuleImporter(
+        'src/task-factory.js',
+        {
+            watchTaskBuilderMock: 'src/task-builders/watch-task-builder.js',
+        },
+    );
 
-    describe('ctor()', function() {
+    describe('ctor()', function () {
         getAllButObject({}).forEach((project) => {
-            it(`should throw an error if invoked without a valid project (value=${typeof project})`, async function() {
+            it(`should throw an error if invoked without a valid project (value=${typeof project})`, async function () {
                 const TaskFactory = await _importModule();
                 const wrapper = () => new TaskFactory(project);
                 const error = 'Invalid project (arg #1)';
@@ -28,8 +34,8 @@ describe('[TaskFactory]', function() {
         });
     });
 
-    describe('_createTaskBuilders()', function() {
-        it('should return an array when invoked', async function() {
+    describe('_createTaskBuilders()', function () {
+        it('should return an array when invoked', async function () {
             const TaskFactory = await _importModule();
             const definition = buildProjectDefinition();
             const project = new Project(definition);
@@ -40,7 +46,7 @@ describe('[TaskFactory]', function() {
         });
     });
 
-    describe('createTasks()', function() {
+    describe('createTasks()', function () {
         async function _initializeFactory(taskInfo) {
             const watchTaskBuilderMock = createTaskBuilderMock('watch');
             const TaskFactory = await _importModule({
@@ -74,13 +80,13 @@ describe('[TaskFactory]', function() {
             return { tasks, project, factory, watchTaskBuilderMock };
         }
 
-        it('should return an empty array when invoked', async function() {
+        it('should return an empty array when invoked', async function () {
             const { factory } = await _initializeFactory([]);
 
             expect(factory.createTasks()).to.be.an('array').that.is.empty;
         });
 
-        it('should invoke the buildTask() method on each task builder (no watch tasks)', async function() {
+        it('should invoke the buildTask() method on each task builder (no watch tasks)', async function () {
             const taskInfo = [
                 { name: 'task1', watchPaths: [] },
                 { name: 'task2', watchPaths: [] },
@@ -106,7 +112,7 @@ describe('[TaskFactory]', function() {
             });
         });
 
-        it('should invoke buildTask() to create a new task for watching tasks that have non empty watch paths', async function() {
+        it('should invoke buildTask() to create a new task for watching tasks that have non empty watch paths', async function () {
             const taskInfo = [
                 { name: 'task1', watchPaths: [] },
                 { name: 'task2', watchPaths: ['path1', 'path2'] },
@@ -146,7 +152,7 @@ describe('[TaskFactory]', function() {
             );
         });
 
-        it('should create a watch task for each task that returns non empty watch paths', async function() {
+        it('should create a watch task for each task that returns non empty watch paths', async function () {
             const taskInfo = [
                 { name: 'task1', watchPaths: [] },
                 { name: 'task2', watchPaths: ['path1', 'path2'] },
@@ -174,7 +180,7 @@ describe('[TaskFactory]', function() {
             });
         });
 
-        it('should include all watch tasks in the final list of tasks returned', async function() {
+        it('should include all watch tasks in the final list of tasks returned', async function () {
             const taskInfo = [
                 { name: 'task1', watchPaths: [] },
                 { name: 'task2', watchPaths: ['path1', 'path2'] },
@@ -196,14 +202,16 @@ describe('[TaskFactory]', function() {
 
             tasks.forEach((task) => {
                 const { buildTask } = task;
-                if(tasksWithPaths.includes(task)) {
+                if (tasksWithPaths.includes(task)) {
                     expect(buildTask).to.have.been.calledTwice;
                     buildTask.args.forEach((args) => {
                         expect(args).to.have.lengthOf(1);
                         expect(args[0]).to.equal(project);
                     });
                 } else {
-                    expect(buildTask).to.have.been.calledOnceWithExactly(project);
+                    expect(buildTask).to.have.been.calledOnceWithExactly(
+                        project,
+                    );
                 }
             });
 
