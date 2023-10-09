@@ -8,7 +8,7 @@ import { BuildTaskBuilder } from '../task-builders/build-task-builder.js';
 import { PackageTaskBuilder } from '../task-builders/package-task-builder.js';
 import { PublishTaskBuilder } from '../task-builders/publish-task-builder.js';
 import { DocsTaskBuilder } from '../task-builders/docs-task-builder.js';
-import {TestTaskBuilder} from "../task-builders/test-task-builder.js";
+import { TestTaskBuilder } from '../task-builders/test-task-builder.js';
 
 /**
  * Represents a factory that generates a set of build tasks for a given project

@@ -27,7 +27,7 @@ import {
     injectWatchPathsCompositionTests,
 } from '../../utils/task-builder-snippets.js';
 
-describe('[BuildTaskBuilder]', function() {
+describe('[BuildTaskBuilder]', function () {
     const _subBuilders = [
         'build-js',
         'build-ts',

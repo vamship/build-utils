@@ -19,7 +19,7 @@ import {
 } from '../../utils/object-builder.js';
 import { injectBuilderInitTests } from '../../utils/task-builder-snippets.js';
 
-describe('[TestUiTaskBuilder]', function() {
+describe('[TestUiTaskBuilder]', function () {
     const _importModule = createModuleImporter(
         'src/task-builders/test-ui-task-builder.js',
         {
@@ -31,7 +31,7 @@ describe('[TestUiTaskBuilder]', function() {
 
     injectBuilderInitTests(_importModule, 'test-ui', `Execute web UI tests`);
 
-    describe('[task]', function() {
+    describe('[task]', function () {
         async function _createTask(definitionOverrides) {
             const execaModuleMock = {
                 execa: stub().callsFake(() => ({
@@ -52,8 +52,8 @@ describe('[TestUiTaskBuilder]', function() {
         }
 
         getAllProjectOverrides().forEach(({ title, overrides }) => {
-            describe(`Verify UI test task (${title})`, function() {
-                it('should invoke jest to run tests on the project', async function() {
+            describe(`Verify UI test task (${title})`, function () {
+                it('should invoke jest to run tests on the project', async function () {
                     const {
                         execaModuleMock: { execa: execaMock },
                         project,
@@ -81,7 +81,7 @@ describe('[TestUiTaskBuilder]', function() {
         });
     });
 
-    describe('getWatchPaths()', function() {
+    describe('getWatchPaths()', function () {
         function createPathList(project) {
             const dirs = ['src', 'test', 'infra'];
             const extensions = ['md', 'html', 'json', 'js', 'jsx', 'ts', 'tsx'];
@@ -94,7 +94,7 @@ describe('[TestUiTaskBuilder]', function() {
         }
 
         getAllButObject({}).forEach((project) => {
-            it(`should throw an error if invoked without valid project (value=${typeof project})`, async function() {
+            it(`should throw an error if invoked without valid project (value=${typeof project})`, async function () {
                 const TaskBuilder = await _importModule();
                 const error = 'Invalid project (arg #1)';
                 const builder = new TaskBuilder();
@@ -105,7 +105,7 @@ describe('[TestUiTaskBuilder]', function() {
         });
 
         getAllProjectOverrides().forEach(({ title, overrides }) => {
-            it(`should return an array of paths to watch ${title}`, async function() {
+            it(`should return an array of paths to watch ${title}`, async function () {
                 const TaskBuilder = await _importModule();
                 const builder = new TaskBuilder();
                 const project = new Project(buildProjectDefinition(overrides));

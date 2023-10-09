@@ -12,7 +12,7 @@ import {
 } from '../utils/data-generator.js';
 import { buildProjectDefinition } from '../utils/object-builder.js';
 
-describe('[TaskBuilder]', function() {
+describe('[TaskBuilder]', function () {
     class MockTaskBuilder extends TaskBuilder {
         constructor(name, description) {
             name = name || 'mock-task';
@@ -42,9 +42,9 @@ describe('[TaskBuilder]', function() {
         return new TaskBuilder(name, description);
     }
 
-    describe('ctor()', function() {
+    describe('ctor()', function () {
         getAllButString('').forEach((name) => {
-            it(`should throw an error if invoked without a valid name (value=${typeof name})`, function() {
+            it(`should throw an error if invoked without a valid name (value=${typeof name})`, function () {
                 const description = 'some task';
                 const wrapper = () => new TaskBuilder(name, description);
                 const error = 'Invalid name (arg #1)';
@@ -54,7 +54,7 @@ describe('[TaskBuilder]', function() {
         });
 
         getAllButString('').forEach((description) => {
-            it(`should throw an error if invoked without a valid description (value=${typeof description})`, function() {
+            it(`should throw an error if invoked without a valid description (value=${typeof description})`, function () {
                 const name = 'sample-task';
                 const wrapper = () => new TaskBuilder(name, description);
                 const error = 'Invalid description (arg #2)';
@@ -63,7 +63,7 @@ describe('[TaskBuilder]', function() {
             });
         });
 
-        it('should expose relevant task properties as read only fields', function() {
+        it('should expose relevant task properties as read only fields', function () {
             const name = 'sample-task';
             const description = 'some task';
             const builder = new TaskBuilder(name, description);
@@ -73,9 +73,9 @@ describe('[TaskBuilder]', function() {
         });
     });
 
-    describe('[properties]', function() {
-        describe('name', function() {
-            it('should return the name of the task', function() {
+    describe('[properties]', function () {
+        describe('name', function () {
+            it('should return the name of the task', function () {
                 const name = 'sample-task';
                 const description = 'some task';
                 const builder = new TaskBuilder(name, description);
@@ -83,8 +83,8 @@ describe('[TaskBuilder]', function() {
                 expect(builder.name).to.equal(name);
             });
         });
-        describe('description', function() {
-            it('should return the name of the task', function() {
+        describe('description', function () {
+            it('should return the name of the task', function () {
                 const name = 'sample-task';
                 const description = 'some task';
                 const builder = new TaskBuilder(name, description);
@@ -94,8 +94,8 @@ describe('[TaskBuilder]', function() {
         });
     });
 
-    describe('_createTask()', function() {
-        it('should throw an error if invoked', function() {
+    describe('_createTask()', function () {
+        it('should throw an error if invoked', function () {
             const builder = _createInstance();
             const wrapper = () => builder._createTask();
             const error = 'Not implemented - TaskBuilder._createTask()';
@@ -104,9 +104,9 @@ describe('[TaskBuilder]', function() {
         });
     });
 
-    describe('buildTask()', function() {
+    describe('buildTask()', function () {
         getAllButObject({}).forEach((project) => {
-            it(`should throw an error if invoked without valid project (value=${typeof project})`, async function() {
+            it(`should throw an error if invoked without valid project (value=${typeof project})`, async function () {
                 const error = 'Invalid project (arg #1)';
                 const builder = _createInstance();
                 const wrapper = () => builder.buildTask(project);
@@ -115,7 +115,7 @@ describe('[TaskBuilder]', function() {
             });
         });
 
-        it('should invoke the _createTask() method when called', function() {
+        it('should invoke the _createTask() method when called', function () {
             const instance = new MockTaskBuilder();
             const project = new Project(buildProjectDefinition());
 
@@ -129,7 +129,7 @@ describe('[TaskBuilder]', function() {
             );
         });
 
-        it('should return the task returned by the _createTask() function', function() {
+        it('should return the task returned by the _createTask() function', function () {
             const instance = new MockTaskBuilder();
             const project = new Project(buildProjectDefinition());
 
@@ -138,7 +138,7 @@ describe('[TaskBuilder]', function() {
             expect(ret).to.equal(instance.task);
         });
 
-        it('should set the display name and desciption of the task', function() {
+        it('should set the display name and desciption of the task', function () {
             const displayName = 'foo-task';
             const description = 'foo-description';
             const instance = new MockTaskBuilder(displayName, description);
@@ -151,7 +151,7 @@ describe('[TaskBuilder]', function() {
         });
     });
 
-    describe('getWatchPaths()', function() {
+    describe('getWatchPaths()', function () {
         function createPathList(project) {
             const dirs = ['src', 'test', 'infra'];
             const extensions = ['md', 'html', 'json', 'js', 'jsx', 'ts', 'tsx'];
@@ -161,7 +161,7 @@ describe('[TaskBuilder]', function() {
         }
 
         getAllButObject({}).forEach((project) => {
-            it(`should throw an error if invoked without valid project (value=${typeof project})`, async function() {
+            it(`should throw an error if invoked without valid project (value=${typeof project})`, async function () {
                 const error = 'Invalid project (arg #1)';
                 const builder = _createInstance();
                 const wrapper = () => builder.getWatchPaths(project);
@@ -170,7 +170,7 @@ describe('[TaskBuilder]', function() {
             });
         });
 
-        it('should return an array of source paths', function() {
+        it('should return an array of source paths', function () {
             const builder = _createInstance();
             const project = new Project(buildProjectDefinition());
 

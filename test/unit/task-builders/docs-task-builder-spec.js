@@ -27,7 +27,7 @@ import {
     injectWatchPathsCompositionTests,
 } from '../../utils/task-builder-snippets.js';
 
-describe('[DocsTaskBuilder]', function() {
+describe('[DocsTaskBuilder]', function () {
     const _subBuilders = ['docs-js', 'docs-ts', 'not-supported'];
     const _importDefinitions = createTaskBuilderImportDefinitions(_subBuilders);
     const _importModule = createModuleImporter(

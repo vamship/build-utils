@@ -69,6 +69,6 @@ export class DocsTaskBuilder extends TaskBuilder {
         const paths = this._getSubBuilders(project)
             .map((builder) => builder.getWatchPaths(project))
             .flat();
-        return [ ...new Set(paths) ];
+        return [...new Set(paths)];
     }
 }

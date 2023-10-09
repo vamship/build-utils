@@ -12,7 +12,7 @@ function _createPath(...components) {
     return components.join(_path.sep);
 }
 
-describe('[Directory]', function() {
+describe('[Directory]', function () {
     function _createTree() {
         return {
             src: {
@@ -33,13 +33,13 @@ describe('[Directory]', function() {
         };
     }
 
-    describe('[Static Members]', function() {
-        it('should expose the expected static members', function() {
+    describe('[Static Members]', function () {
+        it('should expose the expected static members', function () {
             expect(typeof Directory.createTree).to.equal('function');
             expect(typeof Directory.traverseTree).to.equal('function');
         });
 
-        describe('createTree()', function() {
+        describe('createTree()', function () {
             function _verifyDirectory(parent, name) {
                 const child = parent.getChildren().find((dir) => {
                     return dir.name === name;
@@ -59,7 +59,7 @@ describe('[Directory]', function() {
             }
 
             getAllButString().forEach((rootPath) => {
-                it(`should throw an error if invoked without a valid root path (value=${typeof rootPath})`, function() {
+                it(`should throw an error if invoked without a valid root path (value=${typeof rootPath})`, function () {
                     const error = 'Invalid rootPath (arg #1)';
                     const tree = _createTree();
                     const wrapper = () => Directory.createTree(rootPath, tree);
@@ -68,7 +68,7 @@ describe('[Directory]', function() {
             });
 
             getAllButObject().forEach((tree) => {
-                it(`should throw an error if invoked without a valid tree object (value=${typeof tree})`, function() {
+                it(`should throw an error if invoked without a valid tree object (value=${typeof tree})`, function () {
                     const error = 'Invalid tree (arg #2)';
                     const rootPath = '.';
                     const wrapper = () => Directory.createTree(rootPath, tree);
@@ -76,7 +76,7 @@ describe('[Directory]', function() {
                 });
             });
 
-            it('should return a directory with no children if the tree is empty', function() {
+            it('should return a directory with no children if the tree is empty', function () {
                 const rootPath = '.';
                 const tree = _createTree();
                 const root = Directory.createTree(rootPath, tree);
@@ -85,7 +85,7 @@ describe('[Directory]', function() {
                 expect(root.path).to.equal(_createPath('.', ''));
             });
 
-            it('should add a child directory for each member of the tree', function() {
+            it('should add a child directory for each member of the tree', function () {
                 const rootPath = './';
                 const tree = {
                     foo: null,
@@ -98,7 +98,7 @@ describe('[Directory]', function() {
                 _verifyLeaves(root, 'foo', 'bar', 'baz', 'chaz', 'faz');
             });
 
-            it('should create a sub tree for each child that references an object', function() {
+            it('should create a sub tree for each child that references an object', function () {
                 const rootPath = './';
                 const tree = _createTree();
                 const root = Directory.createTree(rootPath, tree);
@@ -118,7 +118,7 @@ describe('[Directory]', function() {
                 _verifyLeaves(unit, 'handlers', 'devices', 'data');
             });
 
-            it('should not add subtrees if the values are not objects', function() {
+            it('should not add subtrees if the values are not objects', function () {
                 const rootPath = './';
                 const tree = {
                     foo: 'foobar',
@@ -143,9 +143,9 @@ describe('[Directory]', function() {
             });
         });
 
-        describe('traverseTree()', function() {
+        describe('traverseTree()', function () {
             getAllButObject({}).forEach((root) => {
-                it(`should throw an error if invoked without a directory object (value=${typeof root})`, function() {
+                it(`should throw an error if invoked without a directory object (value=${typeof root})`, function () {
                     const error = 'Invalid root directory (arg #1)';
                     const callback = spy();
                     const wrapper = () =>
@@ -155,7 +155,7 @@ describe('[Directory]', function() {
             });
 
             getAllButFunction().forEach((callback) => {
-                it(`should throw an error if invoked without a callback (value=${typeof callback})`, function() {
+                it(`should throw an error if invoked without a callback (value=${typeof callback})`, function () {
                     const error = 'Invalid callback function (arg #2)';
                     const root = Directory.createTree('.', { foo: { bar: 1 } });
                     const wrapper = () =>
@@ -164,7 +164,7 @@ describe('[Directory]', function() {
                 });
             });
 
-            it('should invoke the callback for each directory in the tree', function() {
+            it('should invoke the callback for each directory in the tree', function () {
                 // We're going to use the naming convention of directories to
                 // test the traversal. Specifically, the directory level is encoded
                 // into the name.
@@ -198,9 +198,9 @@ describe('[Directory]', function() {
         });
     });
 
-    describe('ctor()', function() {
+    describe('ctor()', function () {
         getAllButString().forEach((path) => {
-            it(`should throw an error if invoked without a valid path (value=${typeof path})`, function() {
+            it(`should throw an error if invoked without a valid path (value=${typeof path})`, function () {
                 const error = 'Invalid path (arg #1)';
                 const wrapper = () => new Directory(path);
                 expect(wrapper).to.throw(error);
@@ -208,14 +208,14 @@ describe('[Directory]', function() {
         });
     });
 
-    describe('[properties]', function() {
-        it('[name] should return the directory name', function() {
+    describe('[properties]', function () {
+        it('[name] should return the directory name', function () {
             const expectedName = 'foo';
             const dir = new Directory(_path.join(process.cwd(), expectedName));
             expect(dir.name).to.equal(expectedName);
         });
 
-        it('[path] should return the relative path to the directory', function() {
+        it('[path] should return the relative path to the directory', function () {
             const expectedPath = 'foo';
             const dir = new Directory(_path.join(process.cwd(), 'foo'));
             expect(dir.path).to.equal(
@@ -223,7 +223,7 @@ describe('[Directory]', function() {
             );
         });
 
-        it('[absolutePath] should return the relative path to the directory', function() {
+        it('[absolutePath] should return the relative path to the directory', function () {
             const path = 'foo';
             const dir = new Directory(path);
             expect(dir.absolutePath).to.equal(
@@ -231,7 +231,7 @@ describe('[Directory]', function() {
             );
         });
 
-        it('[globPath] should return the path used to generate glob patterns', function() {
+        it('[globPath] should return the path used to generate glob patterns', function () {
             const path = 'foo';
             const dir = new Directory(path);
             // The glob path will different from the absolute path in windows,
@@ -243,9 +243,9 @@ describe('[Directory]', function() {
         });
     });
 
-    describe('addChild()', function() {
+    describe('addChild()', function () {
         getAllButString('').forEach((name) => {
-            it(`should throw an error if invoked without a valid name (value=${typeof name})`, function() {
+            it(`should throw an error if invoked without a valid name (value=${typeof name})`, function () {
                 const error = 'Invalid directory name (arg #1)';
                 const dir = new Directory('foo');
                 const wrapper = () => dir.addChild(name);
@@ -254,7 +254,7 @@ describe('[Directory]', function() {
         });
 
         ['foo/bar', 'foo\\bar', 'foo:bar'].forEach((name) => {
-            it(`should throw an error if the directory name contains invalid characters (value=${name})`, function() {
+            it(`should throw an error if the directory name contains invalid characters (value=${name})`, function () {
                 const error =
                     'Directory name cannot include path separators (:, \\ or /)';
                 const dir = new Directory('foo');
@@ -263,7 +263,7 @@ describe('[Directory]', function() {
             });
         });
 
-        it('should create and add a child node to the current directory', function() {
+        it('should create and add a child node to the current directory', function () {
             const expectedName = 'bar';
             const dir = new Directory('foo');
 
@@ -279,13 +279,13 @@ describe('[Directory]', function() {
         });
     });
 
-    describe('getChildren()', function() {
-        it('should return an empty array if the directory has no children', function() {
+    describe('getChildren()', function () {
+        it('should return an empty array if the directory has no children', function () {
             const dir = new Directory('foo');
             expect(dir.getChildren()).to.deep.equal([]);
         });
 
-        it('should return a list of first level children if the directory has children', function() {
+        it('should return a list of first level children if the directory has children', function () {
             const dirNames = ['foo', 'bar', 'baz'];
             const tree = dirNames.reduce((result, dirName) => {
                 result[dirName] = 1;
@@ -300,7 +300,7 @@ describe('[Directory]', function() {
             });
         });
 
-        it('should omit all lower level children of the directory', function() {
+        it('should omit all lower level children of the directory', function () {
             const dirNames = ['foo', 'bar', 'baz'];
             const tree = dirNames.reduce((result, dirName) => {
                 result[dirName] = dirNames.reduce((childRes, childDirName) => {
@@ -319,9 +319,9 @@ describe('[Directory]', function() {
         });
     });
 
-    describe('getChild()', function() {
+    describe('getChild()', function () {
         getAllButString('').forEach((childPath) => {
-            it(`should throw an error if invoked without a valid child path (value=${typeof childPath})`, function() {
+            it(`should throw an error if invoked without a valid child path (value=${typeof childPath})`, function () {
                 const error = 'Invalid childPath (arg #1)';
                 const dir = new Directory('foo');
                 const wrapper = () => dir.getChild(childPath);
@@ -329,7 +329,7 @@ describe('[Directory]', function() {
             });
         });
 
-        it('should throw an error if the child node does not exist in the tree', function() {
+        it('should throw an error if the child node does not exist in the tree', function () {
             const badPath = 'this/does/not/exist';
             const error = `Child not found at path: [${badPath}]`;
             const dir = Directory.createTree('.', _createTree());
@@ -337,7 +337,7 @@ describe('[Directory]', function() {
             expect(wrapper).to.throw(error);
         });
 
-        it('should return a reference to a child at the appropriate path', function() {
+        it('should return a reference to a child at the appropriate path', function () {
             const tree = {
                 foo: {
                     bar: {
@@ -364,9 +364,9 @@ describe('[Directory]', function() {
         });
     });
 
-    describe('getFilePath()', function() {
+    describe('getFilePath()', function () {
         getAllButString('').forEach((fileName) => {
-            it(`should return the absolute path of the directory if the filename is invalid (value=${typeof fileName})`, function() {
+            it(`should return the absolute path of the directory if the filename is invalid (value=${typeof fileName})`, function () {
                 const dir = new Directory('foo');
                 const filePath = dir.getFilePath(fileName);
 
@@ -375,7 +375,7 @@ describe('[Directory]', function() {
         });
 
         ['bar', 'bar.txt', 'foo/bar.txt'].forEach((fileName) => {
-            it(`should return the absolute file path if a valid filename is provided (value=${fileName})`, function() {
+            it(`should return the absolute file path if a valid filename is provided (value=${fileName})`, function () {
                 const dir = new Directory('foo');
                 const filePath = dir.getFilePath(fileName);
 
@@ -384,9 +384,9 @@ describe('[Directory]', function() {
         });
     });
 
-    describe('getFileGlob()', function() {
+    describe('getFileGlob()', function () {
         getAllButString('').forEach((fileName) => {
-            it(`should return the absolute path of the directory if the filename is invalid (value=${typeof fileName})`, function() {
+            it(`should return the absolute path of the directory if the filename is invalid (value=${typeof fileName})`, function () {
                 const dir = new Directory('foo');
                 const glob = dir.getFileGlob(fileName);
 
@@ -397,7 +397,7 @@ describe('[Directory]', function() {
         });
 
         ['bar', 'bar.txt', 'foo/bar.txt'].forEach((fileName) => {
-            it(`should return a glob pattern if a valid filename is provided (value=${fileName})`, function() {
+            it(`should return a glob pattern if a valid filename is provided (value=${fileName})`, function () {
                 const dir = new Directory('foo');
                 const glob = dir.getFileGlob(fileName);
 
@@ -408,9 +408,9 @@ describe('[Directory]', function() {
         });
     });
 
-    describe('getAllFilesGlob()', function() {
+    describe('getAllFilesGlob()', function () {
         getAllButString().forEach((extension) => {
-            it(`should use * as the glob pattern if a valid extension is not specified (value=${typeof extension})`, function() {
+            it(`should use * as the glob pattern if a valid extension is not specified (value=${typeof extension})`, function () {
                 const dir = new Directory('foo');
                 const glob = dir.getAllFilesGlob(extension);
 
@@ -421,7 +421,7 @@ describe('[Directory]', function() {
         });
 
         ['js', 'py', 'txt'].forEach((extension) => {
-            it(`should return a glob pattern that uses the specified file extension (value=${extension})`, function() {
+            it(`should return a glob pattern that uses the specified file extension (value=${extension})`, function () {
                 const dir = new Directory('foo');
                 const glob = dir.getAllFilesGlob(extension);
 

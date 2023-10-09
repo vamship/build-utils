@@ -17,7 +17,7 @@ import {
 } from '../../utils/object-builder.js';
 import { injectBuilderInitTests } from '../../utils/task-builder-snippets.js';
 
-describe('[LintTaskBuilder]', function() {
+describe('[LintTaskBuilder]', function () {
     const _importModule = createModuleImporter(
         'src/task-builders/lint-task-builder.js',
         {
@@ -30,7 +30,7 @@ describe('[LintTaskBuilder]', function() {
 
     injectBuilderInitTests(_importModule, 'lint', 'Lints all source files');
 
-    describe('[task]', function() {
+    describe('[task]', function () {
         async function _createTask(definitionOverrides) {
             const gulpEslintMock = stub().callsFake(() => ({
                 _source: '_eslint_ret_',
@@ -72,8 +72,8 @@ describe('[LintTaskBuilder]', function() {
         }
 
         getAllProjectOverrides().forEach(({ title, overrides }) => {
-            describe(`Verify task (${title})`, function() {
-                it('should inititalize and set the appropriate gulp source files', async function() {
+            describe(`Verify task (${title})`, function () {
+                it('should inititalize and set the appropriate gulp source files', async function () {
                     const { gulpMock, task, project } = await _createTask(
                         overrides
                     );
@@ -94,7 +94,7 @@ describe('[LintTaskBuilder]', function() {
                     });
                 });
 
-                it('should pipe the source files to the eslint task for linting', async function() {
+                it('should pipe the source files to the eslint task for linting', async function () {
                     const { gulpMock, task, gulpEslintMock } =
                         await _createTask(overrides);
 
@@ -118,7 +118,7 @@ describe('[LintTaskBuilder]', function() {
                     );
                 });
 
-                it('should pipe the source files to the eslint format task for linting', async function() {
+                it('should pipe the source files to the eslint format task for linting', async function () {
                     const { gulpMock, task, gulpEslintMock } =
                         await _createTask(overrides);
 
@@ -137,7 +137,7 @@ describe('[LintTaskBuilder]', function() {
                     );
                 });
 
-                it('should force eslint to report an error if linting fails', async function() {
+                it('should force eslint to report an error if linting fails', async function () {
                     const { gulpMock, task, gulpEslintMock } =
                         await _createTask(overrides);
 

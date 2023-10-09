@@ -19,14 +19,14 @@ import {
 } from '../../utils/object-builder.js';
 import { injectBuilderInitTests } from '../../utils/task-builder-snippets.js';
 
-describe('[WatchTaskBuilder]', function() {
+describe('[WatchTaskBuilder]', function () {
     const _importModule = createModuleImporter(
         'src/task-builders/watch-task-builder.js',
         {
             taskBuilderMock: 'src/task-builder.js',
             gulpMock: 'gulp',
         },
-        'WatchTaskBuilder',
+        'WatchTaskBuilder'
     );
 
     function _createInnerTask(name, description) {
@@ -46,12 +46,12 @@ describe('[WatchTaskBuilder]', function() {
         [
             _createInnerTask('some-task', 'some task description'),
             ['/absolute/path/1', 'relative/path/2'],
-        ],
+        ]
     );
 
-    describe('ctor()', function() {
+    describe('ctor()', function () {
         getAllButFunction({}).forEach((task) => {
-            it(`should throw an error if invoked without valid task (value=${typeof task})`, async function() {
+            it(`should throw an error if invoked without valid task (value=${typeof task})`, async function () {
                 const WatchTaskBuilder = await _importModule();
                 const error = 'Invalid task (arg #1)';
                 const paths = ['/test/path/1', 'test/path/2'];
@@ -61,7 +61,7 @@ describe('[WatchTaskBuilder]', function() {
         });
 
         getAllButArray({}).forEach((paths) => {
-            it(`should throw an error if invoked without valid paths (value=${typeof paths})`, async function() {
+            it(`should throw an error if invoked without valid paths (value=${typeof paths})`, async function () {
                 const WatchTaskBuilder = await _importModule();
                 const error = 'Invalid paths (arg #2)';
                 const task = _createInnerTask();
@@ -71,9 +71,9 @@ describe('[WatchTaskBuilder]', function() {
         });
     });
 
-    describe('_createTask()', function() {
+    describe('_createTask()', function () {
         getAllButObject({}).forEach((project) => {
-            it(`should throw an error if invoked without valid project (value=${typeof project})`, async function() {
+            it(`should throw an error if invoked without valid project (value=${typeof project})`, async function () {
                 const WatchTaskBuilder = await _importModule();
                 const error = 'Invalid project (arg #1)';
                 const builder = new WatchTaskBuilder(_createInnerTask(), [
@@ -86,7 +86,7 @@ describe('[WatchTaskBuilder]', function() {
             });
         });
 
-        it('should return a function when invoked', async function() {
+        it('should return a function when invoked', async function () {
             const WatchTaskBuilder = await _importModule();
             const builder = new WatchTaskBuilder(_createInnerTask(), [
                 '/absolute/path/1',
@@ -99,7 +99,7 @@ describe('[WatchTaskBuilder]', function() {
             expect(typeof task).to.equal('function');
         });
 
-        it('should compose a series task that includes start and end methods', async function() {
+        it('should compose a series task that includes start and end methods', async function () {
             const paths = ['/absolute/path/1', 'relative/path/2'];
             const innerTask = _createInnerTask();
             const gulpMock = createGulpMock();
@@ -131,7 +131,7 @@ describe('[WatchTaskBuilder]', function() {
         });
     });
 
-    describe('[task]', function() {
+    describe('[task]', function () {
         async function _createTask(innerTask, paths, definitionOverrides) {
             if (typeof innerTask !== 'function') {
                 innerTask = _createInnerTask();
@@ -155,7 +155,7 @@ describe('[WatchTaskBuilder]', function() {
             };
         }
 
-        it('should use gulp watch to add a watcher to an existing task', async function() {
+        it('should use gulp watch to add a watcher to an existing task', async function () {
             const innerTask = _createInnerTask();
             const paths = ['/foo/bar', 'relative/path/2'];
             const { gulpMock, task } = await _createTask(innerTask, paths);
@@ -168,14 +168,14 @@ describe('[WatchTaskBuilder]', function() {
             expect(gulpMock.callSequence[1]).to.equal('watch');
             expect(gulpMock.watch).to.have.been.calledOnceWithExactly(
                 paths,
-                gulpMock.series.returnValues[0],
+                gulpMock.series.returnValues[0]
             );
         });
     });
 
-    describe('getWatchPaths()', function() {
+    describe('getWatchPaths()', function () {
         getAllButObject({}).forEach((project) => {
-            it(`should throw an error if invoked without valid project (value=${typeof project})`, async function() {
+            it(`should throw an error if invoked without valid project (value=${typeof project})`, async function () {
                 const TaskBuilder = await _importModule();
                 const task = _createInnerTask();
                 const error = 'Invalid project (arg #1)';
@@ -190,7 +190,7 @@ describe('[WatchTaskBuilder]', function() {
         });
 
         getAllProjectOverrides().forEach(({ title, overrides }) => {
-            it(`should return an array of paths to watch ${title}`, async function() {
+            it(`should return an array of paths to watch ${title}`, async function () {
                 const TaskBuilder = await _importModule();
                 const task = _createInnerTask();
                 const builder = new TaskBuilder(task, [

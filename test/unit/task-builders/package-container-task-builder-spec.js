@@ -22,7 +22,7 @@ import { injectBuilderInitTests } from '../../utils/task-builder-snippets.js';
 
 const specificContainerTarget = 'myBuildArm'; // This is a second build defined in object-builder.js
 
-describe('[PackageContainerTaskBuilder]', function() {
+describe('[PackageContainerTaskBuilder]', function () {
     const _importModule = createModuleImporter(
         'src/task-builders/package-container-task-builder.js',
         {
@@ -39,9 +39,9 @@ describe('[PackageContainerTaskBuilder]', function() {
         process.env.ENV_2 = 'foo';
     });
 
-    describe('ctor() <target, repo uri>', function() {
+    describe('ctor() <target, repo uri>', function () {
         getAllButString('').forEach((target) => {
-            it(`should throw an error if invoked without a valid build target (value=${target})`, async function() {
+            it(`should throw an error if invoked without a valid build target (value=${target})`, async function () {
                 const TaskBuilder = await _importModule();
                 const error = 'Invalid target (arg #1)';
                 const repo = undefined;
@@ -52,7 +52,7 @@ describe('[PackageContainerTaskBuilder]', function() {
         });
 
         makeOptional(getAllButString('')).forEach((repo) => {
-            it(`should throw an error if invoked without a valid repo url (value=${repo})`, async function() {
+            it(`should throw an error if invoked without a valid repo url (value=${repo})`, async function () {
                 const TaskBuilder = await _importModule();
                 const error = 'Invalid repo (arg #2)';
                 const wrapper = () =>
@@ -62,7 +62,7 @@ describe('[PackageContainerTaskBuilder]', function() {
             });
         });
 
-        it('should not throw an error if the repo is undefined', async function() {
+        it('should not throw an error if the repo is undefined', async function () {
             const TaskBuilder = await _importModule();
             const wrapper = () =>
                 new TaskBuilder(specificContainerTarget, undefined);
@@ -85,8 +85,8 @@ describe('[PackageContainerTaskBuilder]', function() {
     });
 
     getAllProjectOverrides().forEach(({ title }) => {
-        describe(`[Task Build] - (${title})`, function() {
-            it('should verify that all required build arguments exist in the environment', async function() {
+        describe(`[Task Build] - (${title})`, function () {
+            it('should verify that all required build arguments exist in the environment', async function () {
                 const PackageContainerTaskBuilder = await _importModule();
                 const definition = buildProjectDefinition();
                 const project = new Project(definition);
@@ -104,7 +104,7 @@ describe('[PackageContainerTaskBuilder]', function() {
                 expect(checkStub).to.have.been.calledOnceWith();
             });
 
-            it('should throw an error if any required build arguments are missing', async function() {
+            it('should throw an error if any required build arguments are missing', async function () {
                 const PackageContainerTaskBuilder = await _importModule();
                 const definition = buildProjectDefinition();
                 const project = new Project(definition);
@@ -124,7 +124,7 @@ describe('[PackageContainerTaskBuilder]', function() {
         });
     });
 
-    describe('[task]', function() {
+    describe('[task]', function () {
         const target = 'customTarget';
         const repo = 'custom-repo';
         const description = 'Custom project description';
@@ -217,8 +217,8 @@ describe('[PackageContainerTaskBuilder]', function() {
                     expect(args[args.length - 1]).to.equal('.');
                 }
 
-                describe(`Verify container image build - (${title})`, function() {
-                    it(`should invoke docker to package the project (no build args)`, async function() {
+                describe(`Verify container image build - (${title})`, function () {
+                    it(`should invoke docker to package the project (no build args)`, async function () {
                         const {
                             execaModuleMock: { execa: execaMock },
                             task,
@@ -318,7 +318,7 @@ describe('[PackageContainerTaskBuilder]', function() {
         });
     });
 
-    describe('getWatchPaths()', function() {
+    describe('getWatchPaths()', function () {
         function createPathList(project) {
             const dirs = ['src', 'test', 'infra'];
             const extensions = ['md', 'html', 'json', 'js', 'jsx', 'ts', 'tsx'];
@@ -331,7 +331,7 @@ describe('[PackageContainerTaskBuilder]', function() {
         }
 
         getAllButObject({}).forEach((project) => {
-            it(`should throw an error if invoked without valid project (value=${typeof project})`, async function() {
+            it(`should throw an error if invoked without valid project (value=${typeof project})`, async function () {
                 const TaskBuilder = await _importModule();
                 const error = 'Invalid project (arg #1)';
                 const builder = new TaskBuilder('default');
@@ -342,7 +342,7 @@ describe('[PackageContainerTaskBuilder]', function() {
         });
 
         getAllProjectOverrides().forEach(({ title, overrides }) => {
-            it(`should return an array of paths to watch ${title}`, async function() {
+            it(`should return an array of paths to watch ${title}`, async function () {
                 const TaskBuilder = await _importModule();
                 const builder = new TaskBuilder('default');
                 const project = new Project(buildProjectDefinition(overrides));

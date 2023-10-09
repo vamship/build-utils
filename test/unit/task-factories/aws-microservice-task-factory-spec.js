@@ -17,7 +17,7 @@ import {
     injectTaskBuilderCompositionTests,
 } from '../../utils/task-factory-snippets.js';
 
-describe('[AwsMicroserviceTaskFactory]', function() {
+describe('[AwsMicroserviceTaskFactory]', function () {
     const _builderNames = [
         'clean',
         'format',
@@ -62,7 +62,7 @@ describe('[AwsMicroserviceTaskFactory]', function() {
         return builders;
     }
 
-    describe('_createTaskBuilders()', function() {
+    describe('_createTaskBuilders()', function () {
         const PROJECT_TYPE = 'aws-microservice';
         async function _createFactory(overrides) {
             const { mocks, mockReferences } =

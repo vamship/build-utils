@@ -11,10 +11,10 @@ import {
 } from '../utils/data-generator.js';
 import { buildProjectDefinition } from '../utils/object-builder.js';
 
-describe('[Project]', function() {
-    describe('ctor()', function() {
+describe('[Project]', function () {
+    describe('ctor()', function () {
         getAllButObject().forEach((definition) => {
-            it(`should throw an error if invoked without valid project definition (value=${typeof definition})`, function() {
+            it(`should throw an error if invoked without valid project definition (value=${typeof definition})`, function () {
                 const error = 'Invalid project definition (arg #1)';
                 const wrapper = () => new Project(definition);
 
@@ -22,9 +22,9 @@ describe('[Project]', function() {
             });
         });
 
-        describe('[package.json properties]', function() {
+        describe('[package.json properties]', function () {
             getAllButString('').forEach((name) => {
-                it(`should throw an error if the project definition has an invalid name (value=${typeof name})`, function() {
+                it(`should throw an error if the project definition has an invalid name (value=${typeof name})`, function () {
                     const definition = buildProjectDefinition({ name });
                     const wrapper = () => new Project(definition);
                     const error = /Schema validation failed \[.*name.*\]/;
@@ -34,7 +34,7 @@ describe('[Project]', function() {
             });
 
             getAllButString('').forEach((description) => {
-                it(`should throw an error if the project definition has an invalid description (value=${typeof description})`, function() {
+                it(`should throw an error if the project definition has an invalid description (value=${typeof description})`, function () {
                     const definition = buildProjectDefinition({ description });
                     const wrapper = () => new Project(definition);
                     const error =
@@ -45,7 +45,7 @@ describe('[Project]', function() {
             });
 
             getAllButString('', 'abc').forEach((version) => {
-                it(`should throw an error if invoked without a valid version (value=${typeof version})`, function() {
+                it(`should throw an error if invoked without a valid version (value=${typeof version})`, function () {
                     const definition = buildProjectDefinition({ version });
                     const wrapper = () => new Project(definition);
                     const error = /Schema validation failed \[.*version.*\]/;
@@ -55,9 +55,9 @@ describe('[Project]', function() {
             });
         });
 
-        describe('[buildMetadata properties]', function() {
+        describe('[buildMetadata properties]', function () {
             getAllButObject().forEach((buildMetadata) => {
-                it(`should throw an error if invoked without a valid buildMetadata (value=${typeof buildMetadata})`, function() {
+                it(`should throw an error if invoked without a valid buildMetadata (value=${typeof buildMetadata})`, function () {
                     const definition = buildProjectDefinition({
                         buildMetadata,
                     });
@@ -70,7 +70,7 @@ describe('[Project]', function() {
             });
 
             getAllButString('bad-type').forEach((type) => {
-                it(`should throw an error if invoked without a valid buildMetadata.type (value=${typeof type})`, function() {
+                it(`should throw an error if invoked without a valid buildMetadata.type (value=${typeof type})`, function () {
                     const definition = buildProjectDefinition({
                         'buildMetadata.type': type,
                     });
@@ -82,7 +82,7 @@ describe('[Project]', function() {
             });
 
             getAllButString('bad-language').forEach((language) => {
-                it(`should throw an error if invoked without a valid buildMetadata.language (value=${typeof language})`, function() {
+                it(`should throw an error if invoked without a valid buildMetadata.language (value=${typeof language})`, function () {
                     const definition = buildProjectDefinition({
                         'buildMetadata.language': language,
                     });
@@ -94,7 +94,7 @@ describe('[Project]', function() {
             });
 
             makeOptional(getAllButArray()).forEach((requiredEnv) => {
-                it(`should throw an error if invoked without a valid buildMetadata.requiredEnv (value=${typeof requiredEnv})`, function() {
+                it(`should throw an error if invoked without a valid buildMetadata.requiredEnv (value=${typeof requiredEnv})`, function () {
                     const definition = buildProjectDefinition({
                         'buildMetadata.requiredEnv': requiredEnv,
                     });
@@ -107,7 +107,7 @@ describe('[Project]', function() {
             });
 
             makeOptional(getAllButArray()).forEach((staticFilePatterns) => {
-                it(`should throw an error if invoked without a valid buildMetadata.staticFilePatterns (value=${typeof staticFilePatterns})`, function() {
+                it(`should throw an error if invoked without a valid buildMetadata.staticFilePatterns (value=${typeof staticFilePatterns})`, function () {
                     const definition = buildProjectDefinition({
                         'buildMetadata.staticFilePatterns': staticFilePatterns,
                     });
@@ -119,9 +119,9 @@ describe('[Project]', function() {
                 });
             });
 
-            describe('[aws properties]', function() {
+            describe('[aws properties]', function () {
                 makeOptional(getAllButObject()).forEach((aws) => {
-                    it(`should throw an error if invoked without a valid buildMetadata.aws (value=${typeof aws})`, function() {
+                    it(`should throw an error if invoked without a valid buildMetadata.aws (value=${typeof aws})`, function () {
                         const definition = buildProjectDefinition({
                             'buildMetadata.aws': aws,
                         });
@@ -133,7 +133,7 @@ describe('[Project]', function() {
                 });
 
                 getAllButObject().forEach((stacks) => {
-                    it(`should throw an error if invoked without a valid buildMetadata.aws.stacks (value=${typeof stacks})`, function() {
+                    it(`should throw an error if invoked without a valid buildMetadata.aws.stacks (value=${typeof stacks})`, function () {
                         const definition = buildProjectDefinition({
                             'buildMetadata.aws.stacks': stacks,
                         });
@@ -144,7 +144,7 @@ describe('[Project]', function() {
                     });
                 });
 
-                it(`should throw an error if invoked without at least one stack`, function() {
+                it(`should throw an error if invoked without at least one stack`, function () {
                     const definition = buildProjectDefinition({
                         'buildMetadata.aws': { stacks: {} },
                     });
@@ -155,7 +155,7 @@ describe('[Project]', function() {
                 });
 
                 ['$?!', ''].forEach((stackName) => {
-                    it(`should throw an error if the stack name is invalid`, function() {
+                    it(`should throw an error if the stack name is invalid`, function () {
                         const definition = buildProjectDefinition({
                             'buildMetadata.aws': {
                                 stacks: {
@@ -172,7 +172,7 @@ describe('[Project]', function() {
                 });
 
                 getAllButString('').forEach((stackName) => {
-                    it(`should throw an error if invoked without a valid buildMetadata.aws.stacks[stackName] (value=${typeof stackName})`, function() {
+                    it(`should throw an error if invoked without a valid buildMetadata.aws.stacks[stackName] (value=${typeof stackName})`, function () {
                         const definition = buildProjectDefinition({
                             'buildMetadata.aws.stacks.myStack': stackName,
                         });
@@ -184,7 +184,7 @@ describe('[Project]', function() {
                     });
                 });
 
-                it('should throw an error if unsupported additional parameters are specified', function() {
+                it('should throw an error if unsupported additional parameters are specified', function () {
                     const definition = buildProjectDefinition();
                     definition.buildMetadata.aws.foo = 'bar';
                     const wrapper = () => new Project(definition);
@@ -195,9 +195,9 @@ describe('[Project]', function() {
                 });
             });
 
-            describe('[container properties]', function() {
+            describe('[container properties]', function () {
                 makeOptional(getAllButObject()).forEach((container) => {
-                    it(`should throw an error if invoked without a valid buildMetadata.container (value=${typeof container})`, function() {
+                    it(`should throw an error if invoked without a valid buildMetadata.container (value=${typeof container})`, function () {
                         const definition = buildProjectDefinition({
                             'buildMetadata.container': container,
                         });
@@ -209,7 +209,7 @@ describe('[Project]', function() {
                     });
                 });
 
-                it(`should throw an error if invoked without at least one build configuration`, function() {
+                it(`should throw an error if invoked without at least one build configuration`, function () {
                     const definition = buildProjectDefinition({
                         'buildMetadata.container': {},
                     });
@@ -219,7 +219,7 @@ describe('[Project]', function() {
                 });
 
                 ['$?!', ''].forEach((buildName) => {
-                    it(`should throw an error if the build name is invalid`, function() {
+                    it(`should throw an error if the build name is invalid`, function () {
                         const definition = buildProjectDefinition({
                             'buildMetadata.container': {
                                 default: {
@@ -246,7 +246,7 @@ describe('[Project]', function() {
                     });
                 });
 
-                it(`should throw an error if no default build is defined`, function() {
+                it(`should throw an error if no default build is defined`, function () {
                     const definition = buildProjectDefinition({
                         'buildMetadata.container': {
                             myBuild: {
@@ -264,7 +264,7 @@ describe('[Project]', function() {
                 });
 
                 getAllButObject().forEach((buildName) => {
-                    it(`should throw an error if invoked without a valid buildMetadata.container[buildName] (value=${typeof buildName})`, function() {
+                    it(`should throw an error if invoked without a valid buildMetadata.container[buildName] (value=${typeof buildName})`, function () {
                         const definition = buildProjectDefinition({
                             'buildMetadata.container.default': buildName,
                         });
@@ -277,7 +277,7 @@ describe('[Project]', function() {
                 });
 
                 getAllButString('').forEach((repo) => {
-                    it(`should throw an error if invoked without a valid buildMetadata.container.default.repo (value=${typeof repo})`, function() {
+                    it(`should throw an error if invoked without a valid buildMetadata.container.default.repo (value=${typeof repo})`, function () {
                         const definition = buildProjectDefinition({
                             'buildMetadata.container.default.repo': repo,
                         });
@@ -289,7 +289,7 @@ describe('[Project]', function() {
                 });
 
                 makeOptional(getAllButString('')).forEach((buildFile) => {
-                    it(`should throw an error if invoked without a valid buildMetadata.container.default.buildFile (value=${typeof buildFile})`, function() {
+                    it(`should throw an error if invoked without a valid buildMetadata.container.default.buildFile (value=${typeof buildFile})`, function () {
                         const definition = buildProjectDefinition({
                             'buildMetadata.container.default.buildFile':
                                 buildFile,
@@ -303,7 +303,7 @@ describe('[Project]', function() {
                 });
 
                 makeOptional(getAllButObject()).forEach((buildArgs) => {
-                    it(`should throw an error if invoked without a valid buildMetadata.container.default.buildArgs (value=${typeof buildArgs})`, function() {
+                    it(`should throw an error if invoked without a valid buildMetadata.container.default.buildArgs (value=${typeof buildArgs})`, function () {
                         const definition = buildProjectDefinition({
                             'buildMetadata.container.default.buildArgs':
                                 buildArgs,
@@ -316,7 +316,7 @@ describe('[Project]', function() {
                     });
                 });
 
-                it('should throw an error if unsupported additional parameters are specified', function() {
+                it('should throw an error if unsupported additional parameters are specified', function () {
                     const definition = buildProjectDefinition();
                     definition.buildMetadata.container.default.foo = 'bar';
                     const wrapper = () => new Project(definition);
@@ -327,7 +327,7 @@ describe('[Project]', function() {
                 });
 
                 ['$?!', ''].forEach((buildArg) => {
-                    it(`should throw an error if the build arg name is invalid`, function() {
+                    it(`should throw an error if the build arg name is invalid`, function () {
                         const definition = buildProjectDefinition({
                             'buildMetadata.container.default.buildArgs': {
                                 [`${buildArg}`]: 'foo',
@@ -342,7 +342,7 @@ describe('[Project]', function() {
                 });
 
                 getAllButString().forEach((buildArgValue) => {
-                    it(`should throw an error if invoked without a valid buildMetadata.container.default.buildArgs[buildArgValue] (value=${typeof buildArgValue})`, function() {
+                    it(`should throw an error if invoked without a valid buildMetadata.container.default.buildArgs[buildArgValue] (value=${typeof buildArgValue})`, function () {
                         const definition = buildProjectDefinition({
                             'buildMetadata.container.default.buildArgs': {
                                 foo: buildArgValue,
@@ -359,7 +359,7 @@ describe('[Project]', function() {
         });
     });
 
-    describe('[properties]', function() {
+    describe('[properties]', function () {
         [
             ['name', 'test-project'],
             ['description', 'Test project description'],
@@ -367,7 +367,7 @@ describe('[Project]', function() {
             ['buildMetadata.language', 'ts'],
             ['buildMetadata.type', 'cli'],
         ].forEach(([property, inputValue, expectedValue]) => {
-            it(`should set the property [${property}]  based on data in the project definition`, function() {
+            it(`should set the property [${property}]  based on data in the project definition`, function () {
                 expectedValue = expectedValue || inputValue;
                 const definition = buildProjectDefinition({
                     [property]: inputValue,
@@ -379,12 +379,12 @@ describe('[Project]', function() {
             });
         });
 
-        describe('[unscopedName]', function() {
+        describe('[unscopedName]', function () {
             [
                 ['bar-project', 'bar-project'],
                 ['@foo/bar-project', 'bar-project'],
             ].forEach(([name, unscopedName]) => {
-                it(`should return the name of the project without scope (name=${name})`, function() {
+                it(`should return the name of the project without scope (name=${name})`, function () {
                     const definition = buildProjectDefinition({
                         name: name,
                     });
@@ -395,12 +395,12 @@ describe('[Project]', function() {
             });
         });
 
-        describe('[kebabCasedName]', function() {
+        describe('[kebabCasedName]', function () {
             [
                 ['bar-project', 'bar-project'],
                 ['@foo/bar-project', 'foo-bar-project'],
             ].forEach(([name, kebabCasedName]) => {
-                it(`should return the name of the project in kebab case (name=${name})`, function() {
+                it(`should return the name of the project in kebab case (name=${name})`, function () {
                     const definition = buildProjectDefinition({
                         name: name,
                     });
@@ -411,12 +411,12 @@ describe('[Project]', function() {
             });
         });
 
-        describe('[configFileName]', function() {
+        describe('[configFileName]', function () {
             [
                 ['bar-project', '.barProjectrc'],
                 ['@foo/bar-project', '.barProjectrc'],
             ].forEach(([name, configFileName]) => {
-                it(`should return the name of the project without scope (name=${name})`, function() {
+                it(`should return the name of the project without scope (name=${name})`, function () {
                     const definition = buildProjectDefinition({
                         name: name,
                     });
@@ -427,8 +427,8 @@ describe('[Project]', function() {
             });
         });
 
-        describe('[rootDir]', function() {
-            it('should return a directory that represents the project root', function() {
+        describe('[rootDir]', function () {
+            it('should return a directory that represents the project root', function () {
                 const definition = buildProjectDefinition({});
                 const project = new Project(definition);
                 const rootDir = project.rootDir;
@@ -441,7 +441,7 @@ describe('[Project]', function() {
                 expect(rootDir.path).to.equal(`.${_path.sep}`);
             });
 
-            it('should include the expected directory structure under the project root', function() {
+            it('should include the expected directory structure under the project root', function () {
                 const expectedDirs = [
                     './',
                     'src/',
@@ -490,8 +490,8 @@ describe('[Project]', function() {
         });
     });
 
-    describe('getStaticFilePatterns()', function() {
-        it('should return an empty array if the definition does not contain static file patterns', function() {
+    describe('getStaticFilePatterns()', function () {
+        it('should return an empty array if the definition does not contain static file patterns', function () {
             const definition = buildProjectDefinition({
                 'buildMetadata.staticFilePatterns': undefined,
             });
@@ -500,7 +500,7 @@ describe('[Project]', function() {
             expect(project.getStaticFilePatterns()).to.deep.equal([]);
         });
 
-        it('should return the values specified in the project definition', function() {
+        it('should return the values specified in the project definition', function () {
             const values = ['foo', 'bar'];
             const definition = buildProjectDefinition({
                 'buildMetadata.staticFilePatterns': values,
@@ -510,7 +510,7 @@ describe('[Project]', function() {
             expect(project.getStaticFilePatterns()).to.deep.equal(values);
         });
 
-        it('should return a copy of the values, not a reference', function() {
+        it('should return a copy of the values, not a reference', function () {
             const values = ['foo', 'bar'];
             const definition = buildProjectDefinition({
                 'buildMetadata.staticFilePatterns': values,
@@ -525,8 +525,8 @@ describe('[Project]', function() {
         });
     });
 
-    describe('getRequiredEnv()', function() {
-        it('should return an empty array if the definition does not contain required environment variables', function() {
+    describe('getRequiredEnv()', function () {
+        it('should return an empty array if the definition does not contain required environment variables', function () {
             const definition = buildProjectDefinition({
                 'buildMetadata.requiredEnv': undefined,
             });
@@ -535,7 +535,7 @@ describe('[Project]', function() {
             expect(project.getRequiredEnv()).to.deep.equal([]);
         });
 
-        it('should return the values specified in the project definition', function() {
+        it('should return the values specified in the project definition', function () {
             const values = ['foo', 'bar'];
             const definition = buildProjectDefinition({
                 'buildMetadata.requiredEnv': values,
@@ -545,7 +545,7 @@ describe('[Project]', function() {
             expect(project.getRequiredEnv()).to.deep.equal(values);
         });
 
-        it('should return a copy of the values, not a reference', function() {
+        it('should return a copy of the values, not a reference', function () {
             const values = ['foo', 'bar'];
             const definition = buildProjectDefinition({
                 'buildMetadata.requiredEnv': values,
@@ -560,8 +560,8 @@ describe('[Project]', function() {
         });
     });
 
-    describe('getCdkTargets()', function() {
-        it('should return an empty array if the definition does not contain an aws definition', function() {
+    describe('getCdkTargets()', function () {
+        it('should return an empty array if the definition does not contain an aws definition', function () {
             const definition = buildProjectDefinition({
                 'buildMetadata.aws': undefined,
             });
@@ -570,7 +570,7 @@ describe('[Project]', function() {
             expect(project.getCdkTargets()).to.deep.equal([]);
         });
 
-        it('should return the stack keys specified in the project definition', function() {
+        it('should return the stack keys specified in the project definition', function () {
             const targets = ['foo', 'bar'];
             const definition = buildProjectDefinition({
                 'buildMetadata.aws.stacks': targets.reduce((result, key) => {
@@ -583,7 +583,7 @@ describe('[Project]', function() {
             expect(project.getCdkTargets()).to.deep.equal(targets);
         });
 
-        it('should return a copy of the values, not a reference', function() {
+        it('should return a copy of the values, not a reference', function () {
             const targets = ['foo', 'bar'];
             const definition = buildProjectDefinition({
                 'buildMetadata.aws.stacks': targets.reduce((result, key) => {
@@ -601,9 +601,9 @@ describe('[Project]', function() {
         });
     });
 
-    describe('getCdkStackDefinition()', function() {
+    describe('getCdkStackDefinition()', function () {
         getAllButString('').forEach((target) => {
-            it(`should throw an error if invoked without a valid target (value=${typeof target})`, function() {
+            it(`should throw an error if invoked without a valid target (value=${typeof target})`, function () {
                 const definition = buildProjectDefinition();
                 const project = new Project(definition);
                 const wrapper = () => project.getCdkStackDefinition(target);
@@ -613,7 +613,7 @@ describe('[Project]', function() {
             });
         });
 
-        it('should throw an error if the CDK target has not been defined', function() {
+        it('should throw an error if the CDK target has not been defined', function () {
             const targets = ['foo', 'bar'];
             const definition = buildProjectDefinition({
                 'buildMetadata.aws.stacks': targets.reduce((result, key) => {
@@ -630,7 +630,7 @@ describe('[Project]', function() {
             expect(wrapper).to.throw(error);
         });
 
-        it('should return stack details if the CDK target has been defined', function() {
+        it('should return stack details if the CDK target has been defined', function () {
             const targets = ['foo', 'bar'];
             const stacks = targets.reduce((result, key) => {
                 result[key] = `${key}-stack`;
@@ -648,7 +648,7 @@ describe('[Project]', function() {
             });
         });
 
-        it('should return a copy of the definition and not a reference', function() {
+        it('should return a copy of the definition and not a reference', function () {
             const targets = ['foo', 'bar'];
             const stacks = targets.reduce((result, key) => {
                 result[key] = `${key}-stack`;
@@ -672,8 +672,8 @@ describe('[Project]', function() {
         });
     });
 
-    describe('getContainerTargets()', function() {
-        it('should return an empty array if the definition does not contain an aws definition', function() {
+    describe('getContainerTargets()', function () {
+        it('should return an empty array if the definition does not contain an aws definition', function () {
             const definition = buildProjectDefinition({
                 'buildMetadata.container': undefined,
             });
@@ -682,7 +682,7 @@ describe('[Project]', function() {
             expect(project.getContainerTargets()).to.deep.equal([]);
         });
 
-        it('should return the stack keys specified in the project definition', function() {
+        it('should return the stack keys specified in the project definition', function () {
             const targets = ['foo', 'bar'];
             const containers = createContainerObject(targets);
             const definition = buildProjectDefinition({
@@ -696,7 +696,7 @@ describe('[Project]', function() {
             ]);
         });
 
-        it('should return a copy of the values, not a reference', function() {
+        it('should return a copy of the values, not a reference', function () {
             const targets = ['foo', 'bar'];
             const containers = createContainerObject(targets);
             const definition = buildProjectDefinition({
@@ -712,9 +712,9 @@ describe('[Project]', function() {
         });
     });
 
-    describe('getContainerDefinition()', function() {
+    describe('getContainerDefinition()', function () {
         getAllButString('').forEach((target) => {
-            it(`should throw an error if invoked without a valid target (value=${typeof target})`, function() {
+            it(`should throw an error if invoked without a valid target (value=${typeof target})`, function () {
                 const definition = buildProjectDefinition();
                 const project = new Project(definition);
                 const wrapper = () => project.getContainerDefinition(target);
@@ -724,7 +724,7 @@ describe('[Project]', function() {
             });
         });
 
-        it('should throw an error if the container target has not been defined', function() {
+        it('should throw an error if the container target has not been defined', function () {
             const targets = ['foo', 'bar'];
             const containers = createContainerObject(targets);
 
@@ -740,7 +740,7 @@ describe('[Project]', function() {
             expect(wrapper).to.throw(error);
         });
 
-        it('should return container details if the container target has been defined', function() {
+        it('should return container details if the container target has been defined', function () {
             const targets = ['foo', 'bar'];
             const containers = createContainerObject(targets);
 
@@ -758,7 +758,7 @@ describe('[Project]', function() {
             });
         });
 
-        it('should return a copy of the definition and not a reference', function() {
+        it('should return a copy of the definition and not a reference', function () {
             const targets = ['foo', 'bar'];
             const containers = createContainerObject(targets);
 
@@ -782,8 +782,8 @@ describe('[Project]', function() {
         });
     });
 
-    describe('getUndefinedEnvironmentVariables()', function() {
-        it('should return an empty array if no environment variables are required', function() {
+    describe('getUndefinedEnvironmentVariables()', function () {
+        it('should return an empty array if no environment variables are required', function () {
             const definition = buildProjectDefinition({
                 'buildMetadata.requiredEnv': [],
             });
@@ -793,7 +793,7 @@ describe('[Project]', function() {
             expect(missingVars).to.deep.equal([]);
         });
 
-        it('should return the full list of required environment variables if none are defined', function() {
+        it('should return the full list of required environment variables if none are defined', function () {
             const requiredVars = ['FIRST_VAR', 'SECOND_VAR'];
             const definition = buildProjectDefinition({
                 'buildMetadata.requiredEnv': requiredVars,
@@ -804,7 +804,7 @@ describe('[Project]', function() {
             expect(missingVars).to.deep.equal(requiredVars);
         });
 
-        it('should return the just the variables missing from the environent', function() {
+        it('should return the just the variables missing from the environent', function () {
             const requiredVars = ['FIRST_VAR', 'SECOND_VAR'];
             process.env.FIRST_VAR = 'foo';
             const definition = buildProjectDefinition({

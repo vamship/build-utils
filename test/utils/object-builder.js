@@ -98,7 +98,7 @@ export function createGulpMock() {
             result[method] = mock;
             return result;
         },
-        { callSequence: [] },
+        { callSequence: [] }
     );
 }
 
@@ -188,7 +188,7 @@ export function createModuleImporter(modulePath, pathDefinitions, memberName) {
         const mocks = Object.keys({ ...mockDefs }).reduce((result, key) => {
             if (!pathDefinitions[key]) {
                 throw new Error(
-                    `[Module Importer] Import path not defined for module: ${key}`,
+                    `[Module Importer] Import path not defined for module: ${key}`
                 );
             }
             result[transform(pathDefinitions[key])] = mockDefs[key];
@@ -197,7 +197,7 @@ export function createModuleImporter(modulePath, pathDefinitions, memberName) {
 
         const module = await _esmock(
             _path.resolve(basePath, transform(modulePath)),
-            mocks,
+            mocks
         );
 
         return typeof memberName !== 'string' ? module : module[memberName];
@@ -218,7 +218,7 @@ export function createTaskBuilderImportDefinitions(builderNames) {
         builderNames,
         'task-builder',
         _path.join('src', 'task-builders'),
-        createTaskBuilderMock,
+        createTaskBuilderMock
     );
     return mockData.reduce((result, { importRef, importPath }) => {
         result[importRef] = importPath;
@@ -243,7 +243,7 @@ export function createTaskBuilderImportMocks(mockNames) {
         mockNames,
         'task-builder',
         _path.join('src', 'task-builders'),
-        createTaskBuilderMock,
+        createTaskBuilderMock
     );
 
     const mocks = mockData.reduce((result, { ref }) => {
@@ -256,7 +256,7 @@ export function createTaskBuilderImportMocks(mockNames) {
             result[importRef] = { [className]: ctor };
             return result;
         },
-        {},
+        {}
     );
 
     return { mocks, mockReferences };
@@ -276,7 +276,7 @@ export function createTaskFactoryImportDefinitions(factoryNames) {
         factoryNames,
         'task-factory',
         _path.join('src', 'task-factories'),
-        createTaskFactoryMock,
+        createTaskFactoryMock
     );
     return mockData.reduce((result, { importRef, importPath }) => {
         result[importRef] = importPath;
@@ -301,7 +301,7 @@ export function createTaskFactoryImportMocks(mockNames) {
         mockNames,
         'task-factory',
         _path.join('src', 'task-factories'),
-        createTaskFactoryMock,
+        createTaskFactoryMock
     );
 
     const mocks = mockData.reduce((result, { ref }) => {
@@ -314,7 +314,7 @@ export function createTaskFactoryImportMocks(mockNames) {
             result[importRef] = { [className]: ctor };
             return result;
         },
-        {},
+        {}
     );
 
     return { mocks, mockReferences };

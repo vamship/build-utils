@@ -42,8 +42,8 @@ export default class TaskFactory {
                 (builder) =>
                     new WatchTaskBuilder(
                         builder.buildTask(project),
-                        builder.getWatchPaths(project),
-                    ),
+                        builder.getWatchPaths(project)
+                    )
             );
         return builders
             .concat(watchBuilders)

@@ -17,7 +17,7 @@ import {
 } from '../../utils/object-builder.js';
 import { injectBuilderInitTests } from '../../utils/task-builder-snippets.js';
 
-describe('[DocsJsTaskBuilder]', function() {
+describe('[DocsJsTaskBuilder]', function () {
     const _importModule = createModuleImporter(
         'src/task-builders/docs-js-task-builder.js',
         {
@@ -34,7 +34,7 @@ describe('[DocsJsTaskBuilder]', function() {
         'Generates documentation from code comments in javascript files'
     );
 
-    describe('[task]', function() {
+    describe('[task]', function () {
         async function _createTask(definitionOverrides) {
             const gulpJsDocMock = stub().callsFake(() => ({
                 _source: '_jsdoc_ret_',
@@ -67,8 +67,8 @@ describe('[DocsJsTaskBuilder]', function() {
         }
 
         getAllProjectOverrides().forEach(({ title, overrides }) => {
-            describe(`Verify task (${title})`, function() {
-                it('should inititalize and set the appropriate gulp source files', async function() {
+            describe(`Verify task (${title})`, function () {
+                it('should inititalize and set the appropriate gulp source files', async function () {
                     const { gulpMock, task, project } = await _createTask(
                         overrides
                     );
@@ -89,7 +89,7 @@ describe('[DocsJsTaskBuilder]', function() {
                     });
                 });
 
-                it('should pipe the source files to the document generator to extract docs', async function() {
+                it('should pipe the source files to the document generator to extract docs', async function () {
                     const { gulpMock, task, gulpJsDocMock, project } =
                         await _createTask(overrides);
 

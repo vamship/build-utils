@@ -17,7 +17,7 @@ import {
     injectTaskBuilderCompositionTests,
 } from '../../utils/task-factory-snippets.js';
 
-describe('[LibTaskFactory]', function() {
+describe('[LibTaskFactory]', function () {
     const _builderNames = [
         'clean',
         'format',
@@ -61,7 +61,7 @@ describe('[LibTaskFactory]', function() {
         return builders;
     }
 
-    describe('_createTaskBuilders()', function() {
+    describe('_createTaskBuilders()', function () {
         const PROJECT_TYPE = 'lib';
         async function _createFactory(overrides) {
             const { mocks, mockReferences } =

@@ -17,7 +17,7 @@ import {
     injectWatchPathsCompositionTests,
 } from '../../utils/task-builder-snippets.js';
 
-describe('[PublishTaskBuilder]', function() {
+describe('[PublishTaskBuilder]', function () {
     const _subBuilders = [
         'publish-npm',
         'publish-aws',

@@ -13,7 +13,7 @@ import {
 } from '../../utils/object-builder.js';
 import { injectBuilderInitTests } from '../../utils/task-builder-snippets.js';
 
-describe('[CleanTaskBuilder]', function() {
+describe('[CleanTaskBuilder]', function () {
     const _importModule = createModuleImporter(
         'src/task-builders/clean-task-builder.js',
         {
@@ -29,7 +29,7 @@ describe('[CleanTaskBuilder]', function() {
         'Cleans out working, distribution and temporary files and directories'
     );
 
-    describe('[task]', function() {
+    describe('[task]', function () {
         async function _createTask(definitionOverrides) {
             const deleteMock = spy();
             const CleanTaskBuilder = await _importModule({
@@ -60,8 +60,8 @@ describe('[CleanTaskBuilder]', function() {
                 );
             }
 
-            describe(`Verify task (${title})`, function() {
-                it('should delete the expected files', async function() {
+            describe(`Verify task (${title})`, function () {
+                it('should delete the expected files', async function () {
                     const { deleteMock, project, task } = await _createTask(
                         overrides
                     );

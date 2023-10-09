@@ -18,7 +18,7 @@ import {
 } from '../../utils/object-builder.js';
 import { injectBuilderInitTests } from '../../utils/task-builder-snippets.js';
 
-describe('[BuildTsTaskBuilder]', function() {
+describe('[BuildTsTaskBuilder]', function () {
     const _importModule = createModuleImporter(
         'src/task-builders/build-ts-task-builder.js',
         {
@@ -35,7 +35,7 @@ describe('[BuildTsTaskBuilder]', function() {
         'Build typescript files and writes them to the build directory'
     );
 
-    describe('[task]', function() {
+    describe('[task]', function () {
         async function _createTask(definitionOverrides) {
             const gulpMock = createGulpMock();
             const gulpTypescriptMock = {
@@ -72,8 +72,8 @@ describe('[BuildTsTaskBuilder]', function() {
         }
 
         getAllProjectOverrides().forEach(({ title, overrides }) => {
-            describe(`Verify task (${title})`, function() {
-                it('should inititalize and set the appropriate gulp source files', async function() {
+            describe(`Verify task (${title})`, function () {
+                it('should inititalize and set the appropriate gulp source files', async function () {
                     const { gulpMock, task, project } = await _createTask(
                         overrides
                     );
@@ -93,7 +93,7 @@ describe('[BuildTsTaskBuilder]', function() {
                     });
                 });
 
-                it('should create a new instance of the gulp typescript object', async function() {
+                it('should create a new instance of the gulp typescript object', async function () {
                     const { gulpTypescriptMock, task } = await _createTask(
                         overrides
                     );
@@ -108,7 +108,7 @@ describe('[BuildTsTaskBuilder]', function() {
                     ).to.have.been.calledOnceWithExactly('tsconfig.json');
                 });
 
-                it('should create initialize the new typescript object to get a compiler reference', async function() {
+                it('should create initialize the new typescript object to get a compiler reference', async function () {
                     const { gulpTypescriptMock, task } = await _createTask(
                         overrides
                     );
@@ -122,7 +122,7 @@ describe('[BuildTsTaskBuilder]', function() {
                     ).to.have.been.calledOnceWithExactly();
                 });
 
-                it('should pipe the source files to the typescript compiler', async function() {
+                it('should pipe the source files to the typescript compiler', async function () {
                     const { gulpMock, gulpTypescriptMock, task } =
                         await _createTask(overrides);
 
@@ -139,7 +139,7 @@ describe('[BuildTsTaskBuilder]', function() {
                     );
                 });
 
-                it('should write the source files to the working directories', async function() {
+                it('should write the source files to the working directories', async function () {
                     const { gulpMock, task, project } = await _createTask(
                         overrides
                     );
