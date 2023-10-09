@@ -2,7 +2,7 @@ import _chai from 'chai';
 import _sinonChai from 'sinon-chai';
 _chai.use(_sinonChai);
 
-import { AwsTaskFactory } from '../../../src/task-factories/aws-task-factory.js';
+import { AwsMicroserviceTaskFactory } from '../../../src/task-factories/aws-microservice-task-factory.js';
 import { Project } from '../../../src/project.js';
 import {
     buildProjectDefinition,
@@ -17,7 +17,7 @@ import {
     injectTaskBuilderCompositionTests,
 } from '../../utils/task-factory-snippets.js';
 
-describe('[AwsTaskFactory]', function() {
+describe('[AwsMicroserviceTaskFactory]', function() {
     const _builderNames = [
         'clean',
         'format',
@@ -32,12 +32,12 @@ describe('[AwsTaskFactory]', function() {
     const importDefinitions = createTaskBuilderImportDefinitions(_builderNames);
 
     const _importModule = createModuleImporter(
-        'src/task-factories/aws-task-factory.js',
+        'src/task-factories/aws-microservice-task-factory.js',
         {
             taskFactoryMock: 'src/task-factory.js',
             ...importDefinitions,
         },
-        'AwsTaskFactory'
+        'AwsMicroserviceTaskFactory'
     );
 
     injectFactoryInitTests(
