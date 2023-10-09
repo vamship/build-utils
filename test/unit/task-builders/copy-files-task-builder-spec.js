@@ -3,7 +3,7 @@ import _sinonChai from 'sinon-chai';
 _chai.use(_sinonChai);
 
 import _path from 'path';
-import _camelcase from 'camelcase';
+import { camelCase as _camelCase } from 'change-case';
 
 import _esmock from 'esmock';
 import { Project } from '../../../src/project.js';
@@ -60,7 +60,7 @@ describe('[CopyFilesTaskBuilder]', function() {
                 'buildMetadata.container': container = {},
             } = overrides;
             const extras = [
-                `.${_camelcase(name.replace(/(^@[a-zA-Z]*\/)/g, ''))}rc`,
+                `.${_camelCase(name.replace(/(^@[a-zA-Z]*\/)/g, ''))}rc`,
                 'package.json',
                 'package-lock.json',
                 'LICENSE',

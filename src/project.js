@@ -1,5 +1,5 @@
 import semver from 'semver';
-import _camelcase from 'camelcase';
+import { camelCase as _camelCase } from 'change-case';
 import _gulp from 'gulp';
 import Ajv from 'ajv';
 
@@ -33,7 +33,7 @@ export class Project {
             throw new Error(
                 `Schema validation failed [${instancePath
                     .replace(/\//g, '.')
-                    .trim()} ${message}]`
+                    .trim()} ${message}]`,
             );
         }
 
@@ -53,7 +53,7 @@ export class Project {
 
         if (!semver.valid(version)) {
             throw new Error(
-                `Schema validation failed [.version is not a valid semantic version]`
+                `Schema validation failed [.version is not a valid semantic version]`,
             );
         }
 
@@ -76,7 +76,7 @@ export class Project {
                 result[key] = { name: this._aws.stacks[key] };
                 return result;
             },
-            {}
+            {},
         );
         this._container = container || {};
 
@@ -91,7 +91,7 @@ export class Project {
                 };
                 return result;
             },
-            {}
+            {},
         );
 
         this._rootDir = Directory.createTree('./', {
@@ -164,7 +164,7 @@ export class Project {
      * @returns {String} The expected config file name.
      */
     get configFileName() {
-        return `.${_camelcase(this._unscopedName)}rc`;
+        return `.${_camelCase(this._unscopedName)}rc`;
     }
 
     /**
@@ -277,7 +277,7 @@ export class Project {
         const container = this._containerTargets[target];
         if (!container) {
             throw new Error(
-                `Container target has not been defined (${target})`
+                `Container target has not been defined (${target})`,
             );
         }
         return Object.assign({}, container);
