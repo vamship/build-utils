@@ -275,7 +275,7 @@ export function createTaskFactoryImportDefinitions(factoryNames) {
     const mockData = _prepareMockImportData(
         factoryNames,
         'task-factory',
-        _path.join('src', 'task-factorys'),
+        _path.join('src', 'task-factories'),
         createTaskFactoryMock,
     );
     return mockData.reduce((result, { importRef, importPath }) => {
@@ -300,7 +300,7 @@ export function createTaskFactoryImportMocks(mockNames) {
     const mockData = _prepareMockImportData(
         mockNames,
         'task-factory',
-        _path.join('src', 'task-factorys'),
+        _path.join('src', 'task-factories'),
         createTaskFactoryMock,
     );
 

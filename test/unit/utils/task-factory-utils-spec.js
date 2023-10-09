@@ -12,18 +12,32 @@ import {
 import {
     buildProjectDefinition,
     createModuleImporter,
-    createTaskBuilderMock,
+    createTaskFactoryImportDefinitions,
+    createTaskFactoryImportMocks,
 } from '../../utils/object-builder.js';
 
 describe('[Task Factory Utils]', function () {
+    // It appears that loading all of the task factories takes a while
+    this.timeout(5000);
+
+    const _factoryNames = [
+        'lib',
+        'cli',
+        'api',
+        'aws-microservice',
+        'ui',
+        'container',
+    ];
     const _importModule = createModuleImporter(
         'src/utils/task-factory-utils.js',
-        {},
+        createTaskFactoryImportDefinitions(_factoryNames),
     );
 
     it('should export expected methods', async function () {
-        const { generateAdditionalContainerTasks } = await _importModule();
+        const { generateAdditionalContainerTasks, getTaskFactory } =
+            await _importModule();
         expect(generateAdditionalContainerTasks).to.be.a('function');
+        expect(getTaskFactory).to.be.a('function');
     });
 
     describe('generateAdditionalContainerTasks()', function () {
@@ -190,6 +204,56 @@ describe('[Task Factory Utils]', function () {
                 .flat();
 
             expect(result).to.deep.equal(expectedResults);
+        });
+    });
+
+    describe('getTaskFactory()', function () {
+        async function _initializeFactory() {
+            const { mocks, mockReferences } =
+                createTaskFactoryImportMocks(_factoryNames);
+            const { getTaskFactory } = await _importModule(mockReferences);
+            return { getTaskFactory, mocks };
+        }
+
+        getAllButObject({}).forEach((project) => {
+            it(`should throw an error if invoked without a valid project (value=${project})`, async function () {
+                const { getTaskFactory } = await _initializeFactory();
+                const wrapper = () => getTaskFactory(project);
+                const error = 'Invalid project (arg #1)';
+                expect(wrapper).to.throw(error);
+            });
+        });
+
+        getAllProjectOverrides().forEach(({ title, overrides }) => {
+            it(`should the correct factory based on the project type (${title})`, async function () {
+                const { getTaskFactory, mocks } = await _initializeFactory();
+                const definition = buildProjectDefinition(overrides);
+                const project = new Project(definition);
+                const expectedFactory = mocks[project.type];
+
+                expect(expectedFactory).to.not.be.undefined;
+
+                expect(expectedFactory.ctor).to.not.have.been.called;
+
+                const ret = getTaskFactory(project);
+
+                expect(expectedFactory.ctor).to.have.been.calledWithNew;
+                expect(expectedFactory.ctor).to.have.been.calledOnceWithExactly(
+                    project,
+                );
+                expect(ret).to.equal(expectedFactory);
+            });
+        });
+
+        it('should throw an error if the project type is not recognized', async function () {
+            const { getTaskFactory } = await _initializeFactory();
+            const project = new Project(buildProjectDefinition());
+            const type = 'unknown';
+            const typeStub = stub(project, 'type').get(() => type);
+            const wrapper = () => getTaskFactory(project);
+            const error = `Unrecognized project type (value=${type})`;
+
+            expect(wrapper).to.throw(error);
         });
     });
 });

@@ -1,4 +1,11 @@
 import { Project } from '../project.js';
+import { LibTaskFactory } from '../task-factories/lib-task-factory.js';
+import { ApiTaskFactory } from '../task-factories/api-task-factory.js';
+import { CliTaskFactory } from '../task-factories/cli-task-factory.js';
+import { AwsMicroserviceTaskFactory } from '../task-factories/aws-microservice-task-factory.js';
+import { UiTaskFactory } from '../task-factories/ui-task-factory.js';
+import { ContainerTaskFactory } from '../task-factories/container-task-factory.js';
+
 /**
  * For a project that has multiple containers defined, this function will return
  * the additional tasks for each container. These tasks may be called by name
@@ -33,4 +40,31 @@ export function generateAdditionalContainerTasks(project, additionalTaskList) {
     }
 
     return tasks;
+}
+
+/**
+ * Initializes a task factory for a given project type.
+ *
+ * @param {Project} project The project to generate build tasks for.
+ * @returns {TaskFactory} A task factory for the given project type.
+ */
+export function getTaskFactory(project) {
+    if (!(project instanceof Project)) {
+        throw new Error('Invalid project (arg #1)');
+    }
+    if (project.type === 'lib') {
+        return new LibTaskFactory(project);
+    } else if (project.type === 'api') {
+        return new ApiTaskFactory(project);
+    } else if (project.type === 'cli') {
+        return new CliTaskFactory(project);
+    } else if (project.type === 'ui') {
+        return new UiTaskFactory(project);
+    } else if (project.type === 'aws-microservice') {
+        return new AwsMicroserviceTaskFactory(project);
+    } else if (project.type === 'container') {
+        return new ContainerTaskFactory(project);
+    } else {
+        throw new Error(`Unrecognized project type (value=${project.type})`);
+    }
 }
