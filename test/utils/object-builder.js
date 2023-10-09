@@ -3,29 +3,25 @@ import { stub } from 'sinon';
 import _esmock from 'esmock';
 import _path from 'path';
 import { fileURLToPath } from 'url';
-import _camelcase from 'camelcase';
+import { camelCase, pascalCase } from 'change-case';
+import { camelCase as _camelCase } from 'change-case';
 import { expect } from 'chai';
 
 /**
  * @private
  */
-function _prepareBuilderMockData(builderNames) {
-    return builderNames
-        .map(
-            (name) => ({
-                name,
-                ref: createTaskBuilderMock(name),
-                refName: _camelcase(name) + 'TaskBuilder',
-            }),
-            {},
-        )
-        .map(({ name, ref, refName }) => ({
+function _prepareMockImportData(names, suffix, path, createMock) {
+    return names.map((name) => {
+        const ref = createMock(name);
+        return {
+            name,
             ref,
-            importRef: `${refName}Mock`,
+            className: pascalCase(`${name}-${suffix}`),
+            importRef: `${camelCase(`${name}-${suffix}`)}Mock`,
             ctor: ref.ctor,
-            className: refName.charAt(0).toUpperCase() + refName.slice(1),
-            importPath: `src/task-builders/${name}-task-builder.js`,
-        }));
+            importPath: _path.join(path, `${name}-${suffix}.js`),
+        };
+    });
 }
 
 /**
@@ -115,7 +111,7 @@ export function createGulpMock() {
  * @returns {Object} A task builder mock object.
  */
 export function createTaskBuilderMock(name, watchPaths) {
-    if(!watchPaths) {
+    if (!watchPaths) {
         watchPaths = ['/foo/path', `/bar/path/${name}`];
     }
     const taskRet = `_${name}_task_ret_`;
@@ -135,6 +131,26 @@ export function createTaskBuilderMock(name, watchPaths) {
 }
 
 /**
+ * Creates and returns a mock object for a task factory.
+ *
+ * @param {String} name The name of the task factory.
+ * @returns {Object} A task factory mock object.
+ */
+export function createTaskFactoryMock(name) {
+    const taskRet = `_${name}_task_ret_`;
+    const task = stub().returns(taskRet);
+    task._name = name;
+    const mock = {
+        _name: name,
+        _ret: taskRet,
+        _task: task,
+    };
+    mock.ctor = stub().returns(mock);
+
+    return mock;
+}
+
+/**
  * Creates and returns a mock for the fancy-log library.
  *
  * @returns {Object} A fancy-log mock object.
@@ -147,39 +163,6 @@ export function createFancyLogMock() {
         warn: stub(),
         error: stub(),
     };
-}
-
-export function initializeFactoryTaskMocks(taskList) {
-    return taskList
-        .map((taskName) => ({
-            snakeCaseName: taskName,
-            camelCaseName: _camelcase(taskName),
-        }))
-        .map(({ snakeCaseName, camelCaseName }) => ({
-            snakeCaseName,
-            camelCaseName,
-            className: `${camelCaseName.replace(
-                /^./,
-                camelCaseName.charAt(0).toUpperCase(),
-            )}TaskBuilder`,
-            mockName: `${camelCaseName}TaskBuilderMock`,
-            builderMock: createTaskBuilderMock(snakeCaseName),
-        }))
-        .reduce(
-            (map, item) => {
-                const { mockReferences, taskMap } = map;
-                const { snakeCaseName, className, mockName, builderMock } =
-                    item;
-
-                mockReferences[mockName] = {
-                    [className]: builderMock.ctor,
-                };
-                taskMap[snakeCaseName] = item;
-
-                return map;
-            },
-            { mockReferences: {}, taskMap: {} },
-        );
 }
 
 /**
@@ -231,7 +214,12 @@ export function createModuleImporter(modulePath, pathDefinitions, memberName) {
  * @returns {Object} An object containing a map of mock names to import paths.
  */
 export function createTaskBuilderImportDefinitions(builderNames) {
-    const mockData = _prepareBuilderMockData(builderNames);
+    const mockData = _prepareMockImportData(
+        builderNames,
+        'task-builder',
+        _path.join('src', 'task-builders'),
+        createTaskBuilderMock,
+    );
     return mockData.reduce((result, { importRef, importPath }) => {
         result[importRef] = importPath;
         return result;
@@ -251,21 +239,70 @@ export function createTaskBuilderImportDefinitions(builderNames) {
  *  task mocks.
  */
 export function createTaskBuilderImportMocks(mockNames) {
-    const mockData = mockNames
-        .map(
-            (name) => ({
-                ref: createTaskBuilderMock(name),
-                refName: _camelcase(name) + 'TaskBuilder',
-            }),
-            {},
-        )
-        .map(({ ref, refName }) => ({
-            ref,
-            importRef: `${refName}Mock`,
-            ctor: ref.ctor,
-            className: refName.charAt(0).toUpperCase() + refName.slice(1),
-            importPath: `src/task-builders/${refName}-task-builder.js`,
-        }));
+    const mockData = _prepareMockImportData(
+        mockNames,
+        'task-builder',
+        _path.join('src', 'task-builders'),
+        createTaskBuilderMock,
+    );
+
+    const mocks = mockData.reduce((result, { ref }) => {
+        result[ref._name] = ref;
+        return result;
+    }, {});
+
+    const mockReferences = mockData.reduce(
+        (result, { importRef, ctor, className }) => {
+            result[importRef] = { [className]: ctor };
+            return result;
+        },
+        {},
+    );
+
+    return { mocks, mockReferences };
+}
+
+/**
+ * Creates a dictionary of task definition mocks that can be used to initialize
+ * a module importer.
+ *
+ * @param {Array} factoryNames The list of task factorys for which the
+ * definition mocks need to be created.
+ *
+ * @returns {Object} An object containing a map of mock names to import paths.
+ */
+export function createTaskFactoryImportDefinitions(factoryNames) {
+    const mockData = _prepareMockImportData(
+        factoryNames,
+        'task-factory',
+        _path.join('src', 'task-factorys'),
+        createTaskFactoryMock,
+    );
+    return mockData.reduce((result, { importRef, importPath }) => {
+        result[importRef] = importPath;
+        return result;
+    }, {});
+}
+
+/**
+ * Initializes a collection of objects that can be used to test task lists
+ * generated from task factories.
+ *
+ * @param {Array} taskList The list of tasks for which the objects are to be
+ * created.
+ * @returns {Object} An object containing the following properties:
+ *  - mockReferences: A map of mock references that maps mock objects to
+ *  specific imports for the module.
+ *  - taskMap: A map of objects that contain a superset of information about the
+ *  task mocks.
+ */
+export function createTaskFactoryImportMocks(mockNames) {
+    const mockData = _prepareMockImportData(
+        mockNames,
+        'task-factory',
+        _path.join('src', 'task-factorys'),
+        createTaskFactoryMock,
+    );
 
     const mocks = mockData.reduce((result, { ref }) => {
         result[ref._name] = ref;
