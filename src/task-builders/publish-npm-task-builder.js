@@ -38,6 +38,11 @@ export class PublishNpmTaskBuilder extends TaskBuilder {
             _execa(npmBin, ['publish', packageName], {
                 stdio: 'inherit',
                 cwd: distDir.absolutePath,
+            }).then(undefined, (err) => {
+                /*
+                 * Do nothing. This handler prevents the gulp task from
+                 * crashing with an unhandled error.
+                 */
             });
 
         return task;

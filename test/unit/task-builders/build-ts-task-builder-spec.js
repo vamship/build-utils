@@ -126,17 +126,35 @@ describe('[BuildTsTaskBuilder]', function () {
                     const { gulpMock, gulpTypescriptMock, task } =
                         await _createTask(overrides);
 
-                    expect(gulpMock.pipe).to.not.have.been.called;
-
                     task();
 
-                    expect(gulpMock.dest).to.have.been.calledOnce;
+                    expect(gulpMock.pipe).to.have.been.called;
                     expect(gulpMock.callSequence[1]).to.equal('pipe');
 
                     expect(gulpMock.pipe.args[0]).to.have.length(1);
                     expect(gulpMock.pipe.args[0][0]).to.deep.equal(
                         gulpTypescriptMock.project.returnValues[0]
                     );
+                });
+
+                it('should handle any errors thrown during compilation', async function () {
+                    const { gulpMock, gulpTypescriptMock, task } =
+                        await _createTask(overrides);
+
+                    task();
+
+                    expect(gulpMock.on).to.have.been.calledOnce;
+                    expect(gulpMock.callSequence[2]).to.equal('on');
+
+                    expect(gulpMock.on.args[0]).to.have.length(2);
+                    const [event, handler] = gulpMock.on.args[0];
+                    expect(event).to.equal('error');
+                    expect(handler).to.be.a('function');
+
+                    // Invoke the error handler - it should do nothing, but
+                    // there's no way to test doing nothing, so this will have
+                    // to do for now.
+                    expect(handler()).to.be.undefined;
                 });
 
                 it('should write the source files to the working directories', async function () {
@@ -150,7 +168,7 @@ describe('[BuildTsTaskBuilder]', function () {
                     task();
 
                     expect(gulpMock.dest).to.have.been.calledOnce;
-                    expect(gulpMock.callSequence[2]).to.equal('dest');
+                    expect(gulpMock.callSequence[3]).to.equal('dest');
 
                     expect(gulpMock.dest.args[0]).to.have.length(1);
                     expect(gulpMock.dest.args[0][0]).to.equal(
@@ -162,7 +180,7 @@ describe('[BuildTsTaskBuilder]', function () {
                     );
 
                     expect(gulpMock.pipe).to.have.been.called;
-                    expect(gulpMock.callSequence[3]).to.equal('pipe');
+                    expect(gulpMock.callSequence[4]).to.equal('pipe');
 
                     expect(gulpMock.pipe.args[1]).to.have.length(1);
                     expect(gulpMock.pipe.args[1][0]).to.equal(

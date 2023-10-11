@@ -33,6 +33,11 @@ export class TestUiTaskBuilder extends TaskBuilder {
         const task = () =>
             _execa(jestBin, ['--config', 'jest.config.js', '--coverage'], {
                 stdio: 'inherit',
+            }).then(undefined, (err) => {
+                /*
+                 * Do nothing. This handler prevents the gulp task from
+                 * crashing with an unhandled error.
+                 */
             });
         return task;
     }

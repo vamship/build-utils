@@ -17,6 +17,7 @@ import {
     buildProjectDefinition,
     createModuleImporter,
     createGulpMock,
+    createExecaMock,
 } from '../../utils/object-builder.js';
 import { injectBuilderInitTests } from '../../utils/task-builder-snippets.js';
 
@@ -30,7 +31,7 @@ describe('[PublishContainerTaskBuilder]', function () {
             gulpMock: 'gulp',
             taskBuilderMock: 'src/task-builder.js',
         },
-        'PublishContainerTaskBuilder'
+        'PublishContainerTaskBuilder',
     );
 
     describe('ctor() <target, tag>', function () {
@@ -65,7 +66,7 @@ describe('[PublishContainerTaskBuilder]', function () {
                     target === 'default' ? '' : '-' + target // Specifying a non default container creates a named task
                 }`,
                 `Publish container image for ${target}:${tag || 'latest'}`,
-                [target, tag]
+                [target, tag],
             );
         });
     });
@@ -117,11 +118,7 @@ describe('[PublishContainerTaskBuilder]', function () {
             if (typeof target !== 'string' || target.length === 0) {
                 target = 'default';
             }
-            const execaModuleMock = {
-                execa: stub().callsFake(() => ({
-                    source: '_execa_ret_',
-                })),
-            };
+            const execaModuleMock = createExecaMock();
             const gulpMock = createGulpMock();
             const PublishContainerTaskBuilder = await _importModule({
                 execaModuleMock,
@@ -147,7 +144,7 @@ describe('[PublishContainerTaskBuilder]', function () {
         };
 
         const projectList = getAllProjectOverrides().filter(
-            ({ containerSpecified }) => containerSpecified
+            ({ containerSpecified }) => containerSpecified,
         );
 
         projectList.forEach(({ title, overrides }) => {
@@ -155,16 +152,15 @@ describe('[PublishContainerTaskBuilder]', function () {
                 describe(`Verify task - publish to container registry - (${title})`, function () {
                     it(`should use the docker cli to tag the container image (tag=${tag})`, async function () {
                         const target = 'default';
-                        const {
-                            execaModuleMock: { execa: execaMock },
-                            gulpMock,
-                        } = await _createTask(
+                        const { execaModuleMock, gulpMock } = await _createTask(
                             {
                                 ...overrides,
                             },
                             target,
-                            tag
+                            tag,
                         );
+                        const execaMock = execaModuleMock.execa;
+                        const thenMock = execaModuleMock.then;
 
                         expect(execaMock).to.not.have.been.called;
 
@@ -173,7 +169,7 @@ describe('[PublishContainerTaskBuilder]', function () {
                         // The number of tasks should be double the semver components
                         expect(gulpMock.series.args[0][0]).to.have.lengthOf(
                             semverComponents.length * 2,
-                            'Number of tasks in gulp series is incorrect'
+                            'Number of tasks in gulp series is incorrect',
                         );
 
                         semverComponents.forEach((semTag, index) => {
@@ -186,7 +182,8 @@ describe('[PublishContainerTaskBuilder]', function () {
                                 `${target}:${semTag}`,
                             ];
 
-                            execaMock.reset();
+                            execaMock.resetHistory();
+                            thenMock.resetHistory();
 
                             task();
 
@@ -203,7 +200,7 @@ describe('[PublishContainerTaskBuilder]', function () {
                                 .and.to.have.length(expectedArgs.length);
                             expectedArgs.forEach((arg, index) => {
                                 expect(execaMock.args[0][1][index]).to.equal(
-                                    arg
+                                    arg,
                                 );
                             });
 
@@ -211,30 +208,45 @@ describe('[PublishContainerTaskBuilder]', function () {
                             expect(execaMock.args[0][2]).to.deep.equal({
                                 stdio: 'inherit',
                             });
+
+                            expect(thenMock).to.have.been.calledOnce;
+                            expect(thenMock).to.have.been.calledAfter(
+                                execaMock,
+                            );
+                            expect(thenMock.args[0]).to.have.length(2);
+
+                            const [successHandler, errorHandler] =
+                                thenMock.args[0];
+                            expect(successHandler).to.be.undefined;
+                            expect(errorHandler).to.be.a('function');
+                            // Invoke the error handler - it should do nothing, but
+                            // there's no way to test doing nothing, so this will have
+                            // to do for now.
+                            expect(errorHandler()).to.be.undefined;
                         });
                     });
 
                     it(`should use the docker cli to publish the image to the cloud (tag=${tag})`, async function () {
                         const target = 'default';
-                        const {
-                            execaModuleMock: { execa: execaMock },
-                            gulpMock,
-                        } = await _createTask(
+                        const { execaModuleMock, gulpMock } = await _createTask(
                             {
                                 ...overrides,
                             },
                             target,
-                            tag
+                            tag,
                         );
+                        const execaMock = execaModuleMock.execa;
+                        const thenMock = execaModuleMock.then;
 
                         expect(execaMock).to.not.have.been.called;
+                        expect(thenMock).to.not.have.been.called;
 
                         const semverComponents = semverComponentsObj[tag];
 
                         // The number of tasks should be double the semver components
                         expect(gulpMock.series.args[0][0]).to.have.lengthOf(
                             semverComponents.length * 2,
-                            'Number of tasks in gulp series is incorrect'
+                            'Number of tasks in gulp series is incorrect',
                         );
 
                         semverComponents.forEach((semTag, index) => {
@@ -249,7 +261,8 @@ describe('[PublishContainerTaskBuilder]', function () {
                                 `${target}:${semTag}`,
                             ];
 
-                            execaMock.reset();
+                            execaMock.resetHistory();
+                            thenMock.resetHistory();
 
                             task();
 
@@ -266,7 +279,7 @@ describe('[PublishContainerTaskBuilder]', function () {
                                 .and.to.have.length(expectedArgs.length);
                             expectedArgs.forEach((arg, index) => {
                                 expect(execaMock.args[0][1][index]).to.equal(
-                                    arg
+                                    arg,
                                 );
                             });
 
@@ -274,6 +287,21 @@ describe('[PublishContainerTaskBuilder]', function () {
                             expect(execaMock.args[0][2]).to.deep.equal({
                                 stdio: 'inherit',
                             });
+
+                            expect(thenMock).to.have.been.calledOnce;
+                            expect(thenMock).to.have.been.calledAfter(
+                                execaMock,
+                            );
+                            expect(thenMock.args[0]).to.have.length(2);
+
+                            const [successHandler, errorHandler] =
+                                thenMock.args[0];
+                            expect(successHandler).to.be.undefined;
+                            expect(errorHandler).to.be.a('function');
+                            // Invoke the error handler - it should do nothing, but
+                            // there's no way to test doing nothing, so this will have
+                            // to do for now.
+                            expect(errorHandler()).to.be.undefined;
                         });
                     });
                 });

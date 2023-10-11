@@ -45,6 +45,11 @@ export class PackageNpmTaskBuilder extends TaskBuilder {
             _execa(npmBin, ['pack'], {
                 stdio: 'inherit',
                 cwd: jsDir.absolutePath,
+            }).then(undefined, (err) => {
+                /*
+                 * Do nothing. This handler prevents the gulp task from
+                 * crashing with an unhandled error.
+                 */
             });
 
         const copyTask = () =>

@@ -44,6 +44,11 @@ export class PackageAwsTaskBuilder extends TaskBuilder {
             return _execa(npmBin, args, {
                 stdio: 'inherit',
                 cwd: jsDir.absolutePath,
+            }).then(undefined, (err) => {
+                /*
+                 * Do nothing. This handler prevents the gulp task from
+                 * crashing with an unhandled error.
+                 */
             });
         };
 
@@ -63,8 +68,14 @@ export class PackageAwsTaskBuilder extends TaskBuilder {
                     base: project.rootDir.globPath,
                 })
                 .pipe(_zip(packageName))
+                .on('error', (err) => {
+                    /*
+                     * Do nothing. This handler prevents the gulp task from
+                     * crashing with an unhandled error.
+                     */
+                })
                 .pipe(
-                    _gulp.dest(project.rootDir.getChild('dist').absolutePath)
+                    _gulp.dest(project.rootDir.getChild('dist').absolutePath),
                 );
 
         const task = _gulp.series([installTask, zipTask]);
@@ -87,7 +98,7 @@ export class PackageAwsTaskBuilder extends TaskBuilder {
 
         return dirs
             .map((dir) =>
-                exts.map((ext) => rootDir.getChild(dir).getAllFilesGlob(ext))
+                exts.map((ext) => rootDir.getChild(dir).getAllFilesGlob(ext)),
             )
             .flat();
     }

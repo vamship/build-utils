@@ -17,6 +17,7 @@ import {
     buildProjectDefinition,
     createGulpMock,
     createModuleImporter,
+    createExecaMock,
 } from '../../utils/object-builder.js';
 import { injectBuilderInitTests } from '../../utils/task-builder-snippets.js';
 
@@ -63,11 +64,7 @@ describe('[PackageAwsTaskBuilder]', function () {
     describe('[task]', function () {
         async function _createTask(definitionOverrides) {
             const gulpMock = createGulpMock();
-            const execaModuleMock = {
-                execa: stub().callsFake(() => ({
-                    source: '_execa_ret_',
-                })),
-            };
+            const execaModuleMock = createExecaMock();
             const zipMock = stub().callsFake(() => ({
                 _source: '_zip_ret_',
             }));
@@ -113,15 +110,19 @@ describe('[PackageAwsTaskBuilder]', function () {
             describe(`Verify task (${title})`, function () {
                 it('should invoke npm to install project dependencies', async function () {
                     const {
-                        execaModuleMock: { execa: execaMock },
+                        execaModuleMock,
                         project,
                         gulpMock,
                     } = await _createTask(overrides);
+
+                    const execaMock = execaModuleMock.execa;
+                    const thenMock = execaModuleMock.then;
                     const [task] = gulpMock.series.args[0][0];
 
                     const npmBin = 'npm';
 
                     expect(execaMock).to.not.have.been.called;
+                    expect(thenMock).to.not.have.been.called;
 
                     task();
 
@@ -136,6 +137,18 @@ describe('[PackageAwsTaskBuilder]', function () {
                             ),
                         }
                     );
+
+                    expect(thenMock).to.have.been.calledOnce;
+                    expect(thenMock).to.have.been.calledAfter(execaMock);
+                    expect(thenMock.args[0]).to.have.length(2);
+
+                    const [ successHandler, errorHandler ] = thenMock.args[0];
+                    expect(successHandler).to.be.undefined;
+                    expect(errorHandler).to.be.a('function');
+                    // Invoke the error handler - it should do nothing, but
+                    // there's no way to test doing nothing, so this will have
+                    // to do for now.
+                    expect(errorHandler()).to.be.undefined;
                 });
 
                 it('should inititalize and set the appropriate gulp source files for packaging', async function () {
@@ -165,7 +178,6 @@ describe('[PackageAwsTaskBuilder]', function () {
 
                 it('should pipe the source files to the zip task for packaging', async function () {
                     const {
-                        execaModuleMock: { execa: execaMock },
                         project,
                         gulpMock,
                         zipMock,
@@ -190,9 +202,31 @@ describe('[PackageAwsTaskBuilder]', function () {
                     );
                 });
 
+                it('should handle any errors thrown during execution', async function () {
+                    const {
+                        project,
+                        gulpMock,
+                    } = await _createTask(overrides);
+                    const [_first, task] = gulpMock.series.args[0][0];
+
+                    task();
+
+                    expect(gulpMock.on).to.have.been.calledOnce;
+                    expect(gulpMock.callSequence[3]).to.equal('on');
+
+                    expect(gulpMock.on.args[0]).to.have.length(2);
+                    const [event, handler] = gulpMock.on.args[0];
+                    expect(event).to.equal('error');
+                    expect(handler).to.be.a('function');
+
+                    // Invoke the error handler - it should do nothing, but
+                    // there's no way to test doing nothing, so this will have
+                    // to do for now.
+                    expect(handler()).to.be.undefined;
+                });
+
                 it('should write the packaged file to the distribution directory', async function () {
                     const {
-                        execaModuleMock: { execa: execaMock },
                         project,
                         gulpMock,
                     } = await _createTask(overrides);
@@ -204,7 +238,7 @@ describe('[PackageAwsTaskBuilder]', function () {
                     task();
 
                     expect(gulpMock.dest).to.have.been.calledOnce;
-                    expect(gulpMock.callSequence[3]).to.equal('dest');
+                    expect(gulpMock.callSequence[4]).to.equal('dest');
 
                     expect(gulpMock.dest.args[0]).to.have.length(1);
                     expect(gulpMock.dest.args[0][0]).to.equal(
@@ -213,7 +247,7 @@ describe('[PackageAwsTaskBuilder]', function () {
                     );
 
                     expect(gulpMock.pipe).to.have.been.called;
-                    expect(gulpMock.callSequence[4]).to.equal('pipe');
+                    expect(gulpMock.callSequence[5]).to.equal('pipe');
 
                     expect(gulpMock.pipe.args[1]).to.have.length(1);
                     expect(gulpMock.pipe.args[1][0]).to.equal(

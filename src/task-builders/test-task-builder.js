@@ -51,7 +51,13 @@ export class TestTaskBuilder extends TaskBuilder {
             jsRootDir.getChild(`test/${this._testType}`).getAllFilesGlob('js'),
         ];
 
-        const task = () => _execa(c8Bin, args, { stdio: 'inherit' });
+        const task = () =>
+            _execa(c8Bin, args, { stdio: 'inherit' }).then(undefined, () => {
+                /*
+                 * Do nothing. This handler prevents the gulp task from
+                 * crashing with an unhandled error.
+                 */
+            });
         return task;
     }
 
@@ -71,7 +77,7 @@ export class TestTaskBuilder extends TaskBuilder {
 
         return dirs
             .map((dir) =>
-                exts.map((ext) => rootDir.getChild(dir).getAllFilesGlob(ext))
+                exts.map((ext) => rootDir.getChild(dir).getAllFilesGlob(ext)),
             )
             .flat();
     }

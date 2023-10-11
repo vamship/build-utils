@@ -17,6 +17,7 @@ import {
     buildProjectDefinition,
     createGulpMock,
     createModuleImporter,
+    createExecaMock,
 } from '../../utils/object-builder.js';
 import { injectBuilderInitTests } from '../../utils/task-builder-snippets.js';
 
@@ -62,11 +63,7 @@ describe('[PackageNpmTaskBuilder]', function () {
 
     describe('[task]', function () {
         async function _createTask(definitionOverrides) {
-            const execaModuleMock = {
-                execa: stub().callsFake(() => ({
-                    source: '_execa_ret_',
-                })),
-            };
+            const execaModuleMock = createExecaMock();
             const gulpMock = createGulpMock();
             const deleteMock = spy();
             const PackageNpmTaskBuilder = await _importModule({
@@ -93,15 +90,19 @@ describe('[PackageNpmTaskBuilder]', function () {
             describe(`Verify task - package, copy, delete old - (${title})`, function () {
                 it('should invoke npm to package the project', async function () {
                     const {
-                        execaModuleMock: { execa: execaMock },
+                        execaModuleMock,
                         project,
                         gulpMock,
                     } = await _createTask(overrides);
+
+                    const execaMock = execaModuleMock.execa;
+                    const thenMock = execaModuleMock.then;
                     const [task] = gulpMock.series.args[0][0];
 
                     const npmBin = 'npm';
 
                     expect(execaMock).to.not.have.been.called;
+                    expect(thenMock).to.not.have.been.called;
 
                     task();
 
@@ -116,6 +117,18 @@ describe('[PackageNpmTaskBuilder]', function () {
                             ),
                         }
                     );
+
+                    expect(thenMock).to.have.been.calledOnce;
+                    expect(thenMock).to.have.been.calledAfter(execaMock);
+                    expect(thenMock.args[0]).to.have.length(2);
+
+                    const [ successHandler, errorHandler ] = thenMock.args[0];
+                    expect(successHandler).to.be.undefined;
+                    expect(errorHandler).to.be.a('function');
+                    // Invoke the error handler - it should do nothing, but
+                    // there's no way to test doing nothing, so this will have
+                    // to do for now.
+                    expect(errorHandler()).to.be.undefined;
                 });
 
                 it('should use gulp to copy the package to the distribution directory', async function () {

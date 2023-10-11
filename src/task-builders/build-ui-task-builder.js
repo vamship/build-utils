@@ -30,7 +30,16 @@ export class BuildUiTaskBuilder extends TaskBuilder {
         }
 
         const viteBin = project.rootDir.getFilePath('node_modules/.bin/vite');
-        const task = () => _execa(viteBin, ['build'], { stdio: 'inherit' });
+        const task = () =>
+            _execa(viteBin, ['build'], { stdio: 'inherit' }).then(
+                undefined,
+                (err) => {
+                    /*
+                     * Do nothing. This handler prevents the gulp task from
+                     * crashing with an unhandled error.
+                     */
+                },
+            );
         return task;
     }
 }

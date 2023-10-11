@@ -14,7 +14,7 @@ export class DocsTsTaskBuilder extends TaskBuilder {
     constructor() {
         super(
             'docs-ts',
-            'Generates documentation from code comments in typescript files'
+            'Generates documentation from code comments in typescript files',
         );
     }
 
@@ -40,6 +40,11 @@ export class DocsTsTaskBuilder extends TaskBuilder {
         const task = () =>
             _execa('typedoc', ['--out', docsDir, srcDir.absolutePath], {
                 stdio: 'inherit',
+            }).then(undefined, (err) => {
+                /*
+                 * Do nothing. This handler prevents the gulp task from
+                 * crashing with an unhandled error.
+                 */
             });
         return task;
     }

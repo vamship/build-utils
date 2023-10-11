@@ -32,7 +32,7 @@ export class PublishContainerTaskBuilder extends TaskBuilder {
             // When specifying the container target, if it is not called default, this
             // will create a named task
             `publish-container${target === 'default' ? '' : '-' + target}`,
-            `Publish container image for ${target}:${tag}`
+            `Publish container image for ${target}:${tag}`,
         );
 
         this._target = target;
@@ -64,8 +64,13 @@ export class PublishContainerTaskBuilder extends TaskBuilder {
                     ['tag', definition.name, `${definition.name}:${tag}`],
                     {
                         stdio: 'inherit',
-                    }
-                );
+                    },
+                ).then(undefined, (err) => {
+                    /*
+                     * Do nothing. This handler prevents the gulp task from
+                     * crashing with an unhandled error.
+                     */
+                });
             return tagTask;
         });
         const pushTaskList = semverComponents.map((tag) => {
@@ -73,6 +78,11 @@ export class PublishContainerTaskBuilder extends TaskBuilder {
                 // Per docker docs `docker push [OPTIONS] NAME[:TAG]`
                 _execa('docker', ['push', `${definition.name}:${tag}`], {
                     stdio: 'inherit',
+                }).then(undefined, (err) => {
+                    /*
+                     * Do nothing. This handler prevents the gulp task from
+                     * crashing with an unhandled error.
+                     */
                 });
             return pushTask;
         });

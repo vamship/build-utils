@@ -16,6 +16,7 @@ import {
 import {
     buildProjectDefinition,
     createModuleImporter,
+    createExecaMock,
 } from '../../utils/object-builder.js';
 import { injectBuilderInitTests } from '../../utils/task-builder-snippets.js';
 
@@ -33,11 +34,7 @@ describe('[TestUiTaskBuilder]', function () {
 
     describe('[task]', function () {
         async function _createTask(definitionOverrides) {
-            const execaModuleMock = {
-                execa: stub().callsFake(() => ({
-                    source: '_execa_ret_',
-                })),
-            };
+            const execaModuleMock = createExecaMock();
             const TestUiTaskBuilder = await _importModule({
                 execaModuleMock,
             });
@@ -55,10 +52,13 @@ describe('[TestUiTaskBuilder]', function () {
             describe(`Verify UI test task (${title})`, function () {
                 it('should invoke jest to run tests on the project', async function () {
                     const {
-                        execaModuleMock: { execa: execaMock },
+                        execaModuleMock,
                         project,
                         task,
                     } = await _createTask(overrides);
+
+                    const execaMock = execaModuleMock.execa;
+                    const thenMock = execaModuleMock.then;
 
                     const [jestBin] = ['jest'].map((bin) =>
                         _path.join(
@@ -70,12 +70,27 @@ describe('[TestUiTaskBuilder]', function () {
                     );
 
                     expect(execaMock).to.not.have.been.called;
+                    expect(thenMock).to.not.have.been.called;
+
                     task();
+
                     expect(execaMock).to.have.been.calledOnceWithExactly(
                         jestBin,
                         ['--config', 'jest.config.js', '--coverage'],
                         { stdio: 'inherit' }
                     );
+
+                    expect(thenMock).to.have.been.calledOnce;
+                    expect(thenMock).to.have.been.calledAfter(execaMock);
+                    expect(thenMock.args[0]).to.have.length(2);
+
+                    const [ successHandler, errorHandler ] = thenMock.args[0];
+                    expect(successHandler).to.be.undefined;
+                    expect(errorHandler).to.be.a('function');
+                    // Invoke the error handler - it should do nothing, but
+                    // there's no way to test doing nothing, so this will have
+                    // to do for now.
+                    expect(errorHandler()).to.be.undefined;
                 });
             });
         });

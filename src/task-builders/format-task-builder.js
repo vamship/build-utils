@@ -49,6 +49,12 @@ export class FormatTaskBuilder extends TaskBuilder {
                     base: project.rootDir.globPath,
                 })
                 .pipe(_prettier())
+                .on('error', (err) => {
+                    /*
+                     * Do nothing. This handler prevents the gulp task from
+                     * crashing with an unhandled error.
+                     */
+                })
                 .pipe(_gulp.dest(project.rootDir.absolutePath));
         return task;
     }

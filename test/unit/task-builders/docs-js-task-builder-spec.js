@@ -124,6 +124,26 @@ describe('[DocsJsTaskBuilder]', function () {
                         gulpJsDocMock.returnValues[0]
                     );
                 });
+
+                it('should handle any errors thrown during compilation', async function () {
+                    const { gulpMock, task } =
+                        await _createTask(overrides);
+
+                    task();
+
+                    expect(gulpMock.on).to.have.been.calledOnce;
+                    expect(gulpMock.callSequence[2]).to.equal('on');
+
+                    expect(gulpMock.on.args[0]).to.have.length(2);
+                    const [event, handler] = gulpMock.on.args[0];
+                    expect(event).to.equal('error');
+                    expect(handler).to.be.a('function');
+
+                    // Invoke the error handler - it should do nothing, but
+                    // there's no way to test doing nothing, so this will have
+                    // to do for now.
+                    expect(handler()).to.be.undefined;
+                });
             });
         });
     });

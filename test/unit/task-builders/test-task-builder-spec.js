@@ -16,6 +16,7 @@ import {
 import {
     buildProjectDefinition,
     createModuleImporter,
+    createExecaMock,
 } from '../../utils/object-builder.js';
 import { injectBuilderInitTests } from '../../utils/task-builder-snippets.js';
 
@@ -26,7 +27,7 @@ describe('[TestTaskBuilder]', function () {
             execaModuleMock: 'execa',
             taskBuilderMock: 'src/task-builder.js',
         },
-        'TestTaskBuilder'
+        'TestTaskBuilder',
     );
 
     describe('ctor() <test type>', function () {
@@ -46,17 +47,13 @@ describe('[TestTaskBuilder]', function () {
             _importModule,
             `test-${testType}`,
             `Execute ${testType} tests`,
-            [testType]
-        )
+            [testType],
+        ),
     );
 
     describe('[task]', function () {
         async function _createTask(testType, definitionOverrides) {
-            const execaModuleMock = {
-                execa: stub().callsFake(() => ({
-                    source: '_execa_ret_',
-                })),
-            };
+            const execaModuleMock = createExecaMock();
             const TestTaskBuilder = await _importModule({
                 execaModuleMock,
             });
@@ -74,19 +71,19 @@ describe('[TestTaskBuilder]', function () {
             getAllProjectOverrides().forEach(({ title, overrides }) => {
                 describe(`Verify ${testType} test task (${title})`, function () {
                     it('should invoke mocha and c8 to run tests on the project', async function () {
-                        const {
-                            execaModuleMock: { execa: execaMock },
-                            project,
-                            task,
-                        } = await _createTask(testType, overrides);
+                        const { execaModuleMock, project, task } =
+                            await _createTask(testType, overrides);
+
+                        const execaMock = execaModuleMock.execa;
+                        const thenMock = execaModuleMock.then;
 
                         const [c8Bin, mochaBin] = ['c8', 'mocha'].map((bin) =>
                             _path.join(
                                 project.rootDir.absolutePath,
                                 'node_modules',
                                 '.bin',
-                                bin
-                            )
+                                bin,
+                            ),
                         );
 
                         const specPath = _path.join(
@@ -95,10 +92,14 @@ describe('[TestTaskBuilder]', function () {
                             'test',
                             testType,
                             '**',
-                            '*.js'
+                            '*.js',
                         );
+
                         expect(execaMock).to.not.have.been.called;
+                        expect(thenMock).to.not.have.been.called;
+
                         task();
+
                         expect(execaMock).to.have.been.calledOnceWithExactly(
                             c8Bin,
                             [
@@ -107,11 +108,23 @@ describe('[TestTaskBuilder]', function () {
                                 '--loader=esmock',
                                 specPath,
                             ],
-                            { stdio: 'inherit' }
+                            { stdio: 'inherit' },
                         );
+
+                        expect(thenMock).to.have.been.calledOnce;
+                        expect(thenMock).to.have.been.calledAfter(execaMock);
+                        expect(thenMock.args[0]).to.have.length(2);
+
+                        const [successHandler, errorHandler] = thenMock.args[0];
+                        expect(successHandler).to.be.undefined;
+                        expect(errorHandler).to.be.a('function');
+                        // Invoke the error handler - it should do nothing, but
+                        // there's no way to test doing nothing, so this will have
+                        // to do for now.
+                        expect(errorHandler()).to.be.undefined;
                     });
                 });
-            })
+            }),
         );
     });
 

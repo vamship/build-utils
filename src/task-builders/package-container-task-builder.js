@@ -30,7 +30,7 @@ export class PackageContainerTaskBuilder extends TaskBuilder {
             // When specifying the container target, if it is not called default, this
             // will create a named task
             `package-container${target === 'default' ? '' : '-' + target}`,
-            `Package a project for publishing to a container registry`
+            `Package a project for publishing to a container registry`,
         );
         this._target = target;
         this._repo = repo;
@@ -54,8 +54,8 @@ export class PackageContainerTaskBuilder extends TaskBuilder {
         if (undefinedVars.length > 0) {
             throw new Error(
                 `Missing required environment variables: [${undefinedVars.join(
-                    ', '
-                )}]`
+                    ', ',
+                )}]`,
             );
         }
 
@@ -100,6 +100,11 @@ export class PackageContainerTaskBuilder extends TaskBuilder {
             _execa(dockerBin, args, {
                 stdio: 'inherit',
                 cwd: jsDir.absolutePath,
+            }).then(undefined, (err) => {
+                /*
+                 * Do nothing. This handler prevents the gulp task from
+                 * crashing with an unhandled error.
+                 */
             });
         return task;
     }
@@ -120,7 +125,7 @@ export class PackageContainerTaskBuilder extends TaskBuilder {
 
         return dirs
             .map((dir) =>
-                exts.map((ext) => rootDir.getChild(dir).getAllFilesGlob(ext))
+                exts.map((ext) => rootDir.getChild(dir).getAllFilesGlob(ext)),
             )
             .flat();
     }

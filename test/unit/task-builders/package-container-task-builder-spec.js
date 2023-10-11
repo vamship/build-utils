@@ -17,6 +17,7 @@ import {
 import {
     buildProjectDefinition,
     createModuleImporter,
+    createExecaMock,
 } from '../../utils/object-builder.js';
 import { injectBuilderInitTests } from '../../utils/task-builder-snippets.js';
 
@@ -29,7 +30,7 @@ describe('[PackageContainerTaskBuilder]', function () {
             execaModuleMock: 'execa',
             taskBuilderMock: 'src/task-builder.js',
         },
-        'PackageContainerTaskBuilder'
+        'PackageContainerTaskBuilder',
     );
 
     beforeEach(() => {
@@ -79,7 +80,7 @@ describe('[PackageContainerTaskBuilder]', function () {
                     target === 'default' ? '' : '-' + target // Specifying a non default container creates a named task
                 }`,
                 `Package a project for publishing to a container registry`,
-                [target, repo]
+                [target, repo],
             );
         });
     });
@@ -92,7 +93,7 @@ describe('[PackageContainerTaskBuilder]', function () {
                 const project = new Project(definition);
                 const checkStub = stub(
                     project,
-                    'getUndefinedEnvironmentVariables'
+                    'getUndefinedEnvironmentVariables',
                 ).returns([]);
 
                 const builder = new PackageContainerTaskBuilder('default'); // default is the name of mandatory target populated by default
@@ -110,7 +111,7 @@ describe('[PackageContainerTaskBuilder]', function () {
                 const project = new Project(definition);
                 const checkStub = stub(
                     project,
-                    'getUndefinedEnvironmentVariables'
+                    'getUndefinedEnvironmentVariables',
                 ).returns(['foo', 'bar']);
 
                 const builder = new PackageContainerTaskBuilder('default'); // default is the name of mandatory target populated by default
@@ -118,7 +119,7 @@ describe('[PackageContainerTaskBuilder]', function () {
                 const wrapper = () => builder.buildTask(project);
 
                 expect(wrapper).to.throw(
-                    `Missing required environment variables: [foo, bar]`
+                    `Missing required environment variables: [foo, bar]`,
                 );
             });
         });
@@ -132,11 +133,7 @@ describe('[PackageContainerTaskBuilder]', function () {
         const STD_ARG_COUNT = 17;
 
         async function _createTask(target, repo, definitionOverrides) {
-            const execaModuleMock = {
-                execa: stub().callsFake(() => ({
-                    source: '_execa_ret_',
-                })),
-            };
+            const execaModuleMock = createExecaMock();
             const PackageContainerTaskBuilder = await _importModule({
                 execaModuleMock,
             });
@@ -211,7 +208,7 @@ describe('[PackageContainerTaskBuilder]', function () {
 
                     expect(parseInt(argValue)).to.be.within(
                         startTime - 100,
-                        startTime + 100
+                        startTime + 100,
                     );
 
                     expect(args[args.length - 1]).to.equal('.');
@@ -219,14 +216,15 @@ describe('[PackageContainerTaskBuilder]', function () {
 
                 describe(`Verify container image build - (${title})`, function () {
                     it(`should invoke docker to package the project (no build args)`, async function () {
-                        const {
-                            execaModuleMock: { execa: execaMock },
-                            task,
-                            project,
-                        } = await _createTask(target, repoOverride, overrides);
+                        const { execaModuleMock, project, task } =
+                            await _createTask(target, repoOverride, overrides);
+
+                        const execaMock = execaModuleMock.execa;
+                        const thenMock = execaModuleMock.then;
                         const dockerBin = 'docker';
 
                         expect(execaMock).to.not.have.been.called;
+                        expect(thenMock).to.not.have.been.called;
 
                         task();
 
@@ -246,9 +244,21 @@ describe('[PackageContainerTaskBuilder]', function () {
                             stdio: 'inherit',
                             cwd: _path.join(
                                 project.rootDir.absolutePath,
-                                jsRootDir
+                                jsRootDir,
                             ),
                         });
+
+                        expect(thenMock).to.have.been.calledOnce;
+                        expect(thenMock).to.have.been.calledAfter(execaMock);
+                        expect(thenMock.args[0]).to.have.length(2);
+
+                        const [successHandler, errorHandler] = thenMock.args[0];
+                        expect(successHandler).to.be.undefined;
+                        expect(errorHandler).to.be.a('function');
+                        // Invoke the error handler - it should do nothing, but
+                        // there's no way to test doing nothing, so this will have
+                        // to do for now.
+                        expect(errorHandler()).to.be.undefined;
                     });
 
                     [
@@ -296,11 +306,11 @@ describe('[PackageContainerTaskBuilder]', function () {
                                     index * 2 + STD_ARG_COUNT - 1;
 
                                 expect(args[1][offsetIndex]).to.equal(
-                                    '--build-arg'
+                                    '--build-arg',
                                 );
 
                                 expect(args[1][offsetIndex + 1]).to.equal(
-                                    `${expectedArg}=${expectedValue}`
+                                    `${expectedArg}=${expectedValue}`,
                                 );
                             });
 
@@ -308,7 +318,7 @@ describe('[PackageContainerTaskBuilder]', function () {
                                 stdio: 'inherit',
                                 cwd: _path.join(
                                     project.rootDir.absolutePath,
-                                    jsRootDir
+                                    jsRootDir,
                                 ),
                             });
                         });

@@ -14,6 +14,7 @@ import {
     buildProjectDefinition,
     createModuleImporter,
     createGulpMock,
+    createExecaMock,
 } from '../../utils/object-builder.js';
 import { injectBuilderInitTests } from '../../utils/task-builder-snippets.js';
 
@@ -36,11 +37,7 @@ describe('[DocsTsTaskBuilder]', function () {
 
     describe('[task]', function () {
         async function _createTask(definitionOverrides) {
-            const execaModuleMock = {
-                execa: stub().callsFake(() => ({
-                    source: '_execa_ret_',
-                })),
-            };
+            const execaModuleMock = createExecaMock();
             const DocsTsTaskBuilder = await _importModule({
                 execaModuleMock,
             });
@@ -68,10 +65,13 @@ describe('[DocsTsTaskBuilder]', function () {
             describe(`Verify task (${title})`, function () {
                 it('should pipe the source files to the document generator to extract docs', async function () {
                     const {
-                        task,
-                        execaModuleMock: { execa: execaMock },
+                        execaModuleMock,
                         project,
+                        task,
                     } = await _createTask(overrides);
+
+                    const execaMock = execaModuleMock.execa;
+                    const thenMock = execaModuleMock.then;
                     const typedocBin = 'typedoc';
                     const expectedArgs = [
                         '--out',
@@ -85,6 +85,7 @@ describe('[DocsTsTaskBuilder]', function () {
                     ];
 
                     expect(execaMock).to.not.have.been.called;
+                    expect(thenMock).to.not.have.been.called;
 
                     task();
 
@@ -106,6 +107,18 @@ describe('[DocsTsTaskBuilder]', function () {
                     expect(execaMock.args[0][2]).to.deep.equal({
                         stdio: 'inherit',
                     });
+
+                    expect(thenMock).to.have.been.calledOnce;
+                    expect(thenMock).to.have.been.calledAfter(execaMock);
+                    expect(thenMock.args[0]).to.have.length(2);
+
+                    const [ successHandler, errorHandler ] = thenMock.args[0];
+                    expect(successHandler).to.be.undefined;
+                    expect(errorHandler).to.be.a('function');
+                    // Invoke the error handler - it should do nothing, but
+                    // there's no way to test doing nothing, so this will have
+                    // to do for now.
+                    expect(errorHandler()).to.be.undefined;
                 });
             });
         });

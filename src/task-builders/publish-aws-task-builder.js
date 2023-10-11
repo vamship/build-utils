@@ -89,6 +89,11 @@ export class PublishAwsTaskBuilder extends TaskBuilder {
             _execa(cdkBin, args, {
                 stdio: 'inherit',
                 cwd: jsDir.absolutePath,
+            }).then(undefined, (err) => {
+                /*
+                 * Do nothing. This handler prevents the gulp task from
+                 * crashing with an unhandled error.
+                 */
             });
         };
         return task;
