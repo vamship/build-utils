@@ -379,6 +379,16 @@ describe('[Project]', function () {
             });
         });
 
+        it('shoudl expose a banner property', function () {
+            const definition = buildProjectDefinition();
+            const project = new Project(definition);
+            expect(project.banner).to.be.a('string');
+            expect(project.banner).to.include(project.name);
+            expect(project.banner).to.include(project.language);
+            expect(project.banner).to.include(project.type);
+            expect(project.banner).to.include(project.version);
+        });
+
         describe('[unscopedName]', function () {
             [
                 ['bar-project', 'bar-project'],
