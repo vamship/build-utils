@@ -14,7 +14,7 @@ export class DocsTsTaskBuilder extends TaskBuilder {
     constructor() {
         super(
             'docs-ts',
-            'Generates documentation from code comments in typescript files',
+            'Generates documentation from code comments in typescript files'
         );
     }
 

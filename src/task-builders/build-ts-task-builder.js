@@ -16,7 +16,7 @@ export class BuildTsTaskBuilder extends TaskBuilder {
     constructor() {
         super(
             'build-ts',
-            'Build typescript files and writes them to the build directory',
+            'Build typescript files and writes them to the build directory'
         );
     }
 
@@ -56,7 +56,7 @@ export class BuildTsTaskBuilder extends TaskBuilder {
                      * crashing with an unhandled error.
                      */
                 })
-                .pipe(_gulp.dest(rootDir.getChild('working').absolutePath))
+                .pipe(_gulp.dest(rootDir.getChild('working').absolutePath));
 
         return task;
     }

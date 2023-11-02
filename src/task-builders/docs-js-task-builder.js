@@ -16,7 +16,7 @@ export class DocsJsTaskBuilder extends TaskBuilder {
     constructor() {
         super(
             'docs-js',
-            'Generates documentation from code comments in javascript files',
+            'Generates documentation from code comments in javascript files'
         );
     }
 
@@ -44,7 +44,7 @@ export class DocsJsTaskBuilder extends TaskBuilder {
             opts: {
                 readme: rootDir.getFilePath('README.md'),
                 destination: docsDir.getFilePath(
-                    `${name}${_path.sep}${version}`,
+                    `${name}${_path.sep}${version}`
                 ),
                 template: _path.join('node_modules', 'docdash'),
             },

@@ -109,11 +109,8 @@ describe('[PackageAwsTaskBuilder]', function () {
 
             describe(`Verify task (${title})`, function () {
                 it('should invoke npm to install project dependencies', async function () {
-                    const {
-                        execaModuleMock,
-                        project,
-                        gulpMock,
-                    } = await _createTask(overrides);
+                    const { execaModuleMock, project, gulpMock } =
+                        await _createTask(overrides);
 
                     const execaMock = execaModuleMock.execa;
                     const thenMock = execaModuleMock.then;
@@ -142,7 +139,7 @@ describe('[PackageAwsTaskBuilder]', function () {
                     expect(thenMock).to.have.been.calledAfter(execaMock);
                     expect(thenMock.args[0]).to.have.length(2);
 
-                    const [ successHandler, errorHandler ] = thenMock.args[0];
+                    const [successHandler, errorHandler] = thenMock.args[0];
                     expect(successHandler).to.be.undefined;
                     expect(errorHandler).to.be.a('function');
                     // Invoke the error handler - it should do nothing, but
@@ -177,11 +174,9 @@ describe('[PackageAwsTaskBuilder]', function () {
                 });
 
                 it('should pipe the source files to the zip task for packaging', async function () {
-                    const {
-                        project,
-                        gulpMock,
-                        zipMock,
-                    } = await _createTask(overrides);
+                    const { project, gulpMock, zipMock } = await _createTask(
+                        overrides
+                    );
                     const [_first, task] = gulpMock.series.args[0][0];
 
                     expect(gulpMock.pipe).to.not.have.been.called;
@@ -203,10 +198,7 @@ describe('[PackageAwsTaskBuilder]', function () {
                 });
 
                 it('should handle any errors thrown during execution', async function () {
-                    const {
-                        project,
-                        gulpMock,
-                    } = await _createTask(overrides);
+                    const { project, gulpMock } = await _createTask(overrides);
                     const [_first, task] = gulpMock.series.args[0][0];
 
                     task();
@@ -226,10 +218,7 @@ describe('[PackageAwsTaskBuilder]', function () {
                 });
 
                 it('should write the packaged file to the distribution directory', async function () {
-                    const {
-                        project,
-                        gulpMock,
-                    } = await _createTask(overrides);
+                    const { project, gulpMock } = await _createTask(overrides);
                     const [_first, task] = gulpMock.series.args[0][0];
 
                     expect(gulpMock.pipe).to.not.have.been.called;

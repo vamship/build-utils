@@ -61,12 +61,8 @@ describe('[PublishNpmTaskBuilder]', function () {
 
             describe(`Verify task - (${title})`, function () {
                 it('should invoke npm to publish the project', async function () {
-                    const {
-                        execaModuleMock,
-                        project,
-                        task,
-                        gulpMock,
-                    } = await _createTask(overrides);
+                    const { execaModuleMock, project, task, gulpMock } =
+                        await _createTask(overrides);
                     const execaMock = execaModuleMock.execa;
                     const thenMock = execaModuleMock.then;
 
@@ -96,7 +92,7 @@ describe('[PublishNpmTaskBuilder]', function () {
                     expect(thenMock).to.have.been.calledAfter(execaMock);
                     expect(thenMock.args[0]).to.have.length(2);
 
-                    const [ successHandler, errorHandler ] = thenMock.args[0];
+                    const [successHandler, errorHandler] = thenMock.args[0];
                     expect(successHandler).to.be.undefined;
                     expect(errorHandler).to.be.a('function');
                     // Invoke the error handler - it should do nothing, but

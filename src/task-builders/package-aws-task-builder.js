@@ -75,7 +75,7 @@ export class PackageAwsTaskBuilder extends TaskBuilder {
                      */
                 })
                 .pipe(
-                    _gulp.dest(project.rootDir.getChild('dist').absolutePath),
+                    _gulp.dest(project.rootDir.getChild('dist').absolutePath)
                 );
 
         const task = _gulp.series([installTask, zipTask]);
@@ -98,7 +98,7 @@ export class PackageAwsTaskBuilder extends TaskBuilder {
 
         return dirs
             .map((dir) =>
-                exts.map((ext) => rootDir.getChild(dir).getAllFilesGlob(ext)),
+                exts.map((ext) => rootDir.getChild(dir).getAllFilesGlob(ext))
             )
             .flat();
     }

@@ -51,11 +51,8 @@ describe('[TestUiTaskBuilder]', function () {
         getAllProjectOverrides().forEach(({ title, overrides }) => {
             describe(`Verify UI test task (${title})`, function () {
                 it('should invoke jest to run tests on the project', async function () {
-                    const {
-                        execaModuleMock,
-                        project,
-                        task,
-                    } = await _createTask(overrides);
+                    const { execaModuleMock, project, task } =
+                        await _createTask(overrides);
 
                     const execaMock = execaModuleMock.execa;
                     const thenMock = execaModuleMock.then;
@@ -84,7 +81,7 @@ describe('[TestUiTaskBuilder]', function () {
                     expect(thenMock).to.have.been.calledAfter(execaMock);
                     expect(thenMock.args[0]).to.have.length(2);
 
-                    const [ successHandler, errorHandler ] = thenMock.args[0];
+                    const [successHandler, errorHandler] = thenMock.args[0];
                     expect(successHandler).to.be.undefined;
                     expect(errorHandler).to.be.a('function');
                     // Invoke the error handler - it should do nothing, but

@@ -89,11 +89,8 @@ describe('[PackageNpmTaskBuilder]', function () {
 
             describe(`Verify task - package, copy, delete old - (${title})`, function () {
                 it('should invoke npm to package the project', async function () {
-                    const {
-                        execaModuleMock,
-                        project,
-                        gulpMock,
-                    } = await _createTask(overrides);
+                    const { execaModuleMock, project, gulpMock } =
+                        await _createTask(overrides);
 
                     const execaMock = execaModuleMock.execa;
                     const thenMock = execaModuleMock.then;
@@ -122,7 +119,7 @@ describe('[PackageNpmTaskBuilder]', function () {
                     expect(thenMock).to.have.been.calledAfter(execaMock);
                     expect(thenMock.args[0]).to.have.length(2);
 
-                    const [ successHandler, errorHandler ] = thenMock.args[0];
+                    const [successHandler, errorHandler] = thenMock.args[0];
                     expect(successHandler).to.be.undefined;
                     expect(errorHandler).to.be.a('function');
                     // Invoke the error handler - it should do nothing, but

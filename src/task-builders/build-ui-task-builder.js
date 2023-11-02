@@ -38,7 +38,7 @@ export class BuildUiTaskBuilder extends TaskBuilder {
                      * Do nothing. This handler prevents the gulp task from
                      * crashing with an unhandled error.
                      */
-                },
+                }
             );
         return task;
     }

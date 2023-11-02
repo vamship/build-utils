@@ -61,11 +61,8 @@ describe('[BuildUiTaskBuilder]', function () {
         getAllProjectOverrides(1).forEach(({ title, overrides }) => {
             describe(`Verify task (${title})`, function () {
                 it('should invoke vite to build the web project', async function () {
-                    const {
-                        execaModuleMock,
-                        project,
-                        task,
-                    } = await _createTask(overrides);
+                    const { execaModuleMock, project, task } =
+                        await _createTask(overrides);
 
                     const execaMock = execaModuleMock.execa;
                     const thenMock = execaModuleMock.then;
@@ -89,7 +86,7 @@ describe('[BuildUiTaskBuilder]', function () {
                     expect(thenMock).to.have.been.calledAfter(execaMock);
                     expect(thenMock.args[0]).to.have.length(2);
 
-                    const [ successHandler, errorHandler ] = thenMock.args[0];
+                    const [successHandler, errorHandler] = thenMock.args[0];
                     expect(successHandler).to.be.undefined;
                     expect(errorHandler).to.be.a('function');
                     // Invoke the error handler - it should do nothing, but

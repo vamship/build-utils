@@ -110,8 +110,7 @@ describe('[FormatTaskBuilder]', function () {
                 });
 
                 it('should handle any errors thrown during execution', async function () {
-                    const { gulpMock, task } =
-                        await _createTask(overrides);
+                    const { gulpMock, task } = await _createTask(overrides);
 
                     task();
 
