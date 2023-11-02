@@ -103,6 +103,7 @@ describe('[TestTaskBuilder]', function () {
                         expect(execaMock).to.have.been.calledOnceWithExactly(
                             c8Bin,
                             [
+                                '-x {working/,}test/**',
                                 mochaBin,
                                 '--no-config',
                                 '--loader=esmock',

@@ -45,6 +45,7 @@ export class TestTaskBuilder extends TaskBuilder {
                 : project.rootDir;
 
         const args = [
+            '-x {working/,}test/**',
             mochaBin,
             '--no-config',
             '--loader=esmock',
