@@ -67,6 +67,7 @@ export class DocsJsTaskBuilder extends TaskBuilder {
                      * Do nothing. This handler prevents the gulp task from
                      * crashing with an unhandled error.
                      */
+                    console.error(err);
                 });
         return task;
     }

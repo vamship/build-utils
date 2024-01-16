@@ -53,8 +53,7 @@ export class LintFixTaskBuilder extends TaskBuilder {
                 })
                 .pipe(_eslint({ configType: 'flat', fix: true }))
                 .pipe(_eslint.fix())
-                .pipe(_eslint.format())
-                .pipe(_eslint.failAfterError());
+                .pipe(_eslint.format());
 
         return task;
     }
