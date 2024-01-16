@@ -31,7 +31,7 @@ describe('[PublishContainerTaskBuilder]', function () {
             gulpMock: 'gulp',
             taskBuilderMock: 'src/task-builder.js',
         },
-        'PublishContainerTaskBuilder'
+        'PublishContainerTaskBuilder',
     );
 
     describe('ctor() <target, tag>', function () {
@@ -66,7 +66,7 @@ describe('[PublishContainerTaskBuilder]', function () {
                     target === 'default' ? '' : '-' + target // Specifying a non default container creates a named task
                 }`,
                 `Publish container image for ${target}:${tag || 'latest'}`,
-                [target, tag]
+                [target, tag],
             );
         });
     });
@@ -144,7 +144,7 @@ describe('[PublishContainerTaskBuilder]', function () {
         };
 
         const projectList = getAllProjectOverrides().filter(
-            ({ containerSpecified }) => containerSpecified
+            ({ containerSpecified }) => containerSpecified,
         );
 
         projectList.forEach(({ title, overrides }) => {
@@ -157,7 +157,7 @@ describe('[PublishContainerTaskBuilder]', function () {
                                 ...overrides,
                             },
                             target,
-                            tag
+                            tag,
                         );
                         const execaMock = execaModuleMock.execa;
                         const thenMock = execaModuleMock.then;
@@ -169,7 +169,7 @@ describe('[PublishContainerTaskBuilder]', function () {
                         // The number of tasks should be double the semver components
                         expect(gulpMock.series.args[0][0]).to.have.lengthOf(
                             semverComponents.length * 2,
-                            'Number of tasks in gulp series is incorrect'
+                            'Number of tasks in gulp series is incorrect',
                         );
 
                         semverComponents.forEach((semTag, index) => {
@@ -200,7 +200,7 @@ describe('[PublishContainerTaskBuilder]', function () {
                                 .and.to.have.length(expectedArgs.length);
                             expectedArgs.forEach((arg, index) => {
                                 expect(execaMock.args[0][1][index]).to.equal(
-                                    arg
+                                    arg,
                                 );
                             });
 
@@ -211,7 +211,7 @@ describe('[PublishContainerTaskBuilder]', function () {
 
                             expect(thenMock).to.have.been.calledOnce;
                             expect(thenMock).to.have.been.calledAfter(
-                                execaMock
+                                execaMock,
                             );
                             expect(thenMock.args[0]).to.have.length(2);
 
@@ -233,7 +233,7 @@ describe('[PublishContainerTaskBuilder]', function () {
                                 ...overrides,
                             },
                             target,
-                            tag
+                            tag,
                         );
                         const execaMock = execaModuleMock.execa;
                         const thenMock = execaModuleMock.then;
@@ -246,7 +246,7 @@ describe('[PublishContainerTaskBuilder]', function () {
                         // The number of tasks should be double the semver components
                         expect(gulpMock.series.args[0][0]).to.have.lengthOf(
                             semverComponents.length * 2,
-                            'Number of tasks in gulp series is incorrect'
+                            'Number of tasks in gulp series is incorrect',
                         );
 
                         semverComponents.forEach((semTag, index) => {
@@ -279,7 +279,7 @@ describe('[PublishContainerTaskBuilder]', function () {
                                 .and.to.have.length(expectedArgs.length);
                             expectedArgs.forEach((arg, index) => {
                                 expect(execaMock.args[0][1][index]).to.equal(
-                                    arg
+                                    arg,
                                 );
                             });
 
@@ -290,7 +290,7 @@ describe('[PublishContainerTaskBuilder]', function () {
 
                             expect(thenMock).to.have.been.calledOnce;
                             expect(thenMock).to.have.been.calledAfter(
-                                execaMock
+                                execaMock,
                             );
                             expect(thenMock.args[0]).to.have.length(2);
 

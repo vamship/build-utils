@@ -25,13 +25,13 @@ describe('[LintFixTaskBuilder]', function () {
             gulpEslintMock: 'gulp-eslint-new',
             taskBuilderMock: 'src/task-builder.js',
         },
-        'LintFixTaskBuilder'
+        'LintFixTaskBuilder',
     );
 
     injectBuilderInitTests(
         _importModule,
         'lint-fix',
-        'Lints all source files and applies automatic fixes where possible'
+        'Lints all source files and applies automatic fixes where possible',
     );
 
     describe('[task]', function () {
@@ -81,9 +81,8 @@ describe('[LintFixTaskBuilder]', function () {
         getAllProjectOverrides().forEach(({ title, overrides }) => {
             describe(`Verify task (${title})`, function () {
                 it('should inititalize and set the appropriate gulp source files', async function () {
-                    const { gulpMock, task, project } = await _createTask(
-                        overrides
-                    );
+                    const { gulpMock, task, project } =
+                        await _createTask(overrides);
                     const files = createSourceList(project);
 
                     expect(gulpMock.src).to.not.have.been.called;
@@ -121,7 +120,7 @@ describe('[LintFixTaskBuilder]', function () {
                     expect(gulpMock.callSequence[1]).to.equal('pipe');
                     expect(gulpMock.pipe.args[0]).to.have.length(1);
                     expect(gulpMock.pipe.args[0][0]).to.equal(
-                        gulpEslintMock.returnValues[0]
+                        gulpEslintMock.returnValues[0],
                     );
                 });
 
@@ -140,7 +139,7 @@ describe('[LintFixTaskBuilder]', function () {
                     expect(gulpMock.callSequence[2]).to.equal('pipe');
                     expect(gulpMock.pipe.args[1]).to.have.length(1);
                     expect(gulpMock.pipe.args[1][0]).to.equal(
-                        gulpEslintMock.fix.returnValues[0]
+                        gulpEslintMock.fix.returnValues[0],
                     );
                 });
 
@@ -159,7 +158,7 @@ describe('[LintFixTaskBuilder]', function () {
                     expect(gulpMock.callSequence[3]).to.equal('pipe');
                     expect(gulpMock.pipe.args[2]).to.have.length(1);
                     expect(gulpMock.pipe.args[2][0]).to.equal(
-                        gulpEslintMock.format.returnValues[0]
+                        gulpEslintMock.format.returnValues[0],
                     );
                 });
 
@@ -179,7 +178,7 @@ describe('[LintFixTaskBuilder]', function () {
                     expect(gulpMock.callSequence[4]).to.equal('pipe');
                     expect(gulpMock.pipe.args[3]).to.have.length(1);
                     expect(gulpMock.pipe.args[3][0]).to.equal(
-                        gulpEslintMock.failAfterError.returnValues[0]
+                        gulpEslintMock.failAfterError.returnValues[0],
                     );
                 });
             });

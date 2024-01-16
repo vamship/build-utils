@@ -69,8 +69,8 @@ export class PublishAwsTaskBuilder extends TaskBuilder {
             if (undefinedVars.length > 0) {
                 throw new Error(
                     `Missing required environment variables: [${undefinedVars.join(
-                        ','
-                    )}]`
+                        ',',
+                    )}]`,
                 );
             }
 

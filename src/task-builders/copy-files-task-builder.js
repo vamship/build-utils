@@ -16,7 +16,7 @@ export class CopyFilesTaskBuilder extends TaskBuilder {
     constructor() {
         super(
             'copy-files',
-            'Copies project files from source to build directories'
+            'Copies project files from source to build directories',
         );
     }
 
@@ -43,7 +43,7 @@ export class CopyFilesTaskBuilder extends TaskBuilder {
             .map(
                 (target) =>
                     project.getContainerDefinition(target).buildFile ||
-                    'Dockerfile'
+                    'Dockerfile',
             );
 
         const extras = [

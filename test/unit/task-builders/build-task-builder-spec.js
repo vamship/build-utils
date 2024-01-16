@@ -43,7 +43,7 @@ describe('[BuildTaskBuilder]', function () {
             gulpMock: 'gulp',
             ..._importDefinitions,
         },
-        'BuildTaskBuilder'
+        'BuildTaskBuilder',
     );
 
     async function _initializeTask() {
@@ -88,7 +88,7 @@ describe('[BuildTaskBuilder]', function () {
     injectBuilderInitTests(
         _importModule,
         'build',
-        `Builds the project making it ready for execution/packaging`
+        `Builds the project making it ready for execution/packaging`,
     );
 
     injectSubBuilderCompositionTests(_initializeTask, _getExpectedSubBuilders);

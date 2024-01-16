@@ -17,7 +17,7 @@ export class LintFixTaskBuilder extends TaskBuilder {
     constructor() {
         super(
             'lint-fix',
-            'Lints all source files and applies automatic fixes where possible'
+            'Lints all source files and applies automatic fixes where possible',
         );
     }
 

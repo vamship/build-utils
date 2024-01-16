@@ -92,8 +92,8 @@ export default class TaskBuilder {
         return dirs
             .map((dir) =>
                 exts.map((ext) =>
-                    project.rootDir.getChild(dir).getAllFilesGlob(ext)
-                )
+                    project.rootDir.getChild(dir).getAllFilesGlob(ext),
+                ),
             )
             .flat();
     }

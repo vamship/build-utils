@@ -27,7 +27,7 @@ describe('[TestUiTaskBuilder]', function () {
             execaModuleMock: 'execa',
             taskBuilderMock: 'src/task-builder.js',
         },
-        'TestUiTaskBuilder'
+        'TestUiTaskBuilder',
     );
 
     injectBuilderInitTests(_importModule, 'test-ui', `Execute web UI tests`);
@@ -62,8 +62,8 @@ describe('[TestUiTaskBuilder]', function () {
                             project.rootDir.absolutePath,
                             'node_modules',
                             '.bin',
-                            bin
-                        )
+                            bin,
+                        ),
                     );
 
                     expect(execaMock).to.not.have.been.called;
@@ -74,7 +74,7 @@ describe('[TestUiTaskBuilder]', function () {
                     expect(execaMock).to.have.been.calledOnceWithExactly(
                         jestBin,
                         ['--config', 'jest.config.js', '--coverage'],
-                        { stdio: 'inherit' }
+                        { stdio: 'inherit' },
                     );
 
                     expect(thenMock).to.have.been.calledOnce;

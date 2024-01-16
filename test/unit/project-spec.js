@@ -481,7 +481,7 @@ describe('[Project]', function () {
                 const callback = (dir, level) => {
                     const path = dir.path.replace(
                         new RegExp(_path.sep, 'g'),
-                        '/'
+                        '/',
                     );
                     const expectedDir = expectedDirs[path];
                     expect(expectedDir.visited).to.be.false;
@@ -494,7 +494,7 @@ describe('[Project]', function () {
                 Directory.traverseTree(rootDir, callback);
 
                 Object.keys(expectedDirs).forEach(
-                    (dir) => expect(expectedDirs[dir].visited).to.be.true
+                    (dir) => expect(expectedDirs[dir].visited).to.be.true,
                 );
             });
         });
@@ -763,7 +763,7 @@ describe('[Project]', function () {
             targets.forEach((target) => {
                 const container = project.getContainerDefinition(target);
                 expect(container).to.deep.equal(
-                    Object.assign({ name: target }, containers[target])
+                    Object.assign({ name: target }, containers[target]),
                 );
             });
         });
@@ -781,7 +781,7 @@ describe('[Project]', function () {
             targets.forEach((target) => {
                 const oldValue = project.getContainerDefinition(target);
                 expect(oldValue).to.deep.equal(
-                    Object.assign({ name: target }, containers[target])
+                    Object.assign({ name: target }, containers[target]),
                 );
 
                 oldValue.foo = 'bar';

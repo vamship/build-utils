@@ -32,7 +32,7 @@ describe('[PackageTaskBuilder]', function () {
             gulpMock: 'gulp',
             ..._importDefinitions,
         },
-        'PackageTaskBuilder'
+        'PackageTaskBuilder',
     );
 
     async function _initializeTask() {
@@ -93,7 +93,7 @@ describe('[PackageTaskBuilder]', function () {
     injectBuilderInitTests(
         _importModule,
         'package',
-        `Packages project build files for publishing to a repository`
+        `Packages project build files for publishing to a repository`,
     );
 
     // Generalized composition tests

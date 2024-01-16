@@ -57,7 +57,7 @@ describe('[TaskFactory]', function () {
                 { name: 'task2', watchPaths: [] },
             ];
             const tasks = taskInfo.map(({ name, watchPaths }) =>
-                createTaskBuilderMock(name, watchPaths)
+                createTaskBuilderMock(name, watchPaths),
             );
 
             class TestTaskFactory extends TaskFactory {
@@ -93,7 +93,7 @@ describe('[TaskFactory]', function () {
 
             expect(watchTaskBuilderMock.ctor).to.not.have.been.called;
             tasks.forEach(
-                ({ buildTask }) => expect(buildTask).to.not.have.been.called
+                ({ buildTask }) => expect(buildTask).to.not.have.been.called,
             );
 
             const ret = factory.createTasks();
@@ -119,10 +119,10 @@ describe('[TaskFactory]', function () {
             const { tasks, factory, project, watchTaskBuilderMock } =
                 await _initializeFactory(taskInfo);
             const tasksWithPaths = tasks.filter(
-                (task) => task._watchPaths.length > 0
+                (task) => task._watchPaths.length > 0,
             );
             const tasksWithoutPaths = tasks.filter(
-                (task) => task._watchPaths.length === 0
+                (task) => task._watchPaths.length === 0,
             );
 
             tasksWithoutPaths.forEach((task) => {
@@ -144,8 +144,8 @@ describe('[TaskFactory]', function () {
 
             tasksWithoutPaths.forEach((task) =>
                 expect(task.buildTask).to.have.been.calledOnceWithExactly(
-                    project
-                )
+                    project,
+                ),
             );
         });
 
@@ -159,7 +159,7 @@ describe('[TaskFactory]', function () {
             const { tasks, factory, project, watchTaskBuilderMock } =
                 await _initializeFactory(taskInfo);
             const tasksWithPaths = tasks.filter(
-                (task) => task._watchPaths.length > 0
+                (task) => task._watchPaths.length > 0,
             );
 
             expect(watchTaskBuilderMock.ctor).to.not.have.been.called;
@@ -168,7 +168,7 @@ describe('[TaskFactory]', function () {
 
             expect(watchTaskBuilderMock.ctor).to.have.been.called;
             expect(watchTaskBuilderMock.ctor.callCount).to.equal(
-                tasksWithPaths.length
+                tasksWithPaths.length,
             );
             watchTaskBuilderMock.ctor.args.forEach(([task, paths], index) => {
                 const taskMock = tasksWithPaths[index];
@@ -187,12 +187,12 @@ describe('[TaskFactory]', function () {
             const { tasks, factory, project, watchTaskBuilderMock } =
                 await _initializeFactory(taskInfo);
             const tasksWithPaths = tasks.filter(
-                (task) => task._watchPaths.length > 0
+                (task) => task._watchPaths.length > 0,
             );
 
             expect(watchTaskBuilderMock.buildTask).to.not.have.been.called;
             tasks.forEach(
-                ({ buildTask }) => expect(buildTask).to.not.have.been.called
+                ({ buildTask }) => expect(buildTask).to.not.have.been.called,
             );
 
             const ret = factory.createTasks();
@@ -207,14 +207,14 @@ describe('[TaskFactory]', function () {
                     });
                 } else {
                     expect(buildTask).to.have.been.calledOnceWithExactly(
-                        project
+                        project,
                     );
                 }
             });
 
             expect(watchTaskBuilderMock.buildTask).to.have.been.called;
             expect(watchTaskBuilderMock.buildTask.callCount).to.equal(
-                tasksWithPaths.length
+                tasksWithPaths.length,
             );
             watchTaskBuilderMock.buildTask.args.forEach((args) => {
                 expect(args).to.have.lengthOf(1);
@@ -231,7 +231,7 @@ describe('[TaskFactory]', function () {
 
             tasksWithPaths.forEach((task, index) => {
                 expect(ret[tasks.length + index]).to.equal(
-                    watchTaskBuilderMock._task
+                    watchTaskBuilderMock._task,
                 );
             });
         });

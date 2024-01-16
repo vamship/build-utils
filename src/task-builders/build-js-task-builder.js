@@ -16,7 +16,7 @@ export class BuildJsTaskBuilder extends TaskBuilder {
     constructor() {
         super(
             'build-js',
-            'Copies javascript files from source to destination directories'
+            'Copies javascript files from source to destination directories',
         );
     }
 

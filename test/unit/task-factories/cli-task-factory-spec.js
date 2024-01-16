@@ -40,12 +40,12 @@ describe('[CliTaskFactory]', function () {
             taskFactoryMock: 'src/task-factory.js',
             ...importDefinitions,
         },
-        'CliTaskFactory'
+        'CliTaskFactory',
     );
 
     injectFactoryInitTests(
         _importModule,
-        new Project(buildProjectDefinition())
+        new Project(buildProjectDefinition()),
     );
 
     function _getExpectedTaskBuilders(project) {
@@ -83,7 +83,7 @@ describe('[CliTaskFactory]', function () {
         injectTaskBuilderCompositionTests(
             PROJECT_TYPE,
             _createFactory,
-            _getExpectedTaskBuilders
+            _getExpectedTaskBuilders,
         );
     });
 });

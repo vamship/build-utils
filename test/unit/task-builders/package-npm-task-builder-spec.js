@@ -30,13 +30,13 @@ describe('[PackageNpmTaskBuilder]', function () {
             deleteMock: 'delete',
             taskBuilderMock: 'src/task-builder.js',
         },
-        'PackageNpmTaskBuilder'
+        'PackageNpmTaskBuilder',
     );
 
     injectBuilderInitTests(
         _importModule,
         'package-npm',
-        `Package a project for publishing to NPM`
+        `Package a project for publishing to NPM`,
     );
 
     describe('[task composition]', function () {
@@ -110,9 +110,9 @@ describe('[PackageNpmTaskBuilder]', function () {
                             stdio: 'inherit',
                             cwd: _path.join(
                                 project.rootDir.absolutePath,
-                                jsRootDir
+                                jsRootDir,
                             ),
-                        }
+                        },
                     );
 
                     expect(thenMock).to.have.been.calledOnce;
@@ -143,8 +143,8 @@ describe('[PackageNpmTaskBuilder]', function () {
                         _path.join(
                             project.rootDir.absolutePath,
                             jsRootDir,
-                            packageName
-                        )
+                            packageName,
+                        ),
                     );
                 });
 
@@ -165,8 +165,8 @@ describe('[PackageNpmTaskBuilder]', function () {
                         _path.join(
                             project.rootDir.absolutePath,
                             'dist',
-                            _path.sep
-                        )
+                            _path.sep,
+                        ),
                     );
 
                     expect(gulpMock.pipe).to.have.been.called;
@@ -174,14 +174,13 @@ describe('[PackageNpmTaskBuilder]', function () {
 
                     expect(gulpMock.pipe.args[0]).to.have.length(1);
                     expect(gulpMock.pipe.args[0][0]).to.equal(
-                        gulpMock.dest.returnValues[0]
+                        gulpMock.dest.returnValues[0],
                     );
                 });
 
                 it('should delete the original package file from the source', async function () {
-                    const { gulpMock, deleteMock, project } = await _createTask(
-                        overrides
-                    );
+                    const { gulpMock, deleteMock, project } =
+                        await _createTask(overrides);
                     const [_first, _second, task] = gulpMock.series.args[0][0];
                     const packageName = `${project.kebabCasedName}-${project.version}.tgz`;
 
@@ -194,7 +193,7 @@ describe('[PackageNpmTaskBuilder]', function () {
                         _path.join(
                             project.rootDir.absolutePath,
                             jsRootDir,
-                            packageName
+                            packageName,
                         ),
                     ]);
                 });

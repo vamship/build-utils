@@ -25,7 +25,7 @@ describe('[LintTaskBuilder]', function () {
             gulpEslintMock: 'gulp-eslint-new',
             taskBuilderMock: 'src/task-builder.js',
         },
-        'LintTaskBuilder'
+        'LintTaskBuilder',
     );
 
     injectBuilderInitTests(_importModule, 'lint', 'Lints all source files');
@@ -74,9 +74,8 @@ describe('[LintTaskBuilder]', function () {
         getAllProjectOverrides().forEach(({ title, overrides }) => {
             describe(`Verify task (${title})`, function () {
                 it('should inititalize and set the appropriate gulp source files', async function () {
-                    const { gulpMock, task, project } = await _createTask(
-                        overrides
-                    );
+                    const { gulpMock, task, project } =
+                        await _createTask(overrides);
 
                     expect(gulpMock.src).to.not.have.been.called;
 
@@ -86,7 +85,7 @@ describe('[LintTaskBuilder]', function () {
                     expect(gulpMock.callSequence[0]).to.equal('src');
                     expect(gulpMock.src.args[0]).to.have.length(2);
                     expect(gulpMock.src.args[0][0]).to.have.members(
-                        createSourceList(project)
+                        createSourceList(project),
                     );
                     expect(gulpMock.src.args[0][1]).to.deep.equal({
                         allowEmpty: true,
@@ -114,7 +113,7 @@ describe('[LintTaskBuilder]', function () {
                     expect(gulpMock.callSequence[1]).to.equal('pipe');
                     expect(gulpMock.pipe.args[0]).to.have.length(1);
                     expect(gulpMock.pipe.args[0][0]).to.equal(
-                        gulpEslintMock.returnValues[0]
+                        gulpEslintMock.returnValues[0],
                     );
                 });
 
@@ -133,7 +132,7 @@ describe('[LintTaskBuilder]', function () {
                     expect(gulpMock.callSequence[2]).to.equal('pipe');
                     expect(gulpMock.pipe.args[1]).to.have.length(1);
                     expect(gulpMock.pipe.args[1][0]).to.equal(
-                        gulpEslintMock.format.returnValues[0]
+                        gulpEslintMock.format.returnValues[0],
                     );
                 });
 
@@ -153,7 +152,7 @@ describe('[LintTaskBuilder]', function () {
                     expect(gulpMock.callSequence[3]).to.equal('pipe');
                     expect(gulpMock.pipe.args[2]).to.have.length(1);
                     expect(gulpMock.pipe.args[2][0]).to.equal(
-                        gulpEslintMock.failAfterError.returnValues[0]
+                        gulpEslintMock.failAfterError.returnValues[0],
                     );
                 });
             });

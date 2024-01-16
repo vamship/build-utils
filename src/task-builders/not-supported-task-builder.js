@@ -16,7 +16,7 @@ export class NotSupportedTaskBuilder extends TaskBuilder {
     constructor() {
         super(
             'not-supported',
-            `Task that does nothing - used to indicate that a task is not supported for a project type.`
+            `Task that does nothing - used to indicate that a task is not supported for a project type.`,
         );
     }
 

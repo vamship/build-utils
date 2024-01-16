@@ -28,13 +28,13 @@ describe('[PublishNpmTaskBuilder]', function () {
             gulpMock: 'gulp',
             taskBuilderMock: 'src/task-builder.js',
         },
-        'PublishNpmTaskBuilder'
+        'PublishNpmTaskBuilder',
     );
 
     injectBuilderInitTests(
         _importModule,
         'publish-npm',
-        `Publish a project to an NPM registry`
+        `Publish a project to an NPM registry`,
     );
 
     describe('[task]', function () {
@@ -83,9 +83,9 @@ describe('[PublishNpmTaskBuilder]', function () {
                             cwd:
                                 _path.join(
                                     project.rootDir.absolutePath,
-                                    'dist'
+                                    'dist',
                                 ) + _path.sep,
-                        }
+                        },
                     );
 
                     expect(thenMock).to.have.been.calledOnce;

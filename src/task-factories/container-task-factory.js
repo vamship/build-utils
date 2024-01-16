@@ -47,7 +47,7 @@ export class ContainerTaskFactory extends TaskFactory {
         };
         const additionalTasks = generateAdditionalContainerTasks(
             this._project,
-            additionalTaskList
+            additionalTaskList,
         );
 
         return [

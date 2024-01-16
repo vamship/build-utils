@@ -25,13 +25,13 @@ describe('[DocsJsTaskBuilder]', function () {
             gulpJsDocMock: 'gulp-jsdoc3',
             taskBuilderMock: 'src/task-builder.js',
         },
-        'DocsJsTaskBuilder'
+        'DocsJsTaskBuilder',
     );
 
     injectBuilderInitTests(
         _importModule,
         'docs-js',
-        'Generates documentation from code comments in javascript files'
+        'Generates documentation from code comments in javascript files',
     );
 
     describe('[task]', function () {
@@ -69,9 +69,8 @@ describe('[DocsJsTaskBuilder]', function () {
         getAllProjectOverrides().forEach(({ title, overrides }) => {
             describe(`Verify task (${title})`, function () {
                 it('should inititalize and set the appropriate gulp source files', async function () {
-                    const { gulpMock, task, project } = await _createTask(
-                        overrides
-                    );
+                    const { gulpMock, task, project } =
+                        await _createTask(overrides);
                     const files = createSourceList(project, overrides);
 
                     expect(gulpMock.src).to.not.have.been.called;
@@ -104,13 +103,13 @@ describe('[DocsJsTaskBuilder]', function () {
                         opts: {
                             readme: _path.join(
                                 project.rootDir.absolutePath,
-                                'README.md'
+                                'README.md',
                             ),
                             destination: _path.join(
                                 project.rootDir.absolutePath,
                                 'docs',
                                 project.name,
-                                project.version
+                                project.version,
                             ),
                             template: 'node_modules/docdash',
                         },
@@ -121,7 +120,7 @@ describe('[DocsJsTaskBuilder]', function () {
 
                     expect(gulpMock.pipe.args[0]).to.have.length(1);
                     expect(gulpMock.pipe.args[0][0]).to.equal(
-                        gulpJsDocMock.returnValues[0]
+                        gulpJsDocMock.returnValues[0],
                     );
                 });
 

@@ -35,12 +35,12 @@ describe('[UiTaskFactory]', function () {
             taskFactoryMock: 'src/task-factory.js',
             ...importDefinitions,
         },
-        'UiTaskFactory'
+        'UiTaskFactory',
     );
 
     injectFactoryInitTests(
         _importModule,
-        new Project(buildProjectDefinition())
+        new Project(buildProjectDefinition()),
     );
 
     function _getExpectedTaskBuilders(project) {
@@ -75,7 +75,7 @@ describe('[UiTaskFactory]', function () {
         injectTaskBuilderCompositionTests(
             PROJECT_TYPE,
             _createFactory,
-            _getExpectedTaskBuilders
+            _getExpectedTaskBuilders,
         );
     });
 });

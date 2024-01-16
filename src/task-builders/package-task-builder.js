@@ -22,7 +22,7 @@ export class PackageTaskBuilder extends TaskBuilder {
     constructor() {
         super(
             'package',
-            `Packages project build files for publishing to a repository`
+            `Packages project build files for publishing to a repository`,
         );
     }
 
@@ -41,7 +41,7 @@ export class PackageTaskBuilder extends TaskBuilder {
         }
 
         const builders = this._getSubBuilders(project).map((builder) =>
-            builder.buildTask(project)
+            builder.buildTask(project),
         );
 
         const task = _gulp.series(builders);

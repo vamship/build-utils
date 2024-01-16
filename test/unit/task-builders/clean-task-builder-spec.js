@@ -20,13 +20,13 @@ describe('[CleanTaskBuilder]', function () {
             deleteMock: 'delete',
             taskBuilderMock: 'src/task-builder.js',
         },
-        'CleanTaskBuilder'
+        'CleanTaskBuilder',
     );
 
     injectBuilderInitTests(
         _importModule,
         'clean',
-        'Cleans out working, distribution and temporary files and directories'
+        'Cleans out working, distribution and temporary files and directories',
     );
 
     describe('[task]', function () {
@@ -56,15 +56,14 @@ describe('[CleanTaskBuilder]', function () {
                     'working',
                     'cdk.out',
                 ].map((name) =>
-                    _path.join(project.rootDir.absolutePath, name, _path.sep)
+                    _path.join(project.rootDir.absolutePath, name, _path.sep),
                 );
             }
 
             describe(`Verify task (${title})`, function () {
                 it('should delete the expected files', async function () {
-                    const { deleteMock, project, task } = await _createTask(
-                        overrides
-                    );
+                    const { deleteMock, project, task } =
+                        await _createTask(overrides);
 
                     expect(deleteMock).to.not.have.been.called;
 
@@ -72,7 +71,7 @@ describe('[CleanTaskBuilder]', function () {
 
                     expect(deleteMock).to.have.been.calledOnce;
                     expect(deleteMock.args[0][0]).to.have.members(
-                        createSourceList(project, overrides)
+                        createSourceList(project, overrides),
                     );
                 });
             });

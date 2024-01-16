@@ -27,7 +27,7 @@ describe('[TestTaskBuilder]', function () {
             execaModuleMock: 'execa',
             taskBuilderMock: 'src/task-builder.js',
         },
-        'TestTaskBuilder'
+        'TestTaskBuilder',
     );
 
     describe('ctor() <test type>', function () {
@@ -47,8 +47,8 @@ describe('[TestTaskBuilder]', function () {
             _importModule,
             `test-${testType}`,
             `Execute ${testType} tests`,
-            [testType]
-        )
+            [testType],
+        ),
     );
 
     describe('[task]', function () {
@@ -82,8 +82,8 @@ describe('[TestTaskBuilder]', function () {
                                 project.rootDir.absolutePath,
                                 'node_modules',
                                 '.bin',
-                                bin
-                            )
+                                bin,
+                            ),
                         );
 
                         const specPath = _path.join(
@@ -92,7 +92,7 @@ describe('[TestTaskBuilder]', function () {
                             'test',
                             testType,
                             '**',
-                            '*.js'
+                            '*.js',
                         );
 
                         expect(execaMock).to.not.have.been.called;
@@ -109,7 +109,7 @@ describe('[TestTaskBuilder]', function () {
                                 '--loader=esmock',
                                 specPath,
                             ],
-                            { stdio: 'inherit' }
+                            { stdio: 'inherit' },
                         );
 
                         expect(thenMock).to.have.been.calledOnce;
@@ -125,7 +125,7 @@ describe('[TestTaskBuilder]', function () {
                         expect(errorHandler()).to.be.undefined;
                     });
                 });
-            })
+            }),
         );
     });
 

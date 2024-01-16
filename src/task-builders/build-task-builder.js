@@ -20,7 +20,7 @@ export class BuildTaskBuilder extends TaskBuilder {
     constructor() {
         super(
             'build',
-            `Builds the project making it ready for execution/packaging`
+            `Builds the project making it ready for execution/packaging`,
         );
     }
 
@@ -39,7 +39,7 @@ export class BuildTaskBuilder extends TaskBuilder {
         }
 
         const builders = this._getSubBuilders(project).map((builder) =>
-            builder.buildTask(project)
+            builder.buildTask(project),
         );
 
         const task = _gulp.series(builders);

@@ -18,7 +18,7 @@ export class DocsTaskBuilder extends TaskBuilder {
     constructor() {
         super(
             'docs',
-            `Generates documentation from code comments in source files`
+            `Generates documentation from code comments in source files`,
         );
     }
 
@@ -37,7 +37,7 @@ export class DocsTaskBuilder extends TaskBuilder {
         }
 
         const builders = this._getSubBuilders(project).map((builder) =>
-            builder.buildTask(project)
+            builder.buildTask(project),
         );
 
         const task = _gulp.series(builders);

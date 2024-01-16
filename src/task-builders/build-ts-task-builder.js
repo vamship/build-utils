@@ -16,7 +16,7 @@ export class BuildTsTaskBuilder extends TaskBuilder {
     constructor() {
         super(
             'build-ts',
-            'Build typescript files and writes them to the build directory'
+            'Build typescript files and writes them to the build directory',
         );
     }
 

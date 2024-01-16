@@ -30,7 +30,7 @@ describe('[Task Factory Utils]', function () {
     ];
     const _importModule = createModuleImporter(
         'src/utils/task-factory-utils.js',
-        createTaskFactoryImportDefinitions(_factoryNames)
+        createTaskFactoryImportDefinitions(_factoryNames),
     );
 
     it('should export expected methods', async function () {
@@ -51,7 +51,7 @@ describe('[Task Factory Utils]', function () {
                 const additionalTaskList = stub().returns([]);
 
                 expect(() => func(project, additionalTaskList)).to.throw(
-                    'Invalid project (arg #1)'
+                    'Invalid project (arg #1)',
                 );
             });
         });
@@ -62,7 +62,7 @@ describe('[Task Factory Utils]', function () {
                 const project = new Project(buildProjectDefinition());
 
                 expect(() => func(project, additionalTaskList)).to.throw(
-                    'Invalid additionalTaskList (arg #2)'
+                    'Invalid additionalTaskList (arg #2)',
                 );
             });
         });
@@ -80,7 +80,7 @@ describe('[Task Factory Utils]', function () {
                             },
                         },
                     },
-                })
+                }),
             );
             const additionalTaskList = stub().returns([]);
 
@@ -116,7 +116,7 @@ describe('[Task Factory Utils]', function () {
                             },
                         },
                     },
-                })
+                }),
             );
             const additionalTaskList = stub().returns([]);
 
@@ -127,7 +127,7 @@ describe('[Task Factory Utils]', function () {
             expect(additionalTaskList).to.have.been.calledTwice;
             ['myBuildArm', 'myBuildArm2'].forEach((target, index) => {
                 expect(
-                    additionalTaskList.getCall(index)
+                    additionalTaskList.getCall(index),
                 ).to.have.been.calledWithExactly(target);
             });
         });
@@ -152,7 +152,7 @@ describe('[Task Factory Utils]', function () {
                             },
                         },
                     },
-                })
+                }),
             );
             const additionalTaskList = stub().returns([]);
 
@@ -188,7 +188,7 @@ describe('[Task Factory Utils]', function () {
                             },
                         },
                     },
-                })
+                }),
             );
             const additionalTaskList = (target) => [
                 `_ret_${target}_1`,
@@ -199,7 +199,7 @@ describe('[Task Factory Utils]', function () {
 
             const expectedResults = ['myBuildArm', 'myBuildArm2']
                 .map((target) =>
-                    [1, 2].map((index) => `_ret_${target}_${index}`)
+                    [1, 2].map((index) => `_ret_${target}_${index}`),
                 )
                 .flat();
 
@@ -239,7 +239,7 @@ describe('[Task Factory Utils]', function () {
 
                 expect(expectedFactory.ctor).to.have.been.calledWithNew;
                 expect(expectedFactory.ctor).to.have.been.calledOnceWithExactly(
-                    project
+                    project,
                 );
                 expect(ret).to.equal(expectedFactory);
             });

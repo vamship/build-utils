@@ -43,7 +43,7 @@ export function getAllButString(...extras) {
  */
 export function getAllButObject(...extras) {
     return [undefined, null, 123, true, 'abc', [], () => 0].concat(
-        extras || []
+        extras || [],
     );
 }
 
@@ -59,7 +59,7 @@ export function getAllButObject(...extras) {
  */
 export function getAllButArray(...extras) {
     return [undefined, null, 123, true, 'abc', {}, () => 0].concat(
-        extras || []
+        extras || [],
     );
 }
 
@@ -145,7 +145,7 @@ export function getAllProjectOverrides(maxItems) {
     }
 
     return mapProjectList(_transformOverrides).filter(
-        (_, index) => maxItems < 0 || index < maxItems
+        (_, index) => maxItems < 0 || index < maxItems,
     );
 }
 
@@ -176,7 +176,7 @@ export function getSelectedProjectOverrides(projectTypes, maxItems) {
         .filter(
             ({ overrides }) =>
                 !projectTypes ||
-                projectTypes.indexOf(overrides['buildMetadata.type']) >= 0
+                projectTypes.indexOf(overrides['buildMetadata.type']) >= 0,
         )
         .filter((_, index) => maxItems < 0 || index < maxItems);
 }
@@ -199,9 +199,9 @@ export function generateGlobPatterns(basePath, dirs, extensions) {
                     basePath,
                     dir,
                     '**',
-                    ext.length > 0 ? `*.${ext}` : '*'
-                )
-            )
+                    ext.length > 0 ? `*.${ext}` : '*',
+                ),
+            ),
         )
         .reduce((result, item) => result.concat(item), []);
 }

@@ -125,7 +125,7 @@ describe('[TaskBuilder]', function () {
 
             expect(instance.createTaskSpy).to.have.been.calledOnce;
             expect(instance.createTaskSpy).to.have.been.calledWithExactly(
-                project
+                project,
             );
         });
 

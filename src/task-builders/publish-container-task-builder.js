@@ -32,7 +32,7 @@ export class PublishContainerTaskBuilder extends TaskBuilder {
             // When specifying the container target, if it is not called default, this
             // will create a named task
             `publish-container${target === 'default' ? '' : '-' + target}`,
-            `Publish container image for ${target}:${tag}`
+            `Publish container image for ${target}:${tag}`,
         );
 
         this._target = target;
@@ -64,7 +64,7 @@ export class PublishContainerTaskBuilder extends TaskBuilder {
                     ['tag', definition.name, `${definition.name}:${tag}`],
                     {
                         stdio: 'inherit',
-                    }
+                    },
                 ).then(undefined, (err) => {
                     /*
                      * Do nothing. This handler prevents the gulp task from

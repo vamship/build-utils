@@ -38,7 +38,7 @@ export class PublishTaskBuilder extends TaskBuilder {
         }
 
         const builders = this._getSubBuilders(project).map((builder) =>
-            builder.buildTask(project)
+            builder.buildTask(project),
         );
 
         const task = _gulp.series(builders);

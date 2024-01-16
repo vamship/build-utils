@@ -26,13 +26,13 @@ describe('[CopyFilesTaskBuilder]', function () {
             gulpMock: 'gulp',
             taskBuilderMock: 'src/task-builder.js',
         },
-        'CopyFilesTaskBuilder'
+        'CopyFilesTaskBuilder',
     );
 
     injectBuilderInitTests(
         _importModule,
         'copy-files',
-        'Copies project files from source to build directories'
+        'Copies project files from source to build directories',
     );
 
     describe('[task]', function () {
@@ -72,15 +72,15 @@ describe('[CopyFilesTaskBuilder]', function () {
                 '.npmrc',
             ].concat(
                 Object.keys(container).map(
-                    (key) => container[key].buildFile || 'Dockerfile'
-                )
+                    (key) => container[key].buildFile || 'Dockerfile',
+                ),
             );
             const dirs = ['src', 'test', 'infra'];
             const extensions = ['json'].concat(staticFilePatterns);
             const rootDir = project.rootDir.absolutePath;
 
             return generateGlobPatterns(rootDir, dirs, extensions).concat(
-                extras.map((file) => _path.join(rootDir, file))
+                extras.map((file) => _path.join(rootDir, file)),
             );
         }
 
@@ -92,7 +92,7 @@ describe('[CopyFilesTaskBuilder]', function () {
                     ...overrides,
                     'buildMetadata.container': undefined,
                 },
-            })
+            }),
         );
 
         // Identify projects that can support containers
@@ -133,9 +133,8 @@ describe('[CopyFilesTaskBuilder]', function () {
         projectOverrides.forEach(({ title, overrides }) => {
             describe(`Verify task (${title})`, function () {
                 it('should inititalize and set the appropriate gulp source files', async function () {
-                    const { gulpMock, task, project } = await _createTask(
-                        overrides
-                    );
+                    const { gulpMock, task, project } =
+                        await _createTask(overrides);
                     const files = createSourceList(project, overrides);
 
                     expect(gulpMock.src).to.not.have.been.called;
@@ -158,9 +157,8 @@ describe('[CopyFilesTaskBuilder]', function () {
                         ...overrides,
                         'buildMetadata.staticFilePatterns': staticFilePatterns,
                     };
-                    const { gulpMock, task, project } = await _createTask(
-                        overrides
-                    );
+                    const { gulpMock, task, project } =
+                        await _createTask(overrides);
                     const files = createSourceList(project, overrides);
 
                     expect(gulpMock.src).to.not.have.been.called;
@@ -178,9 +176,8 @@ describe('[CopyFilesTaskBuilder]', function () {
                 });
 
                 it('should write the source files to the working directories', async function () {
-                    const { gulpMock, task, project } = await _createTask(
-                        overrides
-                    );
+                    const { gulpMock, task, project } =
+                        await _createTask(overrides);
 
                     expect(gulpMock.pipe).to.not.have.been.called;
                     expect(gulpMock.dest).to.not.have.been.called;
@@ -195,8 +192,8 @@ describe('[CopyFilesTaskBuilder]', function () {
                         _path.join(
                             project.rootDir.absolutePath,
                             'working',
-                            _path.sep
-                        )
+                            _path.sep,
+                        ),
                     );
 
                     expect(gulpMock.pipe).to.have.been.called;
@@ -204,7 +201,7 @@ describe('[CopyFilesTaskBuilder]', function () {
 
                     expect(gulpMock.pipe.args[0]).to.have.length(1);
                     expect(gulpMock.pipe.args[0][0]).to.equal(
-                        gulpMock.dest.returnValues[0]
+                        gulpMock.dest.returnValues[0],
                     );
                 });
             });

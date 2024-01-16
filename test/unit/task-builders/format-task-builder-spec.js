@@ -25,13 +25,13 @@ describe('[FormatTaskBuilder]', function () {
             gulpPrettierMock: 'gulp-prettier',
             taskBuilderMock: 'src/task-builder.js',
         },
-        'FormatTaskBuilder'
+        'FormatTaskBuilder',
     );
 
     injectBuilderInitTests(
         _importModule,
         'format',
-        'Formats all source files, README.md and build scripts'
+        'Formats all source files, README.md and build scripts',
     );
 
     describe('[task]', function () {
@@ -72,9 +72,8 @@ describe('[FormatTaskBuilder]', function () {
         getAllProjectOverrides().forEach(({ title, overrides }) => {
             describe(`Verify task (${title})`, function () {
                 it('should inititalize and set the appropriate gulp source files', async function () {
-                    const { gulpMock, task, project } = await _createTask(
-                        overrides
-                    );
+                    const { gulpMock, task, project } =
+                        await _createTask(overrides);
                     const files = createSourceList(project, overrides);
 
                     expect(gulpMock.src).to.not.have.been.called;
@@ -105,7 +104,7 @@ describe('[FormatTaskBuilder]', function () {
 
                     expect(gulpMock.pipe.args[0]).to.have.length(1);
                     expect(gulpMock.pipe.args[0][0]).to.equal(
-                        gulpPrettierMock.returnValues[0]
+                        gulpPrettierMock.returnValues[0],
                     );
                 });
 
@@ -129,9 +128,8 @@ describe('[FormatTaskBuilder]', function () {
                 });
 
                 it('should overwrite the source file with formatted contents', async function () {
-                    const { gulpMock, task, project } = await _createTask(
-                        overrides
-                    );
+                    const { gulpMock, task, project } =
+                        await _createTask(overrides);
 
                     expect(gulpMock.pipe).to.not.have.been.called;
                     expect(gulpMock.dest).to.not.have.been.called;
@@ -143,7 +141,7 @@ describe('[FormatTaskBuilder]', function () {
 
                     expect(gulpMock.dest.args[0]).to.have.length(1);
                     expect(gulpMock.dest.args[0][0]).to.equal(
-                        project.rootDir.absolutePath
+                        project.rootDir.absolutePath,
                     );
 
                     expect(gulpMock.pipe).to.have.been.called;
@@ -151,7 +149,7 @@ describe('[FormatTaskBuilder]', function () {
 
                     expect(gulpMock.pipe.args[1]).to.have.length(1);
                     expect(gulpMock.pipe.args[1][0]).to.equal(
-                        gulpMock.dest.returnValues[0]
+                        gulpMock.dest.returnValues[0],
                     );
                 });
             });

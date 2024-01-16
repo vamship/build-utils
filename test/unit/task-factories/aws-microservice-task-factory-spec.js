@@ -37,12 +37,12 @@ describe('[AwsMicroserviceTaskFactory]', function () {
             taskFactoryMock: 'src/task-factory.js',
             ...importDefinitions,
         },
-        'AwsMicroserviceTaskFactory'
+        'AwsMicroserviceTaskFactory',
     );
 
     injectFactoryInitTests(
         _importModule,
-        new Project(buildProjectDefinition())
+        new Project(buildProjectDefinition()),
     );
 
     function _getExpectedTaskBuilders(project) {
@@ -80,7 +80,7 @@ describe('[AwsMicroserviceTaskFactory]', function () {
         injectTaskBuilderCompositionTests(
             PROJECT_TYPE,
             _createFactory,
-            _getExpectedTaskBuilders
+            _getExpectedTaskBuilders,
         );
     });
 });

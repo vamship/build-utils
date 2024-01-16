@@ -29,7 +29,7 @@ describe('[PublishAwsTaskBuilder]', function () {
             dotenvExpandMock: 'dotenv-expand',
             taskBuilderMock: 'src/task-builder.js',
         },
-        'PublishAwsTaskBuilder'
+        'PublishAwsTaskBuilder',
     );
 
     describe('ctor() <target, env>', function () {
@@ -77,7 +77,7 @@ describe('[PublishAwsTaskBuilder]', function () {
         _importModule,
         'publish-aws',
         `Publish a CDK project to AWS`,
-        ['myStack', 'infra', false] // myStack is the name of the target populated by default (see object-builder.js)
+        ['myStack', 'infra', false], // myStack is the name of the target populated by default (see object-builder.js)
     );
 
     getAllProjectOverrides().forEach(({ title, overrides }) => {
@@ -91,7 +91,7 @@ describe('[PublishAwsTaskBuilder]', function () {
                 const builder = new PackageContainerTaskBuilder(
                     stackName,
                     'infra',
-                    false
+                    false,
                 );
 
                 const wrapper = () => builder.buildTask(project);
@@ -134,12 +134,12 @@ describe('[PublishAwsTaskBuilder]', function () {
             const builder = new PublishAwsTaskBuilder(
                 target,
                 environment,
-                requireApproval
+                requireApproval,
             );
 
             const checkStub = stub(
                 project,
-                'getUndefinedEnvironmentVariables'
+                'getUndefinedEnvironmentVariables',
             ).returns([]);
 
             return {
@@ -177,8 +177,8 @@ describe('[PublishAwsTaskBuilder]', function () {
                         expect(config.args[index][0]).to.equal(
                             _path.join(
                                 project.rootDir.getChild('infra').absolutePath,
-                                envFile
-                            )
+                                envFile,
+                            ),
                         );
                     });
 
@@ -186,9 +186,9 @@ describe('[PublishAwsTaskBuilder]', function () {
                     [config.returnValues[0], config.returnValues[1]].forEach(
                         (retValue, index) => {
                             expect(dotenvExpandMock.args[index][0]).to.equal(
-                                retValue
+                                retValue,
                             );
-                        }
+                        },
                     );
                 });
 
@@ -208,7 +208,7 @@ describe('[PublishAwsTaskBuilder]', function () {
                     task();
 
                     expect(
-                        project.getUndefinedEnvironmentVariables
+                        project.getUndefinedEnvironmentVariables,
                     ).to.have.been.calledOnceWith();
                 });
 
@@ -222,15 +222,15 @@ describe('[PublishAwsTaskBuilder]', function () {
                     const missingVars = ['foo', 'bar'];
 
                     project.getUndefinedEnvironmentVariables.returns(
-                        missingVars
+                        missingVars,
                     );
 
                     const wrapper = () => task();
 
                     expect(wrapper).to.throw(
                         `Missing required environment variables: [${missingVars.join(
-                            ','
-                        )}]`
+                            ',',
+                        )}]`,
                     );
                 });
 
@@ -246,7 +246,7 @@ describe('[PublishAwsTaskBuilder]', function () {
                                         [targetStack]: stackName,
                                     },
                                 },
-                                { target: targetStack, requireApproval }
+                                { target: targetStack, requireApproval },
                             );
                         const execaMock = execaModuleMock.execa;
                         const thenMock = execaModuleMock.then;
@@ -267,7 +267,7 @@ describe('[PublishAwsTaskBuilder]', function () {
                                 project.rootDir.absolutePath,
                                 jsRootDir,
                                 'infra',
-                                'index'
+                                'index',
                             ),
                         ].filter((arg) => typeof arg !== 'undefined'); // Filter out any undefined args
 
@@ -296,7 +296,7 @@ describe('[PublishAwsTaskBuilder]', function () {
                             stdio: 'inherit',
                             cwd: _path.join(
                                 project.rootDir.absolutePath,
-                                jsRootDir
+                                jsRootDir,
                             ),
                         });
 

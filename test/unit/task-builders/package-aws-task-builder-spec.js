@@ -30,13 +30,13 @@ describe('[PackageAwsTaskBuilder]', function () {
             zipMock: 'gulp-zip',
             taskBuilderMock: 'src/task-builder.js',
         },
-        'PackageAwsTaskBuilder'
+        'PackageAwsTaskBuilder',
     );
 
     injectBuilderInitTests(
         _importModule,
         'package-aws',
-        `Package a project for publishing to AWS`
+        `Package a project for publishing to AWS`,
     );
 
     describe('[task composition]', function () {
@@ -97,9 +97,9 @@ describe('[PackageAwsTaskBuilder]', function () {
             return generateGlobPatterns(
                 rootDir.absolutePath,
                 dirs,
-                extensions
+                extensions,
             ).concat(
-                extras.map((file) => _path.join(rootDir.absolutePath, file))
+                extras.map((file) => _path.join(rootDir.absolutePath, file)),
             );
         }
 
@@ -130,9 +130,9 @@ describe('[PackageAwsTaskBuilder]', function () {
                             stdio: 'inherit',
                             cwd: _path.join(
                                 project.rootDir.absolutePath,
-                                jsRootDir
+                                jsRootDir,
                             ),
-                        }
+                        },
                     );
 
                     expect(thenMock).to.have.been.calledOnce;
@@ -164,7 +164,7 @@ describe('[PackageAwsTaskBuilder]', function () {
                     expect(gulpMock.callSequence[1]).to.equal('src');
                     expect(gulpMock.src.args[0]).to.have.length(2);
                     expect(gulpMock.src.args[0][0]).to.have.members(
-                        createSourceList(project)
+                        createSourceList(project),
                     );
 
                     expect(gulpMock.src.args[0][1]).to.deep.equal({
@@ -174,9 +174,8 @@ describe('[PackageAwsTaskBuilder]', function () {
                 });
 
                 it('should pipe the source files to the zip task for packaging', async function () {
-                    const { project, gulpMock, zipMock } = await _createTask(
-                        overrides
-                    );
+                    const { project, gulpMock, zipMock } =
+                        await _createTask(overrides);
                     const [_first, task] = gulpMock.series.args[0][0];
 
                     expect(gulpMock.pipe).to.not.have.been.called;
@@ -185,7 +184,7 @@ describe('[PackageAwsTaskBuilder]', function () {
                     task();
 
                     expect(zipMock).to.have.been.calledOnceWith(
-                        `${project.kebabCasedName}-${project.version}.zip`
+                        `${project.kebabCasedName}-${project.version}.zip`,
                     );
 
                     expect(gulpMock.pipe).to.have.been.called;
@@ -193,7 +192,7 @@ describe('[PackageAwsTaskBuilder]', function () {
 
                     expect(gulpMock.pipe.args[0]).to.have.length(1);
                     expect(gulpMock.pipe.args[0][0]).to.equal(
-                        zipMock.returnValues[0]
+                        zipMock.returnValues[0],
                     );
                 });
 
@@ -232,7 +231,7 @@ describe('[PackageAwsTaskBuilder]', function () {
                     expect(gulpMock.dest.args[0]).to.have.length(1);
                     expect(gulpMock.dest.args[0][0]).to.equal(
                         _path.join(project.rootDir.absolutePath, 'dist') +
-                            _path.sep
+                            _path.sep,
                     );
 
                     expect(gulpMock.pipe).to.have.been.called;
@@ -240,7 +239,7 @@ describe('[PackageAwsTaskBuilder]', function () {
 
                     expect(gulpMock.pipe.args[1]).to.have.length(1);
                     expect(gulpMock.pipe.args[1][0]).to.equal(
-                        gulpMock.dest.returnValues[0]
+                        gulpMock.dest.returnValues[0],
                     );
                 });
             });

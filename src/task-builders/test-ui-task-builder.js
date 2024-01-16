@@ -58,7 +58,7 @@ export class TestUiTaskBuilder extends TaskBuilder {
 
         return dirs
             .map((dir) =>
-                exts.map((ext) => rootDir.getChild(dir).getAllFilesGlob(ext))
+                exts.map((ext) => rootDir.getChild(dir).getAllFilesGlob(ext)),
             )
             .flat();
     }

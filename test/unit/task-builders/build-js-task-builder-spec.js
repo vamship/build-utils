@@ -25,13 +25,13 @@ describe('[BuildJsTaskBuilder]', function () {
             gulpMock: 'gulp',
             taskBuilderMock: 'src/task-builder.js',
         },
-        'BuildJsTaskBuilder'
+        'BuildJsTaskBuilder',
     );
 
     injectBuilderInitTests(
         _importModule,
         'build-js',
-        'Copies javascript files from source to destination directories'
+        'Copies javascript files from source to destination directories',
     );
 
     describe('[task]', function () {
@@ -63,9 +63,8 @@ describe('[BuildJsTaskBuilder]', function () {
         getAllProjectOverrides().forEach(({ title, overrides }) => {
             describe(`Verify task (${title})`, function () {
                 it('should inititalize and set the appropriate gulp source files', async function () {
-                    const { gulpMock, task, project } = await _createTask(
-                        overrides
-                    );
+                    const { gulpMock, task, project } =
+                        await _createTask(overrides);
                     const files = createSourceList(project, overrides);
 
                     expect(gulpMock.src).to.not.have.been.called;
@@ -83,9 +82,8 @@ describe('[BuildJsTaskBuilder]', function () {
                 });
 
                 it('should write the source files to the working directories', async function () {
-                    const { gulpMock, task, project } = await _createTask(
-                        overrides
-                    );
+                    const { gulpMock, task, project } =
+                        await _createTask(overrides);
 
                     expect(gulpMock.pipe).to.not.have.been.called;
                     expect(gulpMock.dest).to.not.have.been.called;
@@ -100,8 +98,8 @@ describe('[BuildJsTaskBuilder]', function () {
                         _path.join(
                             project.rootDir.absolutePath,
                             'working',
-                            _path.sep
-                        )
+                            _path.sep,
+                        ),
                     );
 
                     expect(gulpMock.pipe).to.have.been.called;
@@ -109,7 +107,7 @@ describe('[BuildJsTaskBuilder]', function () {
 
                     expect(gulpMock.pipe.args[0]).to.have.length(1);
                     expect(gulpMock.pipe.args[0][0]).to.equal(
-                        gulpMock.dest.returnValues[0]
+                        gulpMock.dest.returnValues[0],
                     );
                 });
             });

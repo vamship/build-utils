@@ -24,13 +24,13 @@ describe('[NotSupportedTaskBuilder]', function () {
             fancyLogMock: 'fancy-log',
             taskBuilderMock: 'src/task-builder.js',
         },
-        'NotSupportedTaskBuilder'
+        'NotSupportedTaskBuilder',
     );
 
     injectBuilderInitTests(
         _importModule,
         'not-supported',
-        'Task that does nothing - used to indicate that a task is not supported for a project type.'
+        'Task that does nothing - used to indicate that a task is not supported for a project type.',
     );
 
     describe('[task]', function () {
@@ -61,9 +61,9 @@ describe('[NotSupportedTaskBuilder]', function () {
                     task();
 
                     expect(
-                        fancyLogMock.warn
+                        fancyLogMock.warn,
                     ).to.have.been.calledOnceWithExactly(
-                        'Task not defined for project'
+                        'Task not defined for project',
                     );
                 });
             });

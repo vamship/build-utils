@@ -133,7 +133,7 @@ export class Directory {
         }
         if (name.match(/[\\/:]/)) {
             throw new Error(
-                'Directory name cannot include path separators (:, \\ or /)'
+                'Directory name cannot include path separators (:, \\ or /)',
             );
         }
         const child = new Directory(_path.join(this.path, name));

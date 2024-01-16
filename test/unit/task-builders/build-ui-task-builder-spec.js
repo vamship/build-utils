@@ -27,7 +27,7 @@ describe('[BuildUiTaskBuilder]', function () {
             execaModuleMock: 'execa',
             taskBuilderMock: 'src/task-builder.js',
         },
-        'BuildUiTaskBuilder'
+        'BuildUiTaskBuilder',
     );
 
     injectBuilderInitTests(_importModule, 'build-ui', 'Build web ui project');
@@ -77,10 +77,10 @@ describe('[BuildUiTaskBuilder]', function () {
                             project.rootDir.absolutePath,
                             'node_modules',
                             '.bin',
-                            'vite'
+                            'vite',
                         ),
                         ['build'],
-                        { stdio: 'inherit' }
+                        { stdio: 'inherit' },
                     );
                     expect(thenMock).to.have.been.calledOnce;
                     expect(thenMock).to.have.been.calledAfter(execaMock);

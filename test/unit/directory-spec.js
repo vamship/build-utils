@@ -138,7 +138,7 @@ describe('[Directory]', function () {
                     'chaz',
                     'faz',
                     'raz',
-                    'zaz'
+                    'zaz',
                 );
             });
         });
@@ -219,7 +219,7 @@ describe('[Directory]', function () {
             const expectedPath = 'foo';
             const dir = new Directory(_path.join(process.cwd(), 'foo'));
             expect(dir.path).to.equal(
-                `${_path.sep}${expectedPath}${_path.sep}`
+                `${_path.sep}${expectedPath}${_path.sep}`,
             );
         });
 
@@ -227,7 +227,7 @@ describe('[Directory]', function () {
             const path = 'foo';
             const dir = new Directory(path);
             expect(dir.absolutePath).to.equal(
-                `${_path.join(process.cwd(), path)}${_path.sep}`
+                `${_path.join(process.cwd(), path)}${_path.sep}`,
             );
         });
 
@@ -238,7 +238,7 @@ describe('[Directory]', function () {
             // where the separator will be '\', not '/'. On linux/mac both of
             // these paths will be the same.
             expect(dir.globPath).to.equal(
-                `${_path.join(process.cwd(), path)}/`
+                `${_path.join(process.cwd(), path)}/`,
             );
         });
     });
@@ -274,7 +274,7 @@ describe('[Directory]', function () {
             expect(children).to.have.lengthOf(1);
             expect(children[0].name).to.equal(expectedName);
             expect(children[0].path).to.equal(
-                `${dir.path}${expectedName}${_path.sep}`
+                `${dir.path}${expectedName}${_path.sep}`,
             );
         });
     });
@@ -391,7 +391,7 @@ describe('[Directory]', function () {
                 const glob = dir.getFileGlob(fileName);
 
                 expect(glob).to.equal(
-                    dir.absolutePath.replace(/\\/g, _path.sep)
+                    dir.absolutePath.replace(/\\/g, _path.sep),
                 );
             });
         });
@@ -402,7 +402,7 @@ describe('[Directory]', function () {
                 const glob = dir.getFileGlob(fileName);
 
                 expect(glob).to.equal(
-                    `${dir.absolutePath}${fileName}`.replace(/\\/g, _path.sep)
+                    `${dir.absolutePath}${fileName}`.replace(/\\/g, _path.sep),
                 );
             });
         });
@@ -415,7 +415,7 @@ describe('[Directory]', function () {
                 const glob = dir.getAllFilesGlob(extension);
 
                 expect(glob).to.equal(
-                    `${dir.absolutePath.replace(/\\/g, _path.sep)}**/*`
+                    `${dir.absolutePath.replace(/\\/g, _path.sep)}**/*`,
                 );
             });
         });
@@ -428,8 +428,8 @@ describe('[Directory]', function () {
                 expect(glob).to.equal(
                     `${dir.absolutePath.replace(
                         /\\/g,
-                        _path.sep
-                    )}**/*.${extension}`
+                        _path.sep,
+                    )}**/*.${extension}`,
                 );
             });
         });

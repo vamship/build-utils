@@ -13,7 +13,7 @@ export class CleanTaskBuilder extends TaskBuilder {
     constructor() {
         super(
             'clean',
-            'Cleans out working, distribution and temporary files and directories'
+            'Cleans out working, distribution and temporary files and directories',
         );
     }
 

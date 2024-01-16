@@ -26,13 +26,13 @@ describe('[BuildTsTaskBuilder]', function () {
             gulpTypescriptMock: 'gulp-typescript',
             taskBuilderMock: 'src/task-builder.js',
         },
-        'BuildTsTaskBuilder'
+        'BuildTsTaskBuilder',
     );
 
     injectBuilderInitTests(
         _importModule,
         'build-ts',
-        'Build typescript files and writes them to the build directory'
+        'Build typescript files and writes them to the build directory',
     );
 
     describe('[task]', function () {
@@ -40,7 +40,7 @@ describe('[BuildTsTaskBuilder]', function () {
             const gulpMock = createGulpMock();
             const gulpTypescriptMock = {
                 createProject: stub().callsFake(
-                    () => gulpTypescriptMock.project
+                    () => gulpTypescriptMock.project,
                 ),
                 project: stub().callsFake(() => ({
                     _source: '_tsproject_ret_',
@@ -74,9 +74,8 @@ describe('[BuildTsTaskBuilder]', function () {
         getAllProjectOverrides().forEach(({ title, overrides }) => {
             describe(`Verify task (${title})`, function () {
                 it('should inititalize and set the appropriate gulp source files', async function () {
-                    const { gulpMock, task, project } = await _createTask(
-                        overrides
-                    );
+                    const { gulpMock, task, project } =
+                        await _createTask(overrides);
                     const files = createSourceList(project, overrides);
 
                     expect(gulpMock.src).to.not.have.been.called;
@@ -94,9 +93,8 @@ describe('[BuildTsTaskBuilder]', function () {
                 });
 
                 it('should create a new instance of the gulp typescript object', async function () {
-                    const { gulpTypescriptMock, task } = await _createTask(
-                        overrides
-                    );
+                    const { gulpTypescriptMock, task } =
+                        await _createTask(overrides);
 
                     expect(gulpTypescriptMock.createProject).to.not.have.been
                         .called;
@@ -104,21 +102,20 @@ describe('[BuildTsTaskBuilder]', function () {
                     task();
 
                     expect(
-                        gulpTypescriptMock.createProject
+                        gulpTypescriptMock.createProject,
                     ).to.have.been.calledOnceWithExactly('tsconfig.json');
                 });
 
                 it('should create initialize the new typescript object to get a compiler reference', async function () {
-                    const { gulpTypescriptMock, task } = await _createTask(
-                        overrides
-                    );
+                    const { gulpTypescriptMock, task } =
+                        await _createTask(overrides);
 
                     expect(gulpTypescriptMock.project).to.not.have.been.called;
 
                     task();
 
                     expect(
-                        gulpTypescriptMock.project
+                        gulpTypescriptMock.project,
                     ).to.have.been.calledOnceWithExactly();
                 });
 
@@ -133,7 +130,7 @@ describe('[BuildTsTaskBuilder]', function () {
 
                     expect(gulpMock.pipe.args[0]).to.have.length(1);
                     expect(gulpMock.pipe.args[0][0]).to.deep.equal(
-                        gulpTypescriptMock.project.returnValues[0]
+                        gulpTypescriptMock.project.returnValues[0],
                     );
                 });
 
@@ -158,9 +155,8 @@ describe('[BuildTsTaskBuilder]', function () {
                 });
 
                 it('should write the source files to the working directories', async function () {
-                    const { gulpMock, task, project } = await _createTask(
-                        overrides
-                    );
+                    const { gulpMock, task, project } =
+                        await _createTask(overrides);
 
                     expect(gulpMock.pipe).to.not.have.been.called;
                     expect(gulpMock.dest).to.not.have.been.called;
@@ -175,8 +171,8 @@ describe('[BuildTsTaskBuilder]', function () {
                         _path.join(
                             project.rootDir.absolutePath,
                             'working',
-                            _path.sep
-                        )
+                            _path.sep,
+                        ),
                     );
 
                     expect(gulpMock.pipe).to.have.been.called;
@@ -184,7 +180,7 @@ describe('[BuildTsTaskBuilder]', function () {
 
                     expect(gulpMock.pipe.args[1]).to.have.length(1);
                     expect(gulpMock.pipe.args[1][0]).to.equal(
-                        gulpMock.dest.returnValues[0]
+                        gulpMock.dest.returnValues[0],
                     );
                 });
             });

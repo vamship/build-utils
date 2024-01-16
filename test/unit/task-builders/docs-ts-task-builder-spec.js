@@ -26,13 +26,13 @@ describe('[DocsTsTaskBuilder]', function () {
             execaModuleMock: 'execa',
             taskBuilderMock: 'src/task-builder.js',
         },
-        'DocsTsTaskBuilder'
+        'DocsTsTaskBuilder',
     );
 
     injectBuilderInitTests(
         _importModule,
         'docs-ts',
-        'Generates documentation from code comments in typescript files'
+        'Generates documentation from code comments in typescript files',
     );
 
     describe('[task]', function () {
@@ -75,7 +75,7 @@ describe('[DocsTsTaskBuilder]', function () {
                         _path.join(
                             project.rootDir.absolutePath,
                             'docs',
-                            project.version
+                            project.version,
                         ),
                         _path.join(project.rootDir.absolutePath, 'src') +
                             _path.sep,

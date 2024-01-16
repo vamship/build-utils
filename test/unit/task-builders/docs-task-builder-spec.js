@@ -37,7 +37,7 @@ describe('[DocsTaskBuilder]', function () {
             gulpMock: 'gulp',
             ..._importDefinitions,
         },
-        'DocsTaskBuilder'
+        'DocsTaskBuilder',
     );
 
     async function _initializeTask() {
@@ -73,7 +73,7 @@ describe('[DocsTaskBuilder]', function () {
     injectBuilderInitTests(
         _importModule,
         'docs',
-        `Generates documentation from code comments in source files`
+        `Generates documentation from code comments in source files`,
     );
 
     injectSubBuilderCompositionTests(_initializeTask, _getExpectedSubBuilders);

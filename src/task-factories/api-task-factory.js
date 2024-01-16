@@ -47,7 +47,7 @@ export class ApiTaskFactory extends TaskFactory {
         };
         const additionalTasks = generateAdditionalContainerTasks(
             this._project,
-            additionalTaskList
+            additionalTaskList,
         );
 
         return [

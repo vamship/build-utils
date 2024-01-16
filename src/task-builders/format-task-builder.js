@@ -14,7 +14,7 @@ export class FormatTaskBuilder extends TaskBuilder {
     constructor() {
         super(
             'format',
-            'Formats all source files, README.md and build scripts'
+            'Formats all source files, README.md and build scripts',
         );
     }
 
