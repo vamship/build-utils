@@ -12,7 +12,6 @@
     },
     "env": {
         "node": true,
-        "jest": true,
         "mocha": true,
         "es2024": true
     }
