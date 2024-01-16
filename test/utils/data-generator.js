@@ -10,7 +10,7 @@ function _transformOverrides({ type, language, noContainer }) {
         containerSpecified: !noContainer,
     };
 
-    if (!!noContainer) {
+    if (noContainer) {
         overrides.overrides['buildMetadata.container'] = undefined;
     }
 

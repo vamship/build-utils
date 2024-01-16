@@ -1,6 +1,5 @@
 import semver from 'semver';
 import { camelCase as _camelCase } from 'change-case';
-import _gulp from 'gulp';
 import Ajv from 'ajv';
 import _colors from 'ansi-colors';
 

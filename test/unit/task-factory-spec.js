@@ -2,12 +2,8 @@ import _chai, { expect } from 'chai';
 import _sinonChai from 'sinon-chai';
 _chai.use(_sinonChai);
 
-import { stub } from 'sinon';
 import { Project } from '../../src/project.js';
-import {
-    getAllButObject,
-    getAllProjectOverrides,
-} from '../utils/data-generator.js';
+import { getAllButObject } from '../utils/data-generator.js';
 import {
     buildProjectDefinition,
     createModuleImporter,
@@ -116,7 +112,7 @@ describe('[TaskFactory]', function () {
                 { name: 'task3', watchPaths: ['path3', 'path4'] },
                 { name: 'task4', watchPaths: [] },
             ];
-            const { tasks, factory, project, watchTaskBuilderMock } =
+            const { tasks, factory, project } =
                 await _initializeFactory(taskInfo);
             const tasksWithPaths = tasks.filter(
                 (task) => task._watchPaths.length > 0,
@@ -132,7 +128,7 @@ describe('[TaskFactory]', function () {
                 expect(task.buildTask).to.not.have.been.called;
             });
 
-            const ret = factory.createTasks();
+            factory.createTasks();
 
             tasksWithPaths.forEach((task) => {
                 expect(task.buildTask).to.have.been.calledTwice;
@@ -156,7 +152,7 @@ describe('[TaskFactory]', function () {
                 { name: 'task3', watchPaths: ['path3', 'path4'] },
                 { name: 'task4', watchPaths: [] },
             ];
-            const { tasks, factory, project, watchTaskBuilderMock } =
+            const { tasks, factory, watchTaskBuilderMock } =
                 await _initializeFactory(taskInfo);
             const tasksWithPaths = tasks.filter(
                 (task) => task._watchPaths.length > 0,
@@ -164,7 +160,7 @@ describe('[TaskFactory]', function () {
 
             expect(watchTaskBuilderMock.ctor).to.not.have.been.called;
 
-            const ret = factory.createTasks();
+            factory.createTasks();
 
             expect(watchTaskBuilderMock.ctor).to.have.been.called;
             expect(watchTaskBuilderMock.ctor.callCount).to.equal(

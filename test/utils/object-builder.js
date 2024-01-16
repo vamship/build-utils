@@ -4,7 +4,6 @@ import _esmock from 'esmock';
 import _path from 'path';
 import { fileURLToPath } from 'url';
 import { camelCase, pascalCase } from 'change-case';
-import { camelCase as _camelCase } from 'change-case';
 import { expect } from 'chai';
 
 /**

@@ -176,7 +176,6 @@ describe('[TaskBuilder]', function () {
 
             const ret = builder.getWatchPaths(project);
 
-            const rootDir = project.rootDir.absolutePath;
             const paths = createPathList(project);
 
             expect(ret).to.have.lengthOf(paths.length);
