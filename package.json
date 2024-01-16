@@ -46,32 +46,32 @@
     },
     "homepage": "https://github.com/vamship/build-utils#readme",
     "devDependencies": {
-        "c8": "^7.13.0",
-        "chai": "^4.3.7",
-        "dot-prop": "^8.0.0",
-        "eslint": "^8.39.0",
-        "esmock": "^2.2.1",
-        "gulp-eslint-new": "^1.7.2",
+        "c8": "^9.1.0",
+        "chai": "^5.0.0",
+        "dot-prop": "^8.0.2",
+        "eslint": "^8.56.0",
+        "esmock": "^2.6.2",
+        "gulp-eslint-new": "^1.9.0",
         "jsdoc": "^4.0.2",
         "mocha": "^10.2.0",
-        "nodemon": "^2.0.22",
-        "prettier": "^2.8.8",
-        "rewire": "^6.0.0",
-        "sinon": "^15.0.4",
+        "nodemon": "^3.0.2",
+        "prettier": "^3.2.2",
+        "rewire": "^7.0.0",
+        "sinon": "^17.0.1",
         "sinon-chai": "^3.7.0"
     },
     "dependencies": {
         "ajv": "^8.12.0",
         "ansi-colors": "^4.1.3",
-        "change-case": "^5.0.2",
+        "change-case": "^5.4.2",
         "delete": "^1.1.0",
-        "docdash": "^2.0.1",
-        "dotenv": "^16.0.3",
+        "docdash": "^2.0.2",
+        "dotenv": "^16.3.1",
         "dotenv-expand": "^10.0.0",
-        "execa": "^7.1.1",
+        "execa": "^8.0.1",
         "fancy-log": ">=2.0.0",
         "mkdirp": "^3.0.1",
-        "semver": "^7.5.0"
+        "semver": "^7.5.4"
     },
     "peerDependencies": {
         "@typescript-eslint/eslint-plugin": ">= 5.1.0",
@@ -90,7 +90,7 @@
     },
     "optionalDependencies": {
         "gulp-jsdoc3": "= 3.0.0",
-        "typedoc": ">=0.24.6",
-        "typescript": ">=5.0.4"
+        "typedoc": ">=0.25.7",
+        "typescript": ">=5.3.3"
     }
 }
