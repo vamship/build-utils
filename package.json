@@ -14,8 +14,8 @@
         "all": "npm run format && npm run lint && npm run test && npm run clean"
     },
     "engines": {
-        "node": ">= 14.18.1",
-        "npm": ">= 8.1.0"
+        "node": ">= 20.11.0",
+        "npm": ">= 10.2.4"
     },
     "files": [
         "package.json",
@@ -50,12 +50,12 @@
         "chai": "^4.4.1",
         "dot-prop": "^8.0.2",
         "eslint": "^8.56.0",
-        "esmock": "^2.6.2",
+        "esmock": "^2.6.3",
         "gulp-eslint-new": "^1.9.0",
         "jsdoc": "^4.0.2",
         "mocha": "^10.2.0",
-        "nodemon": "^3.0.2",
-        "prettier": "^3.2.2",
+        "nodemon": "^3.0.3",
+        "prettier": "^3.2.4",
         "rewire": "^7.0.0",
         "sinon": "^17.0.1",
         "sinon-chai": "^3.7.0"
@@ -66,7 +66,7 @@
         "change-case": "^5.4.2",
         "delete": "^1.1.0",
         "docdash": "^2.0.2",
-        "dotenv": "^16.3.1",
+        "dotenv": "^16.3.2",
         "dotenv-expand": "^10.0.0",
         "execa": "^8.0.1",
         "fancy-log": ">=2.0.0",
