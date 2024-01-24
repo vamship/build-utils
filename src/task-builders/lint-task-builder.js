@@ -48,7 +48,8 @@ export class LintTaskBuilder extends TaskBuilder {
                     base: project.rootDir.globPath,
                 })
                 .pipe(_eslint({ configType: 'flat' }))
-                .pipe(_eslint.format());
+                .pipe(_eslint.format())
+                .pipe(_eslint.failAfterError());
 
         return task;
     }
