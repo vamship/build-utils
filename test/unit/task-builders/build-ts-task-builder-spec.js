@@ -72,7 +72,7 @@ describe('[BuildTsTaskBuilder]', function () {
         }
 
         getAllProjectOverrides().forEach(({ title, overrides }) => {
-            describe(`Verify task (${title})`, function () {
+            describe(`Verify task (${title})`, async function () {
                 it('should inititalize and set the appropriate gulp source files', async function () {
                     const { gulpMock, task, project } =
                         await _createTask(overrides);

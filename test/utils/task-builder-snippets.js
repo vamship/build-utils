@@ -32,8 +32,8 @@ export function injectBuilderInitTests(
         ctorArgs = [];
     }
 
-    describe(`ctor() ${JSON.stringify(ctorArgs)}`, () => {
-        it('should invoke the super constructor with correct arguments', async () => {
+    describe(`ctor() ${JSON.stringify(ctorArgs)}`, function () {
+        it('should invoke the super constructor with correct arguments', async function () {
             const superCtor = spy();
             const TaskBuilder = await importModule({
                 taskBuilderMock: {
@@ -52,9 +52,9 @@ export function injectBuilderInitTests(
         });
     });
 
-    describe(`_createTask() ${JSON.stringify(ctorArgs)}`, () => {
+    describe(`_createTask() ${JSON.stringify(ctorArgs)}`, function () {
         getAllButObject({}).forEach((project) => {
-            it(`should throw an error if invoked without valid project (value=${typeof project})`, async () => {
+            it(`should throw an error if invoked without valid project (value=${typeof project})`, async function () {
                 const TaskBuilder = await importModule();
                 const error = 'Invalid project (arg #1)';
                 const builder = new TaskBuilder(...ctorArgs);
@@ -64,7 +64,7 @@ export function injectBuilderInitTests(
             });
         });
 
-        it('should return a function when invoked', async () => {
+        it('should return a function when invoked', async function () {
             const TaskBuilder = await importModule();
             const builder = new TaskBuilder(...ctorArgs);
 
@@ -92,8 +92,8 @@ export function injectSubBuilderCompositionTests(
     getAllProjectOverrides().forEach(({ title, overrides }) => {
         const checkCtorNotCalled = createCtorNotCalledChecker(overrides);
 
-        describe(`[task composition] (${title})`, () => {
-            it(`should initialize appropriate sub builders`, async () => {
+        describe(`[task composition] (${title})`, function () {
+            it(`should initialize appropriate sub builders`, async function () {
                 const { builder, subBuilderMocks } =
                     await initializeTask(overrides);
                 const definition = buildProjectDefinition(overrides);
@@ -127,7 +127,7 @@ export function injectSubBuilderCompositionTests(
                 });
             });
 
-            it(`should create a composite task comprised of subtasks`, async () => {
+            it(`should create a composite task comprised of subtasks`, async function () {
                 const { gulpMock, builder } = await initializeTask(overrides);
                 const definition = buildProjectDefinition(overrides);
                 const project = new Project(definition);
@@ -144,7 +144,7 @@ export function injectSubBuilderCompositionTests(
                 });
             });
 
-            it(`should use the correct sub tasks for the composite task`, async () => {
+            it(`should use the correct sub tasks for the composite task`, async function () {
                 const { gulpMock, builder, subBuilderMocks } =
                     await initializeTask(overrides);
                 const definition = buildProjectDefinition(overrides);
@@ -185,9 +185,9 @@ export function injectWatchPathsCompositionTests(
     initializeTask,
     getExpectedSubBuilders,
 ) {
-    describe(`getWatchPaths()`, () => {
+    describe(`getWatchPaths()`, function () {
         getAllButObject({}).forEach((project) => {
-            it(`should throw an error if invoked without valid project (value=${typeof project})`, async () => {
+            it(`should throw an error if invoked without valid project (value=${typeof project})`, async function () {
                 const { builder } = await initializeTask();
                 const error = 'Invalid project (arg #1)';
                 const wrapper = () => builder.getWatchPaths(project);
@@ -197,8 +197,8 @@ export function injectWatchPathsCompositionTests(
         });
 
         getAllProjectOverrides().forEach(({ title, overrides }) => {
-            describe(`[path generation] (${title})`, () => {
-                it(`should obtain watch watch paths from sub builders`, async () => {
+            describe(`[path generation] (${title})`, function () {
+                it(`should obtain watch watch paths from sub builders`, async function () {
                     const { builder, subBuilderMocks } =
                         await initializeTask(overrides);
                     const definition = buildProjectDefinition(overrides);
@@ -227,7 +227,7 @@ export function injectWatchPathsCompositionTests(
                     });
                 });
 
-                it(`should consoldiate all watch paths into a unique list`, async () => {
+                it(`should consoldiate all watch paths into a unique list`, async function () {
                     const { builder, subBuilderMocks } =
                         await initializeTask(overrides);
                     const definition = buildProjectDefinition(overrides);
