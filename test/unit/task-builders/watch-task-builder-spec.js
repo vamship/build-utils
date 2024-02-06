@@ -4,7 +4,7 @@ _chai.use(_sinonChai);
 
 import _path from 'path';
 import _esmock from 'esmock';
-import { spy } from 'sinon';
+import { stub } from 'sinon';
 import { Project } from '../../../src/project.js';
 import {
     getAllButFunction,
@@ -15,6 +15,7 @@ import {
 import {
     buildProjectDefinition,
     createGulpMock,
+    createFancyLogMock,
     createModuleImporter,
 } from '../../utils/object-builder.js';
 import { injectBuilderInitTests } from '../../utils/task-builder-snippets.js';
@@ -24,21 +25,23 @@ describe('[WatchTaskBuilder]', function () {
         'src/task-builders/watch-task-builder.js',
         {
             taskBuilderMock: 'src/task-builder.js',
+            fancyLogMock: 'fancy-log',
             gulpMock: 'gulp',
         },
         'WatchTaskBuilder',
     );
 
-    function _createInnerTask(name, description) {
+    function _createInnerTask(name, description, taskRet) {
         name = name || 'some-task';
         description = description || 'some task description';
 
-        const task = spy();
+        const task = stub().callsFake(() => taskRet);
         task.displayName = name;
         task.description = description;
 
         return task;
     }
+
     injectBuilderInitTests(
         _importModule,
         'watch-some-task',
@@ -124,7 +127,7 @@ describe('[WatchTaskBuilder]', function () {
             expect(gulpMock.series.args[0][0]).to.be.a('function');
 
             // Task to execute
-            expect(gulpMock.series.args[0][1]).to.equal(innerTask);
+            expect(gulpMock.series.args[0][1]).to.be.a('function');
 
             // Log message after task execution
             expect(gulpMock.series.args[0][2]).to.be.a('function');
@@ -140,8 +143,10 @@ describe('[WatchTaskBuilder]', function () {
                 paths = ['/absolute/path/1', 'relative/path/2'];
             }
             const gulpMock = createGulpMock();
+            const fancyLogMock = createFancyLogMock();
             const WatchTaskBuilder = await _importModule({
                 gulpMock,
+                fancyLogMock: { default: fancyLogMock },
             });
 
             const definition = buildProjectDefinition(definitionOverrides);
@@ -170,6 +175,122 @@ describe('[WatchTaskBuilder]', function () {
                 paths,
                 gulpMock.series.returnValues[0],
             );
+        });
+
+        describe('[task wrapper]', function () {
+            async function _getTaskWrapper(innerTask) {
+                const { gulpMock, task } = await _createTask(innerTask);
+
+                task();
+
+                return gulpMock.series.args[0][1];
+            }
+
+            it('should invoke the inner task', async function () {
+                const innerTask = _createInnerTask();
+                const taskWrapper = await _getTaskWrapper(innerTask);
+                const done = stub();
+
+                expect(innerTask).to.not.have.been.called;
+
+                taskWrapper(done);
+
+                expect(innerTask).to.have.been.calledOnceWithExactly();
+            });
+
+            [null, undefined, 0, false, ''].forEach((value) => {
+                it(`should complete the task if the inner task returns a falsy value (value=${value})`, async function () {
+                    const innerTask = _createInnerTask(
+                        'inner-task',
+                        'inner task description',
+                        value,
+                    );
+
+                    const taskWrapper = await _getTaskWrapper(innerTask);
+                    const done = stub();
+
+                    expect(done).to.not.have.been.called;
+
+                    taskWrapper(done);
+
+                    expect(done).to.have.been.calledOnceWithExactly();
+                });
+            });
+
+            [
+                { resultType: 'rejected', taskRet: Promise.reject() },
+                { resultType: 'resolved', taskRet: Promise.resolve() },
+            ].forEach(({ resultType, taskRet }) => {
+                it(`should complete the task if the inner task returns a thenable that is ${resultType}`, async function () {
+                    const innerTask = _createInnerTask(
+                        'inner-task',
+                        'inner task description',
+                        taskRet,
+                    );
+
+                    const taskWrapper = await _getTaskWrapper(innerTask);
+                    const done = stub();
+
+                    expect(done).to.not.have.been.called;
+
+                    const ret = taskWrapper(done);
+
+                    expect(ret).to.be.an.instanceof(Promise);
+
+                    await ret;
+
+                    expect(done).to.have.been.calledOnceWithExactly();
+                });
+            });
+
+            ['error', 'end'].forEach((event) => {
+                it(`should complete the task if the inner task returns a stream raises [${event}]`, async function () {
+                    const taskRet = stub();
+                    const callbacks = {};
+
+                    taskRet.on = stub().callsFake((event, cb) => {
+                        callbacks[event] = cb;
+                        return taskRet;
+                    });
+
+                    const innerTask = _createInnerTask(
+                        'inner-task',
+                        'inner task description',
+                        taskRet,
+                    );
+
+                    const taskWrapper = await _getTaskWrapper(innerTask);
+                    const done = stub();
+
+                    expect(done).to.not.have.been.called;
+
+                    const ret = taskWrapper(done);
+
+                    callbacks[event]();
+
+                    expect(ret).to.equal(taskRet);
+                    expect(done).to.have.been.calledOnceWithExactly();
+                });
+            });
+
+            ['foo', {}, [], 123].forEach((value) => {
+                it(`should complete the task if the inner task returns a non stream/promise/falsy value (value=${value})`, async function () {
+                    const innerTask = _createInnerTask(
+                        'inner-task',
+                        'inner task description',
+                        value,
+                    );
+
+                    const taskWrapper = await _getTaskWrapper(innerTask);
+                    const done = stub();
+
+                    expect(done).to.not.have.been.called;
+
+                    taskWrapper(done);
+
+                    expect(done).to.have.been.calledOnceWithExactly();
+                });
+            });
         });
     });
 

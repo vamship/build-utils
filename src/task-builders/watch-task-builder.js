@@ -44,10 +44,54 @@ export class WatchTaskBuilder extends TaskBuilder {
         if (!(project instanceof Project)) {
             throw new Error('Invalid project (arg #1)');
         }
+        const taskRunner = (done) => {
+            const result = this._task();
+            if (!result) {
+                _fancyLog(
+                    'Task returned no result. Skipping. Will rerun on next change.',
+                );
+                done();
+            } else if (result.then) {
+                return result.then(
+                    () => {
+                        _fancyLog(
+                            'Task was resolved successfully. Will rerun on next change.',
+                        );
+                        done();
+                    },
+                    (err) => {
+                        _fancyLog(
+                            'Task was rejected with errors. Will rerun on next change.',
+                        );
+                        done();
+                    },
+                );
+            } else if (result.on) {
+                return result
+                    .on('error', (err) => {
+                        _fancyLog(
+                            'Task stream reported errors. Will rerun on next change.',
+                        );
+                        done();
+                    })
+                    .on('end', () => {
+                        _fancyLog(
+                            'Task stream completed successfully. Will rerun on next change.',
+                        );
+                        done();
+                    });
+            } else {
+                _fancyLog(
+                    'Task is neither promise nor stream. Skipping. Will rerun on next change.',
+                );
+                done();
+            }
+        };
+        taskRunner.description = this._task.description;
         const taskName = _colors.cyan(this._task.displayName);
         const task = _gulp.series(
             async () => _fancyLog(`Running task ${taskName}`),
-            this._task,
+            taskRunner,
             async () => _fancyLog('Task completed'),
         );
         return () => _gulp.watch(this._paths, task);
