@@ -171,13 +171,10 @@ export function createTaskFactoryMock(name) {
  * @returns {Object} A fancy-log mock object.
  */
 export function createFancyLogMock() {
-    return {
-        log: stub(),
-        dir: stub(),
-        info: stub(),
-        warn: stub(),
-        error: stub(),
-    };
+    return ['log', 'info', 'warn', 'error', 'dir'].reduce((logger, key) => {
+        logger[key] = stub();
+        return logger;
+    }, stub());
 }
 
 /**
