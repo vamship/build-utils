@@ -5,5 +5,5 @@
     ],
     "timeout": "5000",
     "loader": ["esmock"],
-    "parallel": false
+    "parallel": true
 }
