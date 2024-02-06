@@ -1,5 +1,3 @@
-'use strict';
-
 import _path from 'path';
 
 const _sepRegexp = new RegExp(_path.sep.replace(/\\/g, '\\\\'), 'g');
