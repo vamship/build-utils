@@ -139,6 +139,7 @@ describe('[PackageNpmTaskBuilder]', function () {
 
                     expect(gulpMock.src).to.have.been.calledOnce;
                     expect(gulpMock.callSequence[1]).to.equal('src');
+                    expect(gulpMock.src.args[0]).to.have.length(2);
                     expect(gulpMock.src.args[0][0]).to.equal(
                         _path.join(
                             project.rootDir.absolutePath,
@@ -146,6 +147,9 @@ describe('[PackageNpmTaskBuilder]', function () {
                             packageName,
                         ),
                     );
+                    expect(gulpMock.src.args[0][1]).to.deep.equal({
+                        encoding: false,
+                    });
                 });
 
                 it('should write package archive to the distribution directory', async function () {
