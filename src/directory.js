@@ -227,4 +227,20 @@ export class Directory {
         }
         return `${this.globPath}**/${extension}`;
     }
+    /**
+     * Gets a string glob that can be used to match all folders/files
+     * starting with .(dot) in the current folder and all sub folders,
+     * optionally filtered by file extension.
+     *
+     * @param {String} [extension] An optional extension to use when generating
+     *        a globbing pattern.
+     */
+    getAllHiddenFilesGlob(extension) {
+        if (typeof extension !== 'string') {
+            extension = '.*';
+        } else {
+            extension = `.*.${extension}`;
+        }
+        return `${this.globPath}**/${extension}`;
+    }
 }
