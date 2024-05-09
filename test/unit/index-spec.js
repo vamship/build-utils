@@ -1,22 +1,13 @@
-'use strict';
+import { expect } from 'chai';
+import { Directory } from '../../src/directory.js';
+import { Project } from '../../src/project.js';
 
-const _chai = require('chai');
-_chai.use(require('sinon-chai'));
-_chai.use(require('chai-as-promised'));
+import { Directory as ExportedDirectory } from '../../src/index.js';
+import { Project as ExportedProject } from '../../src/index.js';
 
-const expect = _chai.expect;
-const _rewire = require('rewire');
-
-const Directory = require('../../src/directory');
-let _index = null;
-
-describe('[index]', () => {
-    beforeEach(function () {
-        this.timeout(10000);
-        _index = _rewire('../../src/index');
-    });
-
-    it('should expose the expected properties', () => {
-        expect(_index.Directory).to.equal(Directory);
+describe('[index]', function () {
+    it('should expose the expected properties', function () {
+        expect(ExportedDirectory).to.equal(Directory);
+        expect(ExportedProject).to.equal(Project);
     });
 });

@@ -1,19 +1,23 @@
 'use strict';
 
-/**
- * A collection of task builder functions that can be used to generate gulp
- * tasks based on project configuration.
- */
-module.exports = [
-    'clean',
-    'format',
-    'lint',
-    'build',
-    'test',
-    'docs',
-    'package',
-    'publish',
-].reduce((tasks, task) => {
-    tasks[task] = require(`./${task}`);
-    return tasks;
-}, {});
+export * from './build-js-task-builder.js';
+export * from './build-ts-task-builder.js';
+export * from './build-ui-task-builder.js';
+export * from './clean-task-builder.js';
+export * from './copy-files-task-builder.js';
+export * from './docs-js-task-builder.js';
+export * from './docs-ts-task-builder.js';
+export * from './format-task-builder.js';
+export * from './lint-fix-task-builder.js';
+export * from './lint-task-builder.js';
+export * from './package-aws-task-builder.js';
+export * from './package-container-task-builder.js';
+export * from './package-npm-task-builder.js';
+export * from './publish-aws-task-builder.js';
+export * from './publish-container-task-builder.js';
+export * from './publish-npm-task-builder.js';
+export * from './test-task-builder.js';
+export * from './test-ui-task-builder.js';
+export * from './watch-task-builder.js';
+export * from './build-task-builder.js';
+export * from './not-supported-task-builder.js';

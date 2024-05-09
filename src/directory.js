@@ -1,6 +1,4 @@
-'use strict';
-
-const _path = require('path');
+import _path from 'path';
 
 const _sepRegexp = new RegExp(_path.sep.replace(/\\/g, '\\\\'), 'g');
 
@@ -8,13 +6,13 @@ const _sepRegexp = new RegExp(_path.sep.replace(/\\/g, '\\\\'), 'g');
  * Abstract representation of a directory, with methods for traversal and
  * glob pattern generation.
  */
-class Directory {
+export class Directory {
     /**
      * @param {String} path The path represented by this directory.
      */
     constructor(path) {
         if (typeof path !== 'string') {
-            throw new Error('Invalid path specified (arg #1)');
+            throw new Error('Invalid path (arg #1)');
         }
 
         let relativePath = path.replace(process.cwd(), '');
@@ -39,10 +37,10 @@ class Directory {
      */
     static createTree(rootPath, tree) {
         if (typeof rootPath !== 'string') {
-            throw new Error('Invalid rootPath specified (arg #1)');
+            throw new Error('Invalid rootPath (arg #1)');
         }
         if (!tree || tree instanceof Array || typeof tree !== 'object') {
-            throw new Error('Invalid tree specified (arg #2)');
+            throw new Error('Invalid tree (arg #2)');
         }
 
         function createRecursive(parent, tree) {
@@ -72,10 +70,10 @@ class Directory {
      */
     static traverseTree(root, callback) {
         if (!(root instanceof Directory)) {
-            throw new Error('Invalid root directory specified (arg #1)');
+            throw new Error('Invalid root directory (arg #1)');
         }
         if (typeof callback !== 'function') {
-            throw new Error('Invalid callback function specified (arg #1)');
+            throw new Error('Invalid callback function (arg #2)');
         }
         function traverseRecursive(parent, level) {
             callback(parent, level);
@@ -129,17 +127,27 @@ class Directory {
      */
     addChild(name) {
         if (typeof name !== 'string' || name.length <= 0) {
-            throw new Error('Invalid directory name specified (arg #1)');
+            throw new Error('Invalid directory name (arg #1)');
         }
         if (name.match(/[\\/:]/)) {
             throw new Error(
-                'Directory name cannot include path separators (:, \\ or /)'
+                'Directory name cannot include path separators (:, \\ or /)',
             );
         }
         const child = new Directory(_path.join(this.path, name));
         this._children.push(child);
 
         return child;
+    }
+
+    /**
+     * Returns an array containing all first level children of the current
+     * directory.
+     *
+     * @return {Directory[]} An array of first level children for the directory.
+     */
+    getChildren() {
+        return this._children.slice();
     }
 
     /**
@@ -154,7 +162,7 @@ class Directory {
      */
     getChild(path) {
         if (typeof path !== 'string' || path.length <= 0) {
-            throw new Error('Invalid child path specified (arg #1)');
+            throw new Error('Invalid childPath (arg #1)');
         }
         const tokens = path.split('/');
         const child = tokens.reduce((result, name) => {
@@ -169,16 +177,6 @@ class Directory {
             throw new Error(`Child not found at path: [${path}]`);
         }
         return child;
-    }
-
-    /**
-     * Returns an array containing all first level children of the current
-     * directory.
-     *
-     * @return {Directory[]} An array of first level children for the directory.
-     */
-    getChildren() {
-        return this._children.slice();
     }
 
     /**
@@ -246,5 +244,3 @@ class Directory {
         return `${this.globPath}**/${extension}`;
     }
 }
-
-module.exports = Directory;

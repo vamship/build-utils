@@ -2,7 +2,7 @@
     "extends": ["eslint:recommended"],
     "plugins": [],
     "parserOptions": {
-        "ecmaVersion": 10,
+        "ecmaVersion": 13,
         "sourceType": "module"
     },
     "rules": {
@@ -12,6 +12,7 @@
     },
     "env": {
         "node": true,
-        "mocha": true
+        "mocha": true,
+        "es2024": true
     }
 }

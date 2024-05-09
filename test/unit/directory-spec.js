@@ -1,33 +1,45 @@
-'use strict';
+import { expect } from 'chai';
+import { spy } from 'sinon';
+import { Directory } from '../../src/directory.js';
+import _path from 'path';
+import {
+    getAllButString,
+    getAllButObject,
+    getAllButFunction,
+} from '../utils/data-generator.js';
 
-const _sinon = require('sinon');
-const _chai = require('chai');
-_chai.use(require('sinon-chai'));
-_chai.use(require('chai-as-promised'));
+function _createPath(...components) {
+    return components.join(_path.sep);
+}
 
-const expect = _chai.expect;
-const _path = require('path');
-const _process = require('process');
-const _rewire = require('rewire');
-
-let Directory = null;
-
-describe('[Directory]', () => {
-    function _createPath(...components) {
-        return components.join(_path.sep);
+describe('[Directory]', function () {
+    function _createTree() {
+        return {
+            src: {
+                handlers: null,
+                devices: null,
+                data: null,
+            },
+            test: {
+                unit: {
+                    handlers: null,
+                    devices: null,
+                    data: null,
+                },
+            },
+            working: null,
+            '.tmp': null,
+            '.coverage': null,
+        };
     }
 
-    beforeEach(() => {
-        Directory = _rewire('../../src/directory');
-    });
-
-    describe('[Static Members]', () => {
-        it('should expose the expected static members', () => {
-            expect(Directory.createTree).to.be.a('function');
-            expect(Directory.traverseTree).to.be.a('function');
+    describe('[Static Members]', function () {
+        it('should expose the expected static members', function () {
+            expect(typeof Directory.createTree).to.equal('function');
+            expect(typeof Directory.traverseTree).to.equal('function');
         });
 
-        describe('createTree()', () => {
+        describe('createTree()', function () {
             function _verifyDirectory(parent, name) {
                 const child = parent.getChildren().find((dir) => {
                     return dir.name === name;
@@ -46,49 +58,34 @@ describe('[Directory]', () => {
                 });
             }
 
-            it('should throw an error if invoked without a valid root path', () => {
-                const error = 'Invalid rootPath specified (arg #1)';
-                const inputs = [null, undefined, 123, true, {}, [], () => {}];
-
-                inputs.forEach((path) => {
-                    const wrapper = () => {
-                        return Directory.createTree(path);
-                    };
+            getAllButString().forEach((rootPath) => {
+                it(`should throw an error if invoked without a valid root path (value=${typeof rootPath})`, function () {
+                    const error = 'Invalid rootPath (arg #1)';
+                    const tree = _createTree();
+                    const wrapper = () => Directory.createTree(rootPath, tree);
                     expect(wrapper).to.throw(error);
                 });
             });
 
-            it('should throw an error if invoked without a valid tree object', () => {
-                const error = 'Invalid tree specified (arg #2)';
-                const inputs = [
-                    null,
-                    undefined,
-                    123,
-                    true,
-                    'test',
-                    [],
-                    () => {},
-                ];
-
-                inputs.forEach((tree) => {
-                    const wrapper = () => {
-                        const rootPath = './';
-                        return Directory.createTree(rootPath, tree);
-                    };
+            getAllButObject().forEach((tree) => {
+                it(`should throw an error if invoked without a valid tree object (value=${typeof tree})`, function () {
+                    const error = 'Invalid tree (arg #2)';
+                    const rootPath = '.';
+                    const wrapper = () => Directory.createTree(rootPath, tree);
                     expect(wrapper).to.throw(error);
                 });
             });
 
-            it('should return a directory with no children if the tree is empty', () => {
+            it('should return a directory with no children if the tree is empty', function () {
                 const rootPath = '.';
-                const tree = {};
+                const tree = _createTree();
                 const root = Directory.createTree(rootPath, tree);
 
                 expect(root).to.be.an.instanceof(Directory);
                 expect(root.path).to.equal(_createPath('.', ''));
             });
 
-            it('should add a child directory for each member of the tree', () => {
+            it('should add a child directory for each member of the tree', function () {
                 const rootPath = './';
                 const tree = {
                     foo: null,
@@ -101,43 +98,27 @@ describe('[Directory]', () => {
                 _verifyLeaves(root, 'foo', 'bar', 'baz', 'chaz', 'faz');
             });
 
-            it('should create a sub tree for each child that references an object', () => {
+            it('should create a sub tree for each child that references an object', function () {
                 const rootPath = './';
-                const tree = {
-                    src: {
-                        handlers: null,
-                        devices: null,
-                        data: null,
-                    },
-                    test: {
-                        unit: {
-                            handlers: null,
-                            devices: null,
-                            data: null,
-                        },
-                    },
-                    working: null,
-                    '.tmp': null,
-                    '.coverage': null,
-                };
+                const tree = _createTree();
                 const root = Directory.createTree(rootPath, tree);
 
-                expect(root.getChildren()).to.have.length(5);
+                expect(root.getChildren()).to.have.lengthOf(5);
                 _verifyLeaves(root, 'working', '.tmp', '.coverage');
 
                 const src = _verifyDirectory(root, 'src');
-                expect(src.getChildren()).to.have.length(3);
+                expect(src.getChildren()).to.have.lengthOf(3);
                 _verifyLeaves(src, 'handlers', 'devices', 'data');
 
                 const test = _verifyDirectory(root, 'test');
-                expect(test.getChildren()).to.have.length(1);
+                expect(test.getChildren()).to.have.lengthOf(1);
 
                 const unit = _verifyDirectory(test, 'unit');
-                expect(unit.getChildren()).to.have.length(3);
+                expect(unit.getChildren()).to.have.lengthOf(3);
                 _verifyLeaves(unit, 'handlers', 'devices', 'data');
             });
 
-            it('should not add subtrees if the values are not objects', () => {
+            it('should not add subtrees if the values are not objects', function () {
                 const rootPath = './';
                 const tree = {
                     foo: 'foobar',
@@ -157,581 +138,300 @@ describe('[Directory]', () => {
                     'chaz',
                     'faz',
                     'raz',
-                    'zaz'
+                    'zaz',
                 );
             });
         });
 
-        describe('traverseTree()', () => {
-            it('should throw an error if invoked without a Directory instance', () => {
-                const error = 'Invalid root directory specified (arg #1)';
-                const inputs = [
-                    null,
-                    undefined,
-                    123,
-                    true,
-                    'foo',
-                    {},
-                    [],
-                    () => {},
-                ];
-
-                inputs.forEach((root) => {
-                    const wrapper = () => {
-                        return Directory.traverseTree(root);
-                    };
+        describe('traverseTree()', function () {
+            getAllButObject({}).forEach((root) => {
+                it(`should throw an error if invoked without a directory object (value=${typeof root})`, function () {
+                    const error = 'Invalid root directory (arg #1)';
+                    const callback = spy();
+                    const wrapper = () =>
+                        Directory.traverseTree(root, callback);
                     expect(wrapper).to.throw(error);
                 });
             });
 
-            it('should throw an error if invoked without a callback function', () => {
-                const error = 'Invalid callback function specified (arg #1)';
-                const inputs = [null, undefined, 123, true, 'foo', {}, []];
-
-                inputs.forEach((callback) => {
-                    const wrapper = () => {
-                        const root = new Directory('.');
-                        return Directory.traverseTree(root, callback);
-                    };
+            getAllButFunction().forEach((callback) => {
+                it(`should throw an error if invoked without a callback (value=${typeof callback})`, function () {
+                    const error = 'Invalid callback function (arg #2)';
+                    const root = Directory.createTree('.', { foo: { bar: 1 } });
+                    const wrapper = () =>
+                        Directory.traverseTree(root, callback);
                     expect(wrapper).to.throw(error);
                 });
             });
 
-            it('should invoke the callback function just once if the root has no children', () => {
-                const root = new Directory('.');
-                const callback = _sinon.spy();
-                const dirName = _path.basename(process.cwd());
-
-                expect(callback).to.not.have.been.called;
-
-                Directory.traverseTree(root, callback);
-
-                expect(callback).to.have.been.calledOnce;
-                const dir = callback.args[0][0];
-                expect(dir).to.be.an.instanceof(Directory);
-                expect(dir.name).to.equal(dirName);
-
-                const level = callback.args[0][1];
-                expect(level).to.equal(0);
-            });
-
-            it('should recursively walk the tree structure in depth first fashion', () => {
-                const rootPath = './';
-                const dirName = _path.basename(process.cwd());
-                const tree = {
-                    src: {
-                        handlers: null,
-                        devices: null,
-                        data: null,
-                    },
-                    test: {
-                        unit: {
-                            foo: null,
-                            bar: null,
-                            baz: null,
+            it('should invoke the callback for each directory in the tree', function () {
+                // We're going to use the naming convention of directories to
+                // test the traversal. Specifically, the directory level is encoded
+                // into the name.
+                const dirs = {
+                    level_1_0: {
+                        level_2_0: {
+                            level_3_0: {},
+                        },
+                        level_2_1: {
+                            level_3_1: {},
                         },
                     },
-                    working: null,
-                    '.tmp': null,
-                    '.coverage': null,
+                    level_1_1: {},
                 };
-                const expectedSequence = [
-                    {
-                        name: dirName,
-                        level: 0,
-                    },
-                    {
-                        name: 'src',
-                        level: 1,
-                    },
-                    {
-                        name: 'handlers',
-                        level: 2,
-                    },
-                    {
-                        name: 'devices',
-                        level: 2,
-                    },
-                    {
-                        name: 'data',
-                        level: 2,
-                    },
-                    {
-                        name: 'test',
-                        level: 1,
-                    },
-                    {
-                        name: 'unit',
-                        level: 2,
-                    },
-                    {
-                        name: 'foo',
-                        level: 3,
-                    },
-                    {
-                        name: 'bar',
-                        level: 3,
-                    },
-                    {
-                        name: 'baz',
-                        level: 3,
-                    },
-                    {
-                        name: 'working',
-                        level: 1,
-                    },
-                    {
-                        name: '.tmp',
-                        level: 1,
-                    },
-                    {
-                        name: '.coverage',
-                        level: 1,
-                    },
-                ];
-
-                const root = Directory.createTree(rootPath, tree);
-                const callback = _sinon.spy();
-
-                expect(callback).to.not.have.been.called;
+                const rootDir = 'foo';
+                const root = Directory.createTree(rootDir, dirs);
+                const callback = spy((dir, level) => {
+                    if (dir.name !== rootDir) {
+                        const l1 = dir.name.split('_')[1];
+                        expect(level).to.equal(parseInt(l1));
+                    } else {
+                        expect(level).to.equal(0);
+                    }
+                });
 
                 Directory.traverseTree(root, callback);
 
-                expect(callback.callCount).to.equal(expectedSequence.length);
-                expectedSequence.forEach((info, index) => {
-                    const dir = callback.args[index][0];
-                    expect(dir).to.be.an.instanceof(Directory);
-                    expect(dir.name).to.equal(info.name);
-
-                    const level = callback.args[index][1];
-                    expect(level).to.equal(info.level);
-                });
+                // There are 7 levels in our input including the root level
+                expect(callback.callCount).to.equal(7);
             });
         });
     });
 
-    describe('ctor()', () => {
-        it('should throw an error if invoked without a valid path', () => {
-            const error = 'Invalid path specified (arg #1)';
-            const inputs = [null, undefined, 123, true, {}, [], () => {}];
-
-            inputs.forEach((path) => {
-                const wrapper = () => {
-                    return new Directory(path);
-                };
+    describe('ctor()', function () {
+        getAllButString().forEach((path) => {
+            it(`should throw an error if invoked without a valid path (value=${typeof path})`, function () {
+                const error = 'Invalid path (arg #1)';
+                const wrapper = () => new Directory(path);
                 expect(wrapper).to.throw(error);
             });
         });
-
-        it('should expose the expected methods and properties', () => {
-            const dir = new Directory(_createPath('.', 'foo', 'bar'));
-
-            expect(dir).to.be.an('object');
-            expect(dir.name).to.be.a('string');
-            expect(dir.path).to.be.a('string');
-            expect(dir.absolutePath).to.be.a('string');
-            expect(dir.globPath).to.be.a('string');
-            expect(dir.addChild).to.be.a('function');
-            expect(dir.getChild).to.be.a('function');
-            expect(dir.getChildren).to.be.a('function');
-            expect(dir.getFilePath).to.be.a('function');
-            expect(dir.getFileGlob).to.be.a('function');
-            expect(dir.getAllFilesGlob).to.be.a('function');
-        });
     });
 
-    describe('name', () => {
-        it('should return an empty string if the input path is the root character', () => {
-            const inputs = [_path.sep];
-
-            inputs.forEach((path) => {
-                const dir = new Directory(path);
-                expect(dir.name).to.equal('');
-            });
+    describe('[properties]', function () {
+        it('[name] should return the directory name', function () {
+            const expectedName = 'foo';
+            const dir = new Directory(_path.join(process.cwd(), expectedName));
+            expect(dir.name).to.equal(expectedName);
         });
 
-        it('should return the name the current directory if the input path is empty or "."', () => {
-            const inputs = ['', '.', `.${_path.sep}`, `.${_path.sep}.`];
-
-            inputs.forEach((path) => {
-                const dir = new Directory(path);
-                expect(dir.name).to.equal(_path.basename(_process.cwd()));
-            });
-        });
-
-        it('should return the name of the directory if a relative path is specified', () => {
-            const dirs = ['foo', 'bar', 'baz'];
-            const inputs = [_createPath(...dirs), _createPath(...dirs, '')];
-
-            inputs.forEach((path) => {
-                const dir = new Directory(path);
-                expect(dir.name).to.equal('baz');
-            });
-        });
-
-        it('should return the name of the directory if an absolute path is specified', () => {
-            const dirs = ['foo', 'bar', 'baz'];
-            const inputs = [
-                _createPath('', ...dirs),
-                _createPath('', ...dirs, ''),
-            ];
-
-            inputs.forEach((path) => {
-                const dir = new Directory(path);
-                expect(dir.name).to.equal('baz');
-            });
-        });
-    });
-
-    describe('path', () => {
-        it(`should return "${_path.sep} if the path is "${_path.sep}"`, () => {
-            const dir = new Directory(_path.sep);
-            expect(dir.path).to.equal(_path.sep);
-        });
-
-        it('should return a standardized reference to the current directory', () => {
-            const inputs = ['', '.', `.${_path.sep}`];
-
-            inputs.forEach((path) => {
-                const dir = new Directory(path);
-                const expectedPath = _createPath('.', '');
-                expect(dir.path).to.equal(expectedPath);
-            });
-        });
-
-        it('should return a standardized directory path when a relative path is specified', () => {
-            const dirs = ['foo', 'bar', 'baz'];
-            const inputs = [_createPath(...dirs), _createPath(...dirs, '')];
-
-            inputs.forEach((path) => {
-                const dir = new Directory(path);
-                const expectedPath = _createPath(...dirs, '');
-                expect(dir.path).to.equal(expectedPath);
-            });
-        });
-
-        it('should return a standardized directory path when an absolute path is specified', () => {
-            const dirs = ['foo', 'bar', 'baz'];
-            const inputs = [
-                _createPath('', ...dirs),
-                _createPath('', ...dirs, ''),
-            ];
-
-            inputs.forEach((path) => {
-                const dir = new Directory(path);
-                const expectedPath = _createPath('', ...dirs, '');
-                expect(dir.path).to.equal(expectedPath);
-            });
-        });
-    });
-
-    describe('absolutePath', () => {
-        it(`should return "${_path.sep}" if the path is "${_path.sep}"`, () => {
-            const dir = new Directory(_path.sep);
-            expect(dir.absolutePath).to.equal(_path.sep);
-        });
-
-        it('should use the resolved path to determine a standardized directory path', () => {
-            const inputs = ['', '.', `.${_path.sep}`];
-
-            inputs.forEach((path) => {
-                const dir = new Directory(path);
-                const expectedPath = _path.join(_path.resolve(path), _path.sep);
-                expect(dir.absolutePath).to.equal(expectedPath);
-            });
-        });
-
-        it('should return a standardized directory path when a relative path is specified', () => {
-            const dirs = ['foo', 'bar', 'baz'];
-            const inputs = [_createPath(...dirs), _createPath(...dirs, '')];
-
-            inputs.forEach((path) => {
-                const dir = new Directory(path);
-                let expectedPath = _createPath(_path.resolve(), ...dirs, '');
-                expect(dir.absolutePath).to.equal(expectedPath);
-            });
-        });
-
-        it('should return a standardized directory path when an absolute path is specified', () => {
-            const dirs = ['foo', 'bar', 'baz'];
-            const inputs = [
-                _createPath('', ...dirs),
-                _createPath('', ...dirs, ''),
-            ];
-
-            inputs.forEach((path) => {
-                const dir = new Directory(path);
-                const expectedPath = _createPath('', ...dirs, '');
-                expect(dir.absolutePath).to.equal(expectedPath);
-            });
-        });
-    });
-
-    describe('globPath', () => {
-        it(`should return "/" if the path is "${_path.sep}"`, () => {
-            const dir = new Directory(_path.sep);
-            expect(dir.globPath).to.equal('/');
-        });
-
-        it('should use the resolved path to determine a standardized directory glob', () => {
-            const inputs = ['', '.', `.${_path.sep}`];
-
-            inputs.forEach((path) => {
-                const dir = new Directory(path);
-                const filePath = _path.join(_path.resolve(path), _path.sep);
-                const expectedPath = filePath.replace(/\\/g, '/');
-
-                expect(dir.globPath).to.equal(expectedPath);
-            });
-        });
-
-        it('should return a standardized directory glob when a relative path is specified', () => {
-            const dirs = ['foo', 'bar', 'baz'];
-            const inputs = [_createPath(...dirs), _createPath(...dirs, '')];
-
-            inputs.forEach((path) => {
-                const dir = new Directory(path);
-                const filePath = _createPath(_path.resolve(), ...dirs, '');
-                const expectedPath = filePath.replace(/\\/g, '/');
-
-                expect(dir.globPath).to.equal(expectedPath);
-            });
-        });
-
-        it('should return a standardized directory glob when an absolute path is specified', () => {
-            const dirs = ['foo', 'bar', 'baz'];
-            const inputs = [
-                _createPath('', ...dirs),
-                _createPath('', ...dirs, ''),
-            ];
-
-            inputs.forEach((path) => {
-                const dir = new Directory(path);
-                const filePath = _createPath('', ...dirs, '');
-                const expectedPath = filePath.replace(/\\/g, '/');
-                expect(dir.globPath).to.equal(expectedPath);
-            });
-        });
-    });
-
-    describe('addChild()', () => {
-        it('should throw an error if invoked without a valid directory name', () => {
-            const error = 'Invalid directory name specified (arg #1)';
-            const inputs = [null, undefined, 123, true, {}, [], () => {}];
-
-            inputs.forEach((path) => {
-                const wrapper = () => {
-                    const dir = new Directory('');
-                    return dir.addChild(path);
-                };
-                expect(wrapper).to.throw(error);
-            });
-        });
-
-        it('should throw an error if the name includes path separators', () => {
-            const error =
-                'Directory name cannot include path separators (:, \\ or /)';
-            const inputs = [
-                '/',
-                '\\',
-                '/child',
-                'child/',
-                'child\\',
-                '\\child',
-                'c:',
-            ];
-
-            inputs.forEach((path) => {
-                const wrapper = () => {
-                    const dir = new Directory('');
-                    return dir.addChild(path);
-                };
-                expect(wrapper).to.throw(error);
-            });
-        });
-
-        it('should return an instance of Directory', () => {
-            const dir = new Directory('');
-            const child = dir.addChild('baby');
-            expect(child).to.be.an.instanceof(Directory);
-        });
-
-        it('should create and add a new Directory instance to the child array', () => {
-            const dir = new Directory('');
-
-            //NOTE: Examining "private" members.
-            expect(dir._children).to.deep.equal([]);
-            const child = dir.addChild('baby');
-
-            expect(dir._children).to.have.length(1);
-            expect(dir._children[0]).to.equal(child);
-        });
-
-        it('should initialize the child directory with the correct path', () => {
-            const parentPath = _createPath('foo', 'bar', 'baz');
-            const childDirName = 'chaz';
-            const dir = new Directory(parentPath);
-
-            const child = dir.addChild(childDirName);
-            const refChild = new Directory(
-                _path.join(parentPath, childDirName)
+        it('[path] should return the relative path to the directory', function () {
+            const expectedPath = 'foo';
+            const dir = new Directory(_path.join(process.cwd(), 'foo'));
+            expect(dir.path).to.equal(
+                `${_path.sep}${expectedPath}${_path.sep}`,
             );
+        });
 
-            expect(child.path).to.equal(refChild.path);
-            expect(child.name).to.equal(refChild.name);
+        it('[absolutePath] should return the relative path to the directory', function () {
+            const path = 'foo';
+            const dir = new Directory(path);
+            expect(dir.absolutePath).to.equal(
+                `${_path.join(process.cwd(), path)}${_path.sep}`,
+            );
+        });
+
+        it('[globPath] should return the path used to generate glob patterns', function () {
+            const path = 'foo';
+            const dir = new Directory(path);
+            // The glob path will different from the absolute path in windows,
+            // where the separator will be '\', not '/'. On linux/mac both of
+            // these paths will be the same.
+            expect(dir.globPath).to.equal(
+                `${_path.join(process.cwd(), path)}/`,
+            );
         });
     });
 
-    describe('getChild()', () => {
-        it('should throw an error if invoked without a valid path', () => {
-            const error = 'Invalid child path specified (arg #1)';
-            const inputs = [null, undefined, 123, true, '', {}, [], () => {}];
-
-            inputs.forEach((path) => {
-                const wrapper = () => {
-                    const dir = new Directory('.');
-                    return dir.getChild(path);
-                };
+    describe('addChild()', function () {
+        getAllButString('').forEach((name) => {
+            it(`should throw an error if invoked without a valid name (value=${typeof name})`, function () {
+                const error = 'Invalid directory name (arg #1)';
+                const dir = new Directory('foo');
+                const wrapper = () => dir.addChild(name);
                 expect(wrapper).to.throw(error);
             });
         });
 
-        it('should throw an error if a child does not exist at the specified path', () => {
-            const path = 'foo';
-            const error = `Child not found at path: [${path}]`;
+        ['foo/bar', 'foo\\bar', 'foo:bar'].forEach((name) => {
+            it(`should throw an error if the directory name contains invalid characters (value=${name})`, function () {
+                const error =
+                    'Directory name cannot include path separators (:, \\ or /)';
+                const dir = new Directory('foo');
+                const wrapper = () => dir.addChild(name);
+                expect(wrapper).to.throw(error);
+            });
+        });
 
-            const wrapper = () => {
-                const dir = new Directory('.');
-                return dir.getChild(path);
-            };
+        it('should create and add a child node to the current directory', function () {
+            const expectedName = 'bar';
+            const dir = new Directory('foo');
+
+            expect(dir.getChildren()).to.have.lengthOf(0);
+            dir.addChild(expectedName);
+
+            const children = dir.getChildren();
+            expect(children).to.have.lengthOf(1);
+            expect(children[0].name).to.equal(expectedName);
+            expect(children[0].path).to.equal(
+                `${dir.path}${expectedName}${_path.sep}`,
+            );
+        });
+    });
+
+    describe('getChildren()', function () {
+        it('should return an empty array if the directory has no children', function () {
+            const dir = new Directory('foo');
+            expect(dir.getChildren()).to.deep.equal([]);
+        });
+
+        it('should return a list of first level children if the directory has children', function () {
+            const dirNames = ['foo', 'bar', 'baz'];
+            const tree = dirNames.reduce((result, dirName) => {
+                result[dirName] = 1;
+                return result;
+            }, {});
+            const dir = Directory.createTree('.', tree);
+
+            const children = dir.getChildren();
+            expect(children).to.have.lengthOf(dirNames.length);
+            dirNames.forEach((expectedName, index) => {
+                expect(children[index].name).to.equal(expectedName);
+            });
+        });
+
+        it('should omit all lower level children of the directory', function () {
+            const dirNames = ['foo', 'bar', 'baz'];
+            const tree = dirNames.reduce((result, dirName) => {
+                result[dirName] = dirNames.reduce((childRes, childDirName) => {
+                    childRes[`${childDirName}_child`] = 1;
+                    return childRes;
+                }, {});
+                return result;
+            }, {});
+            const dir = Directory.createTree('.', tree);
+
+            const children = dir.getChildren();
+            expect(children).to.have.lengthOf(dirNames.length);
+            dirNames.forEach((expectedName, index) => {
+                expect(children[index].name).to.equal(expectedName);
+            });
+        });
+    });
+
+    describe('getChild()', function () {
+        getAllButString('').forEach((childPath) => {
+            it(`should throw an error if invoked without a valid child path (value=${typeof childPath})`, function () {
+                const error = 'Invalid childPath (arg #1)';
+                const dir = new Directory('foo');
+                const wrapper = () => dir.getChild(childPath);
+                expect(wrapper).to.throw(error);
+            });
+        });
+
+        it('should throw an error if the child node does not exist in the tree', function () {
+            const badPath = 'this/does/not/exist';
+            const error = `Child not found at path: [${badPath}]`;
+            const dir = Directory.createTree('.', _createTree());
+            const wrapper = () => dir.getChild(badPath);
             expect(wrapper).to.throw(error);
         });
 
-        it('should return the child from its child list if the path is simple', () => {
-            const path = 'foo';
-            const dir = new Directory('.');
-            const child = dir.addChild(path);
-
-            const ret = dir.getChild(path);
-            expect(ret).to.equal(child);
-        });
-
-        it('should recursively search through its children if the path is complex', () => {
-            const childNames = ['foo', 'bar'];
-            const path = _createPath(...childNames);
-            const dir = new Directory('.');
-
-            const lastChild = childNames.reduce((result, name) => {
-                return result.addChild(name);
-            }, dir);
-
-            const ret = dir.getChild(path);
-            expect(ret).to.equal(lastChild);
-        });
-
-        it('should abort search with an error if a child is not found in the path', () => {
-            const childNames = ['foo', 'bar'];
-            const path = _createPath('foo', 'bar', 'baz');
-            const error = `Child not found at path: [${path}]`;
-            const dir = new Directory('.');
-
-            childNames.forEach((name) => {
-                dir.addChild(name);
-            });
-
-            const wrapper = () => {
-                return dir.getChild(path);
+        it('should return a reference to a child at the appropriate path', function () {
+            const tree = {
+                foo: {
+                    bar: {
+                        baz: null,
+                    },
+                },
+                foo2: {
+                    bar2: null,
+                    baz2: null,
+                },
+                '.tmp': null,
             };
-            expect(wrapper).to.throw(error);
-        });
-    });
+            const dir = Directory.createTree('.', tree);
 
-    describe('getChildren()', () => {
-        it('should return an array containing all of the child directories', () => {
-            const parent = new Directory('');
-            const childDirectories = ['foo', 'bar', 'baz'].map((path) => {
-                return new Directory(path);
+            [
+                { path: 'foo', nodeName: 'foo' },
+                { path: 'foo2/bar2', nodeName: 'bar2' },
+                { path: 'foo/bar/baz', nodeName: 'baz' },
+                { path: '.tmp', nodeName: '.tmp' },
+            ].forEach(({ path, nodeName }) => {
+                const child = dir.getChild(path);
+                expect(child.name).to.equal(nodeName);
             });
-
-            childDirectories.forEach((dir) => parent._children.push(dir));
-
-            const ret = parent.getChildren();
-            expect(ret).to.deep.equal(childDirectories);
-            expect(ret).to.not.equal(parent._children);
         });
     });
 
-    describe('getFilePath()', () => {
-        it('should return the path to the parent if invoked without a valid fileName', () => {
-            const inputs = [null, undefined, 123, true, {}, [], () => {}];
+    describe('getFilePath()', function () {
+        getAllButString('').forEach((fileName) => {
+            it(`should return the absolute path of the directory if the filename is invalid (value=${typeof fileName})`, function () {
+                const dir = new Directory('foo');
+                const filePath = dir.getFilePath(fileName);
 
-            inputs.forEach((fileName) => {
-                const dir = new Directory('');
-                const ret = dir.getFilePath(fileName);
-
-                expect(ret).to.equal(dir.absolutePath);
+                expect(filePath).to.equal(dir.absolutePath);
             });
         });
 
-        it('should return the path to the filename as if it exists in the directory', () => {
-            const fileName = 'test-file';
-            const dir = new Directory('');
-            const ret = dir.getFilePath(fileName);
+        ['bar', 'bar.txt', 'foo/bar.txt'].forEach((fileName) => {
+            it(`should return the absolute file path if a valid filename is provided (value=${fileName})`, function () {
+                const dir = new Directory('foo');
+                const filePath = dir.getFilePath(fileName);
 
-            expect(ret).to.equal(_path.join(dir.absolutePath, fileName));
+                expect(filePath).to.equal(`${dir.absolutePath}${fileName}`);
+            });
         });
     });
 
-    describe('getFileGlob()', () => {
-        it('should return the glob to the parent if invoked without a valid fileName', () => {
-            const inputs = [null, undefined, 123, true, {}, [], () => {}];
+    describe('getFileGlob()', function () {
+        getAllButString('').forEach((fileName) => {
+            it(`should return the absolute path of the directory if the filename is invalid (value=${typeof fileName})`, function () {
+                const dir = new Directory('foo');
+                const glob = dir.getFileGlob(fileName);
 
-            inputs.forEach((fileName) => {
-                const dir = new Directory('');
-                const ret = dir.getFileGlob(fileName);
-
-                expect(ret).to.equal(dir.globPath);
+                expect(glob).to.equal(
+                    dir.absolutePath.replace(/\\/g, _path.sep),
+                );
             });
         });
 
-        it('should return the path to the filename as if it exists in the directory', () => {
-            const fileName = 'test-file';
-            const dir = new Directory('');
-            const ret = dir.getFileGlob(fileName);
+        ['bar', 'bar.txt', 'foo/bar.txt'].forEach((fileName) => {
+            it(`should return a glob pattern if a valid filename is provided (value=${fileName})`, function () {
+                const dir = new Directory('foo');
+                const glob = dir.getFileGlob(fileName);
 
-            expect(ret).to.equal(`${dir.globPath}${fileName}`);
+                expect(glob).to.equal(
+                    `${dir.absolutePath}${fileName}`.replace(/\\/g, _path.sep),
+                );
+            });
         });
     });
 
-    describe('getAllFilesGlob()', () => {
-        it('should return the expected globbing pattern when invoked without an extension', () => {
-            const dirs = ['foo', 'bar', 'baz'];
-            const path = _createPath(...dirs);
-            const absPath = _path.resolve(...dirs);
-            const expectedPattern = _createPath(absPath, '**', '*').replace(
-                /\\/g,
-                '/'
-            );
+    describe('getAllFilesGlob()', function () {
+        getAllButString().forEach((extension) => {
+            it(`should use * as the glob pattern if a valid extension is not specified (value=${typeof extension})`, function () {
+                const dir = new Directory('foo');
+                const glob = dir.getAllFilesGlob(extension);
 
-            const dir = new Directory(path);
-            const ret = dir.getAllFilesGlob();
-            expect(ret).to.equal(expectedPattern);
+                expect(glob).to.equal(
+                    `${dir.absolutePath.replace(/\\/g, _path.sep)}**/*`,
+                );
+            });
         });
 
-        it('should return the expected globbing pattern when invoked with an extension', () => {
-            const dirs = ['foo', 'bar', 'baz'];
-            const ext = 'js';
-            const path = _createPath(...dirs);
-            const absPath = _path.resolve(...dirs);
-            const expectedPattern = _createPath(
-                absPath,
-                '**',
-                `*.${ext}`
-            ).replace(/\\/g, '/');
+        ['js', 'py', 'txt'].forEach((extension) => {
+            it(`should return a glob pattern that uses the specified file extension (value=${extension})`, function () {
+                const dir = new Directory('foo');
+                const glob = dir.getAllFilesGlob(extension);
 
-            const dir = new Directory(path);
-            const ret = dir.getAllFilesGlob(ext);
-            expect(ret).to.equal(expectedPattern);
+                expect(glob).to.equal(
+                    `${dir.absolutePath.replace(
+                        /\\/g,
+                        _path.sep,
+                    )}**/*.${extension}`,
+                );
+            });
         });
     });
 });
