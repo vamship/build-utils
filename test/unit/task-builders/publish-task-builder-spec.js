@@ -64,7 +64,15 @@ describe('[PublishTaskBuilder]', function () {
         }
         // Type aws-microservice
         else if (type === 'aws-microservice') {
-            return [{ name: 'publish-aws', ctorArgs: [] }];
+            const cdkTargets = project.getCdkTargets();
+            return cdkTargets.map((stack) => ({
+                name: 'publish-aws',
+                ctorArgs: [
+                    stack,
+                    process.env.INFRA_ENV,
+                    process.env.INFRA_NO_PROMPT === 'true',
+                ],
+            }));
         }
         // Type ui
         else if (type === 'ui') {
