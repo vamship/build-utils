@@ -34,7 +34,7 @@ describe('[NotSupportedTaskBuilder]', function () {
     );
 
     describe('[task]', function () {
-        async function _createTask(definitionOverrides) {
+        async function _createTask(definitionOverrides, message) {
             const fancyLogMock = createFancyLogMock();
             const NotSupportedTaskBuilder = await _importModule({
                 fancyLogMock,
@@ -42,7 +42,7 @@ describe('[NotSupportedTaskBuilder]', function () {
 
             const definition = buildProjectDefinition(definitionOverrides);
             const project = new Project(definition);
-            const builder = new NotSupportedTaskBuilder();
+            const builder = new NotSupportedTaskBuilder(message);
 
             return {
                 fancyLogMock,
@@ -53,18 +53,23 @@ describe('[NotSupportedTaskBuilder]', function () {
 
         getAllProjectOverrides().forEach(({ title, overrides }) => {
             describe(`Verify task (${title})`, function () {
-                it(`should show a log message on the screen`, async function () {
-                    const { task, fancyLogMock } = await _createTask(overrides);
+                [undefined, 'custom message'].forEach((message) => {
+                    it(`should show a log message on the screen (custom message=${message})`, async function () {
+                        const { task, fancyLogMock } = await _createTask(
+                            overrides,
+                            message,
+                        );
+                        const expectedMessage =
+                            message || 'Task not defined for project';
 
-                    expect(fancyLogMock.info).to.not.have.been.called;
+                        expect(fancyLogMock.info).to.not.have.been.called;
 
-                    task();
+                        await task();
 
-                    expect(
-                        fancyLogMock.warn,
-                    ).to.have.been.calledOnceWithExactly(
-                        'Task not defined for project',
-                    );
+                        expect(
+                            fancyLogMock.warn,
+                        ).to.have.been.calledOnceWithExactly(expectedMessage);
+                    });
                 });
             });
         });

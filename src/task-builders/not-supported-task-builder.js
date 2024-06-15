@@ -12,12 +12,21 @@ import { Project } from '../project.js';
 export class NotSupportedTaskBuilder extends TaskBuilder {
     /**
      * Creates a new task builder.
+     *
+     * @param {String} [message] An optional message to display when the task is
+     * run.
      */
-    constructor() {
+    constructor(message) {
         super(
             'not-supported',
             `Task that does nothing - used to indicate that a task is not supported for a project type.`,
         );
+
+        if (typeof message !== 'string' || message.length <= 0) {
+            message = 'Task not defined for project';
+        }
+
+        this._message = message;
     }
 
     /**
@@ -33,7 +42,7 @@ export class NotSupportedTaskBuilder extends TaskBuilder {
         if (!(project instanceof Project)) {
             throw new Error('Invalid project (arg #1)');
         }
-        return () => _fancyLog.warn('Task not defined for project');
+        return async () => _fancyLog.warn(this._message);
     }
 
     /**
