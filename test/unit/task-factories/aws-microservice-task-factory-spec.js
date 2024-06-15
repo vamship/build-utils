@@ -28,6 +28,7 @@ describe('[AwsMicroserviceTaskFactory]', function () {
         'build',
         'package',
         'publish',
+        'publish-aws',
     ];
     const importDefinitions = createTaskBuilderImportDefinitions(_builderNames);
 
@@ -46,6 +47,20 @@ describe('[AwsMicroserviceTaskFactory]', function () {
     );
 
     function _getExpectedTaskBuilders(project) {
+        const additionalBuilders = project
+            .getCdkTargets()
+            .filter((stack) => stack !== 'default')
+            .map((stack) => {
+                return {
+                    name: 'publish-aws',
+                    ctorArgs: [
+                        stack,
+                        process.env.INFRA_ENV,
+                        process.env.INFRA_NO_PROMPT === 'true',
+                    ],
+                };
+            });
+
         const builders = [
             { name: 'clean', ctorArgs: [] },
             { name: 'format', ctorArgs: [] },
@@ -56,8 +71,8 @@ describe('[AwsMicroserviceTaskFactory]', function () {
             { name: 'docs', ctorArgs: [project] },
             { name: 'build', ctorArgs: [project] },
             { name: 'package', ctorArgs: [project] },
-            { name: 'publish', ctorArgs: [project] },
-        ];
+            { name: 'publish', ctorArgs: [] },
+        ].concat(additionalBuilders);
 
         return builders;
     }

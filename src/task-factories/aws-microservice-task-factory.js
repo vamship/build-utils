@@ -9,6 +9,7 @@ import { PackageTaskBuilder } from '../task-builders/package-task-builder.js';
 import { PublishTaskBuilder } from '../task-builders/publish-task-builder.js';
 import { DocsTaskBuilder } from '../task-builders/docs-task-builder.js';
 import { TestTaskBuilder } from '../task-builders/test-task-builder.js';
+import { PublishAwsTaskBuilder } from '../task-builders/publish-aws-task-builder.js';
 
 /**
  * Represents a factory that generates a set of build tasks for a given project
@@ -36,6 +37,18 @@ export class AwsMicroserviceTaskFactory extends TaskFactory {
             return [];
         }
 
+        const publishTasks = this._project
+            .getCdkTargets()
+            .filter((stack) => stack !== 'default')
+            .map(
+                (stack) =>
+                    new PublishAwsTaskBuilder(
+                        stack,
+                        process.env.INFRA_ENV,
+                        process.env.INFRA_NO_PROMPT === 'true',
+                    ),
+            );
+
         return [
             new CleanTaskBuilder(),
             new FormatTaskBuilder(),
@@ -47,7 +60,7 @@ export class AwsMicroserviceTaskFactory extends TaskFactory {
             new DocsTaskBuilder(this._project),
             new BuildTaskBuilder(this._project),
             new PackageTaskBuilder(this._project),
-            new PublishTaskBuilder(this._project),
-        ];
+            new PublishTaskBuilder(),
+        ].concat(publishTasks);
     }
 }
