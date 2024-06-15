@@ -1,6 +1,6 @@
 import _path from 'path';
 
-function _transformOverrides({ type, language, noContainer }) {
+function _transformOverrides({ type, language, noContainer, defaultAwsStack }) {
     const overrides = {
         title: `${type} - ${language}${noContainer ? ' [no container]' : ''}`,
         overrides: {
@@ -12,6 +12,11 @@ function _transformOverrides({ type, language, noContainer }) {
 
     if (noContainer) {
         overrides.overrides['buildMetadata.container'] = undefined;
+    }
+
+    if (defaultAwsStack) {
+        overrides.overrides['buildMetadata.aws.stacks.default'] =
+            'default-stack';
     }
 
     return overrides;
@@ -122,6 +127,18 @@ export function mapProjectList(transform) {
         .concat([
             { language: 'js', type: 'cli', noContainer: true },
             { language: 'ts', type: 'cli', noContainer: true },
+        ])
+        .concat([
+            {
+                language: 'js',
+                type: 'aws-microservice',
+                defaultAwsStack: true,
+            },
+            {
+                language: 'ts',
+                type: 'aws-microservice',
+                defaultAwsStack: true,
+            },
         ])
         .map(transform)
         .filter((item) => !!item);
