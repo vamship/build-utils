@@ -59,7 +59,15 @@ export class PublishTaskBuilder extends TaskBuilder {
         }
         // Type aws-microservice
         else if (type === 'aws-microservice') {
-            return [new PublishAwsTaskBuilder()];
+            const cdkTargets = project.getCdkTargets();
+            return cdkTargets.map(
+                (stack) =>
+                    new PublishAwsTaskBuilder(
+                        stack,
+                        process.env.INFRA_ENV,
+                        process.env.INFRA_NO_PROMPT === 'true',
+                    ),
+            );
         }
         // Type container
         else if (type === 'container') {
