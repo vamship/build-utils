@@ -8,6 +8,7 @@ import {
     getAllButArray,
     makeOptional,
     createContainerObject,
+    getAllProjectOverrides,
 } from '../utils/data-generator.js';
 import { buildProjectDefinition } from '../utils/object-builder.js';
 
@@ -142,6 +143,18 @@ describe('[Project]', function () {
 
                         expect(wrapper).to.throw(error);
                     });
+                });
+
+                it(`should throw an error if invoked without a valid buildMetadata.aws (value=${typeof aws})`, function () {
+                    const definition = buildProjectDefinition({
+                        'buildMetadata.type': 'aws-microservice',
+                        'buildMetadata.aws': undefined,
+                    });
+                    const wrapper = () => new Project(definition);
+                    const error =
+                        /AWS microservice projects require AWS configuration/;
+
+                    expect(wrapper).to.throw(error);
                 });
 
                 it(`should throw an error if invoked without at least one stack`, function () {
@@ -571,18 +584,24 @@ describe('[Project]', function () {
     });
 
     describe('getCdkTargets()', function () {
-        it('should return an empty array if the definition does not contain an aws definition', function () {
-            const definition = buildProjectDefinition({
-                'buildMetadata.aws': undefined,
-            });
-            const project = new Project(definition);
+        getAllProjectOverrides()
+            .filter(({ type }) => type != 'aws-microservice')
+            .forEach((override) => {
+                it(`should throw an error if the project type is not an aws microservice (type=${override.type})`, function () {
+                    const definition = buildProjectDefinition(override);
+                    const project = new Project(definition);
+                    const error =
+                        'CDK targets are only available for AWS microservices';
+                    const wrapper = () => project.getCdkTargets();
 
-            expect(project.getCdkTargets()).to.deep.equal([]);
-        });
+                    expect(wrapper).to.throw(error);
+                });
+            });
 
         it('should return the stack keys specified in the project definition', function () {
             const targets = ['foo', 'bar'];
             const definition = buildProjectDefinition({
+                'buildMetadata.type': 'aws-microservice',
                 'buildMetadata.aws.stacks': targets.reduce((result, key) => {
                     result[key] = `${key}-stack`;
                     return result;
@@ -596,6 +615,7 @@ describe('[Project]', function () {
         it('should return a copy of the values, not a reference', function () {
             const targets = ['foo', 'bar'];
             const definition = buildProjectDefinition({
+                'buildMetadata.type': 'aws-microservice',
                 'buildMetadata.aws.stacks': targets.reduce((result, key) => {
                     result[key] = `${key}-stack`;
                     return result;

@@ -57,6 +57,12 @@ export class Project {
             );
         }
 
+        if (type === 'aws-microservice' && !aws) {
+            throw new Error(
+                `AWS microservice projects require AWS configuration`,
+            );
+        }
+
         if (aws && aws.stacks && Object.keys(aws.stacks).length <= 0) {
             throw new Error(`No AWS stacks defined`);
         }
@@ -243,6 +249,11 @@ export class Project {
      * @return {Array} A list of stack keys
      */
     getCdkTargets() {
+        if (this._type !== 'aws-microservice') {
+            throw new Error(
+                'CDK targets are only available for AWS microservices',
+            );
+        }
         return Object.keys(this._cdkTargets);
     }
 
