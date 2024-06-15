@@ -75,8 +75,8 @@ describe('[PublishAwsTaskBuilder]', function () {
 
     injectBuilderInitTests(
         _importModule,
-        'publish-aws',
-        `Publish a CDK project to AWS`,
+        'publish-aws-myStack',
+        `Publish a CDK project to AWS: [myStack]`,
         ['myStack', 'infra', false], // myStack is the name of the target populated by default (see object-builder.js)
     );
 

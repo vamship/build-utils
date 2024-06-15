@@ -30,7 +30,11 @@ export class PublishAwsTaskBuilder extends TaskBuilder {
         if (typeof requireApproval !== 'boolean') {
             throw new Error('Invalid requireApproval (arg #3)');
         }
-        super('publish-aws', `Publish a CDK project to AWS`);
+
+        super(
+            `publish-aws-${target}`,
+            `Publish a CDK project to AWS: [${target}]`,
+        );
 
         this._target = target;
         this._environment = environment;
