@@ -434,4 +434,31 @@ describe('[Directory]', function () {
             });
         });
     });
+
+    describe('getAllHiddenFilesGlob()', function () {
+        getAllButString().forEach((extension) => {
+            it(`should use .* as the glob pattern if a valid extension is not specified (value=${typeof extension})`, function () {
+                const dir = new Directory('foo');
+                const glob = dir.getAllHiddenFilesGlob(extension);
+
+                expect(glob).to.equal(
+                    `${dir.absolutePath.replace(/\\/g, _path.sep)}**/.*`,
+                );
+            });
+        });
+
+        ['js', 'py', 'txt'].forEach((extension) => {
+            it(`should return a glob pattern that uses the specified file extension (value=${extension})`, function () {
+                const dir = new Directory('foo');
+                const glob = dir.getAllHiddenFilesGlob(extension);
+
+                expect(glob).to.equal(
+                    `${dir.absolutePath.replace(
+                        /\\/g,
+                        _path.sep,
+                    )}**/.*.${extension}`,
+                );
+            });
+        });
+    });
 });
