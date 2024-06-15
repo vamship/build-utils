@@ -64,15 +64,27 @@ describe('[PublishTaskBuilder]', function () {
         }
         // Type aws-microservice
         else if (type === 'aws-microservice') {
-            const cdkTargets = project.getCdkTargets();
-            return cdkTargets.map((stack) => ({
-                name: 'publish-aws',
-                ctorArgs: [
-                    stack,
-                    process.env.INFRA_ENV,
-                    process.env.INFRA_NO_PROMPT === 'true',
-                ],
-            }));
+            if (project.getCdkTargets().find((stack) => stack === 'default')) {
+                return [
+                    {
+                        name: 'publish-aws',
+                        ctorArgs: [
+                            'default',
+                            process.env.INFRA_ENV,
+                            process.env.INFRA_NO_PROMPT === 'true',
+                        ],
+                    },
+                ];
+            } else {
+                return [
+                    {
+                        name: 'not-supported',
+                        ctorArgs: [
+                            'No default stack defined for project. Please use an explicitly named publish task.',
+                        ],
+                    },
+                ];
+            }
         }
         // Type ui
         else if (type === 'ui') {

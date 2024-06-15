@@ -59,15 +59,24 @@ export class PublishTaskBuilder extends TaskBuilder {
         }
         // Type aws-microservice
         else if (type === 'aws-microservice') {
-            const cdkTargets = project.getCdkTargets();
-            return cdkTargets.map(
-                (stack) =>
+            const stacks = project.getCdkTargets();
+            const defaultStack = stacks.find((target) => target === 'default');
+
+            if (defaultStack) {
+                return [
                     new PublishAwsTaskBuilder(
-                        stack,
+                        defaultStack,
                         process.env.INFRA_ENV,
                         process.env.INFRA_NO_PROMPT === 'true',
                     ),
-            );
+                ];
+            } else {
+                return [
+                    new NotSupportedTaskBuilder(
+                        'No default stack defined for project. Please use an explicitly named publish task.',
+                    ),
+                ];
+            }
         }
         // Type container
         else if (type === 'container') {
