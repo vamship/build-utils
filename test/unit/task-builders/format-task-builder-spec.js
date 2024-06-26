@@ -59,9 +59,13 @@ describe('[FormatTaskBuilder]', function () {
         }
 
         function createSourceList(project, overrides) {
-            const dirs = ['src', 'test', 'infra', '.gulp'];
+            const dirs = ['src', 'test'];
             const extensions = ['ts', 'js', 'json', 'py', 'tsx', 'jsx'];
             const rootDir = project.rootDir.absolutePath;
+
+            if (project.type === 'aws-microservice') {
+                dirs.push('infra');
+            }
 
             return generateGlobPatterns(rootDir, dirs, extensions).concat([
                 _path.join(rootDir, 'README.md'),

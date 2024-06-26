@@ -53,9 +53,13 @@ describe('[BuildJsTaskBuilder]', function () {
         }
 
         function createSourceList(project, overrides) {
-            const dirs = ['src', 'test', 'infra'];
+            const dirs = ['src', 'test'];
             const extensions = ['js'];
             const rootDir = project.rootDir.absolutePath;
+
+            if (project.type === 'aws-microservice') {
+                dirs.push('infra');
+            }
 
             return generateGlobPatterns(rootDir, dirs, extensions);
         }
