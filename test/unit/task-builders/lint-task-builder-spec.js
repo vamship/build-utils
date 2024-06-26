@@ -62,9 +62,12 @@ describe('[LintTaskBuilder]', function () {
         }
 
         function createSourceList(project) {
-            const dirs = ['src', 'test', 'infra', '.gulp'];
+            const dirs = ['src', 'test'];
             const extensions = ['ts', 'js', 'tsx', 'jsx'];
             const rootDir = project.rootDir.absolutePath;
+            if(project.type === 'aws-microservice') {
+                dirs.push('infra');
+            }
 
             return generateGlobPatterns(rootDir, dirs, extensions).concat([
                 _path.join(rootDir, 'Gulpfile.js'),

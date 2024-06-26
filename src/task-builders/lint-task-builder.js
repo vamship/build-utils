@@ -31,9 +31,13 @@ export class LintTaskBuilder extends TaskBuilder {
             throw new Error('Invalid project (arg #1)');
         }
 
-        const dirs = ['src', 'test', 'infra', '.gulp'];
+        const dirs = ['src', 'test'];
         const extras = ['Gulpfile.js'];
         const extensions = ['ts', 'js', 'tsx', 'jsx'];
+
+        if(project.type === 'aws-microservice') {
+            dirs.push('infra');
+        }
 
         const paths = dirs
             .map((dir) => project.rootDir.getChild(dir))
