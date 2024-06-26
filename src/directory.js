@@ -1,4 +1,5 @@
 import _path from 'path';
+import _fs from 'fs';
 
 const _sepRegexp = new RegExp(_path.sep.replace(/\\/g, '\\\\'), 'g');
 
@@ -118,6 +119,16 @@ export class Directory {
      */
     get globPath() {
         return this._globPath;
+    }
+
+    /**
+     * Returns a boolean indicating whether the directory exists on the file
+     * system.
+     *
+     * @return {Boolean} True if the directory exists, false otherwise.
+     */
+    exists() {
+        return _fs.existsSync(this.absolutePath);
     }
 
     /**

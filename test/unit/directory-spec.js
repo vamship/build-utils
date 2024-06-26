@@ -243,6 +243,18 @@ describe('[Directory]', function () {
         });
     });
 
+    describe('exists()', function() {
+        it('should return true if the directory exists', async function() {
+            const dir = new Directory('.');
+            expect(dir.exists()).to.be.true;
+        });
+
+        it('should return false if the directory does not exist', async function() {
+            const dir = new Directory('this/does/not/exist');
+            expect(dir.exists()).to.be.false;
+        });
+    });
+
     describe('addChild()', function () {
         getAllButString('').forEach((name) => {
             it(`should throw an error if invoked without a valid name (value=${typeof name})`, function () {
