@@ -65,6 +65,7 @@ export class CopyFilesTaskBuilder extends TaskBuilder {
 
         const paths = dirs
             .map((dir) => rootDir.getChild(dir))
+            .filter((dir) => dir.exists())
             .map((dir) => extensions.map((ext) => dir.getAllFilesGlob(ext)))
             .reduce((result, arr) => result.concat(arr), [])
             .concat(extras.map((item) => rootDir.getFileGlob(item)));

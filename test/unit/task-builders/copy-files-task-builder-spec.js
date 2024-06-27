@@ -6,6 +6,7 @@ import _path from 'path';
 import { camelCase as _camelCase } from 'change-case';
 
 import _esmock from 'esmock';
+import { stub } from 'sinon';
 import { Project } from '../../../src/project.js';
 import {
     getAllProjectOverrides,
@@ -44,6 +45,13 @@ describe('[CopyFilesTaskBuilder]', function () {
 
             const definition = buildProjectDefinition(definitionOverrides);
             const project = new Project(definition);
+            const original = project.rootDir.getChild;
+            stub(project.rootDir, 'getChild').callsFake((name) => {
+                const dir = original.call(project.rootDir, name);
+                stub(dir, 'exists').returns(true);
+                return dir;
+            });
+
             const builder = new CopyFilesTaskBuilder();
 
             return {
