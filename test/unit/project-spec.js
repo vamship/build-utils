@@ -472,6 +472,7 @@ describe('[Project]', function () {
                     'test/unit/',
                     'test/api/',
                     'infra/',
+                    'scripts/',
                     'working/',
                     'working/src/',
                     'working/test/',

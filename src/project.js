@@ -107,6 +107,7 @@ export class Project {
                 api: null,
             },
             infra: null,
+            scripts: null,
             working: {
                 src: null,
                 test: {
