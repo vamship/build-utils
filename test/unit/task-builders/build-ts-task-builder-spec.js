@@ -64,9 +64,13 @@ describe('[BuildTsTaskBuilder]', function () {
         }
 
         function createSourceList(project) {
-            const dirs = ['src', 'test', 'infra'];
+            const dirs = ['src', 'test'];
             const extensions = ['ts'];
             const rootDir = project.rootDir.absolutePath;
+
+            if (project.type === 'aws-microservice') {
+                dirs.push('infra');
+            }
 
             return generateGlobPatterns(rootDir, dirs, extensions);
         }

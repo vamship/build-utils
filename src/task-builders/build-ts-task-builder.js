@@ -35,8 +35,12 @@ export class BuildTsTaskBuilder extends TaskBuilder {
         }
 
         const { rootDir } = project;
-        const dirs = ['src', 'test', 'infra'];
+        const dirs = ['src', 'test'];
         const extensions = ['ts'];
+
+        if(project.type === 'aws-microservice') {
+            dirs.push('infra');
+        }
 
         const paths = dirs
             .map((dir) => rootDir.getChild(dir))
