@@ -73,7 +73,6 @@ describe('[CopyFilesTaskBuilder]', function () {
                 'package-lock.json',
                 'LICENSE',
                 'README.md',
-                '_scripts/*',
                 'nginx.conf',
                 '.env',
                 '.npmignore',
@@ -83,7 +82,7 @@ describe('[CopyFilesTaskBuilder]', function () {
                     (key) => container[key].buildFile || 'Dockerfile',
                 ),
             );
-            const dirs = ['src', 'test'];
+            const dirs = ['src', 'test', 'scripts'];
             const extensions = ['json'].concat(staticFilePatterns);
             const rootDir = project.rootDir.absolutePath;
 
