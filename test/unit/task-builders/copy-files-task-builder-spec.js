@@ -75,9 +75,13 @@ describe('[CopyFilesTaskBuilder]', function () {
                     (key) => container[key].buildFile || 'Dockerfile',
                 ),
             );
-            const dirs = ['src', 'test', 'infra'];
+            const dirs = ['src', 'test'];
             const extensions = ['json'].concat(staticFilePatterns);
             const rootDir = project.rootDir.absolutePath;
+
+            if(project.type === 'aws-microservice') {
+                dirs.push('infra');
+            }
 
             return generateGlobPatterns(rootDir, dirs, extensions).concat(
                 extras.map((file) => _path.join(rootDir, file)),

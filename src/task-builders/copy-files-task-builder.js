@@ -36,7 +36,7 @@ export class CopyFilesTaskBuilder extends TaskBuilder {
         }
 
         const { rootDir } = project;
-        const dirs = ['src', 'test', 'infra'];
+        const dirs = ['src', 'test'];
         const extensions = ['json'].concat(project.getStaticFilePatterns());
         const containerBuildFiles = project
             .getContainerTargets()
@@ -45,6 +45,10 @@ export class CopyFilesTaskBuilder extends TaskBuilder {
                     project.getContainerDefinition(target).buildFile ||
                     'Dockerfile',
             );
+
+        if(project.type === 'aws-microservice') {
+            dirs.push('infra');
+        }
 
         const extras = [
             project.configFileName,
