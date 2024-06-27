@@ -69,12 +69,16 @@ export class TestTaskBuilder extends TaskBuilder {
         if (!(project instanceof Project)) {
             throw new Error('Invalid project (arg #1)');
         }
-        const dirs = ['src', 'test', 'infra'];
+        const dirs = ['src', 'test'];
         const exts = ['md', 'html', 'json', 'js', 'jsx', 'ts', 'tsx'];
         const rootDir =
             project.language === 'ts'
                 ? project.rootDir.getChild('working')
                 : project.rootDir;
+
+        if(project.type === 'aws-microservice') {
+            dirs.push('infra');
+        }
 
         return dirs
             .map((dir) =>
