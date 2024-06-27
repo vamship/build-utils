@@ -248,8 +248,13 @@ describe('[PackageAwsTaskBuilder]', function () {
 
     describe('getWatchPaths()', function () {
         function createPathList(project) {
-            const dirs = ['src', 'test', 'infra'];
+            const dirs = ['src', 'test'];
             const extensions = ['md', 'html', 'json', 'js', 'jsx', 'ts', 'tsx'];
+
+            if(project.type === 'aws-microservice') {
+                dirs.push('infra');
+            }
+
             const rootDir =
                 project.language === 'ts'
                     ? _path.join(project.rootDir.absolutePath, 'working')
