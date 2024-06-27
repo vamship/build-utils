@@ -251,7 +251,7 @@ describe('[PackageAwsTaskBuilder]', function () {
             const dirs = ['src', 'test'];
             const extensions = ['md', 'html', 'json', 'js', 'jsx', 'ts', 'tsx'];
 
-            if(project.type === 'aws-microservice') {
+            if (project.type === 'aws-microservice') {
                 dirs.push('infra');
             }
 

@@ -35,7 +35,7 @@ export class LintTaskBuilder extends TaskBuilder {
         const extras = ['Gulpfile.js'];
         const extensions = ['ts', 'js', 'tsx', 'jsx'];
 
-        if(project.type === 'aws-microservice') {
+        if (project.type === 'aws-microservice') {
             dirs.push('infra');
         }
 

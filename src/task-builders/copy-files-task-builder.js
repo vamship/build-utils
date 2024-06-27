@@ -46,7 +46,7 @@ export class CopyFilesTaskBuilder extends TaskBuilder {
                     'Dockerfile',
             );
 
-        if(project.type === 'aws-microservice') {
+        if (project.type === 'aws-microservice') {
             dirs.push('infra');
         }
 

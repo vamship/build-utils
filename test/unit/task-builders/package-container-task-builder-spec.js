@@ -337,7 +337,7 @@ describe('[PackageContainerTaskBuilder]', function () {
                     ? _path.join(project.rootDir.absolutePath, 'working')
                     : project.rootDir.absolutePath;
 
-            if(project.type === 'aws-microservice') {
+            if (project.type === 'aws-microservice') {
                 dirs.push('infra');
             }
 

@@ -79,7 +79,7 @@ describe('[CopyFilesTaskBuilder]', function () {
             const extensions = ['json'].concat(staticFilePatterns);
             const rootDir = project.rootDir.absolutePath;
 
-            if(project.type === 'aws-microservice') {
+            if (project.type === 'aws-microservice') {
                 dirs.push('infra');
             }
 

@@ -76,7 +76,7 @@ export class PackageNpmTaskBuilder extends TaskBuilder {
                 ? project.rootDir.getChild('working')
                 : project.rootDir;
 
-        if(project.type === 'aws-microservice') {
+        if (project.type === 'aws-microservice') {
             dirs.push('infra');
         }
 

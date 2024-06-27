@@ -38,7 +38,7 @@ export class BuildTsTaskBuilder extends TaskBuilder {
         const dirs = ['src', 'test'];
         const extensions = ['ts'];
 
-        if(project.type === 'aws-microservice') {
+        if (project.type === 'aws-microservice') {
             dirs.push('infra');
         }
 

@@ -36,7 +36,7 @@ export class FormatTaskBuilder extends TaskBuilder {
         const extras = ['Gulpfile.js', 'README.md'];
         const extensions = ['ts', 'js', 'json', 'py', 'tsx', 'jsx'];
 
-        if(project.type === 'aws-microservice') {
+        if (project.type === 'aws-microservice') {
             dirs.push('infra');
         }
 

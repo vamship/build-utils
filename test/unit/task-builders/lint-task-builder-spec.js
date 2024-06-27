@@ -65,7 +65,7 @@ describe('[LintTaskBuilder]', function () {
             const dirs = ['src', 'test'];
             const extensions = ['ts', 'js', 'tsx', 'jsx'];
             const rootDir = project.rootDir.absolutePath;
-            if(project.type === 'aws-microservice') {
+            if (project.type === 'aws-microservice') {
                 dirs.push('infra');
             }
 
