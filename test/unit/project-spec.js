@@ -896,6 +896,81 @@ describe('[Project]', function () {
             });
         });
 
+        it('should default the build file to Dockerfile if no build file has been defined', function () {
+            const targets = ['foo', 'bar'];
+            const containers = createContainerObject(targets);
+
+            targets.forEach((target) => {
+                delete containers[target].buildFile;
+            });
+
+            const definition = buildProjectDefinition({
+                'buildMetadata.container': containers,
+            });
+
+            const project = new Project(definition);
+
+            targets.forEach((target) => {
+                const container = project.getContainerDefinition(target);
+                expect(container).to.deep.equal(
+                    Object.assign(
+                        { name: target, buildFile: 'Dockerfile' },
+                        containers[target],
+                    ),
+                );
+            });
+        });
+
+        it('should default the build args to an empty object if no args have been defined', function () {
+            const targets = ['foo', 'bar'];
+            const containers = createContainerObject(targets);
+
+            targets.forEach((target) => {
+                delete containers[target].buildArgs;
+            });
+
+            const definition = buildProjectDefinition({
+                'buildMetadata.container': containers,
+            });
+
+            const project = new Project(definition);
+
+            targets.forEach((target) => {
+                const container = project.getContainerDefinition(target);
+                expect(container).to.deep.equal(
+                    Object.assign(
+                        { name: target, buildArgs: {} },
+                        containers[target],
+                    ),
+                );
+            });
+        });
+
+        it('should default the build secrets to an empty object if no secrets have been defined', function () {
+            const targets = ['foo', 'bar'];
+            const containers = createContainerObject(targets);
+
+            targets.forEach((target) => {
+                delete containers[target].buildSecrets;
+            });
+
+            const definition = buildProjectDefinition({
+                'buildMetadata.container': containers,
+            });
+
+            const project = new Project(definition);
+
+            targets.forEach((target) => {
+                const container = project.getContainerDefinition(target);
+                expect(container).to.deep.equal(
+                    Object.assign(
+                        { name: target, buildSecrets: {} },
+                        containers[target],
+                    ),
+                );
+            });
+        });
+
         it('should return a copy of the definition and not a reference', function () {
             const targets = ['foo', 'bar'];
             const containers = createContainerObject(targets);
