@@ -94,9 +94,9 @@ export class Project {
                 result[key] = {
                     name: key,
                     repo,
-                    buildFile,
-                    buildArgs,
-                    buildSecrets,
+                    buildFile: buildFile || 'Dockerfile',
+                    buildArgs: buildArgs || {},
+                    buildSecrets: buildSecrets || {},
                 };
                 return result;
             },
@@ -279,11 +279,7 @@ export class Project {
     }
 
     /**
-     * Returns a list of docker targets defined for the project. Every target
-     * will define the following properties:
-     * - repo: The docker repo
-     * - buildFile: The name of the build file to use
-     * - buildArgs: Arguments to be passed to the docker build
+     * Returns a list of docker targets defined for the project.
      *
      * @return {Array}
      */
@@ -292,9 +288,14 @@ export class Project {
     }
 
     /**
-     * Gets CDK stack information based on the cdk stack key.
+     * Gets the definition for a specific container target. The definition will
+     * include the following properties:
+     * - repo: The docker repo
+     * - buildFile: The name of the build file to use
+     * - buildArgs: Arguments to be passed to the docker build
+     * - buildSecrets: Secrets to be passed to the docker build
      *
-     * @param {String} target The CDK target name
+     * @param {String} target The container target name
      * @returns {Object} The container definition corresponding to the target.
      */
     getContainerDefinition(target) {
