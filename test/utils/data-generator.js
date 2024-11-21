@@ -239,6 +239,12 @@ export function createContainerObject(targetList) {
             buildArgs: {
                 arg1: 'value2',
             },
+            buildSecrets: {
+                secret1: {
+                    type: 'secret',
+                    src: 'secret1',
+                },
+            },
         };
         return result;
     }, {});
@@ -249,6 +255,12 @@ export function createContainerObject(targetList) {
         buildFile: 'BuildFile-1',
         buildArgs: {
             arg1: 'value1',
+        },
+        buildSecrets: {
+            secret1: {
+                type: 'env',
+                src: 'MY_SECRET',
+            },
         },
     };
     return containers;

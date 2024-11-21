@@ -109,6 +109,35 @@ export default {
                                     },
                                     additionalProperties: false,
                                 },
+
+                                /**
+                                 * Collection of secrets passed to the
+                                 * container build.
+                                 */
+                                buildSecrets: {
+                                    type: 'object',
+                                    /**
+                                     * Individual build arguments
+                                     */
+                                    patternProperties: {
+                                        '^[a-zA-Z0-9-_]+$': {
+                                            type: 'object',
+                                            properties: {
+                                                type: {
+                                                    type: 'string',
+                                                    minLength: 1,
+                                                },
+                                                src: {
+                                                    type: 'string',
+                                                    minLength: 1,
+                                                },
+                                            },
+                                            required: ['type', 'src'],
+                                            additionalProperties: false,
+                                        },
+                                    },
+                                    additionalProperties: false,
+                                },
                             },
                             required: ['repo'],
                             additionalProperties: false,

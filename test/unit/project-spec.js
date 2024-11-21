@@ -241,12 +241,22 @@ describe('[Project]', function () {
                                     buildArgs: {
                                         arg1: 'value1',
                                     },
+                                    buildSecrets: {
+                                        secret1: {
+                                            type: 'file',
+                                            src: './my-file',
+                                        },
+                                    },
                                 },
                                 [`${buildName}`]: {
                                     repo: 'my-repo-2',
                                     buildFile: 'BuildFile-2',
                                     buildArgs: {
                                         arg1: 'value2',
+                                    },
+                                    buildSecrets: {
+                                        type: 'file',
+                                        src: './my-file',
                                     },
                                 },
                             },
@@ -267,6 +277,10 @@ describe('[Project]', function () {
                                 buildFile: 'BuildFile-1',
                                 buildArgs: {
                                     arg1: 'value1',
+                                },
+                                buildSecrets: {
+                                    type: 'file',
+                                    src: './my-file',
                                 },
                             },
                         },
@@ -329,6 +343,20 @@ describe('[Project]', function () {
                     });
                 });
 
+                makeOptional(getAllButObject()).forEach((buildSecrets) => {
+                    it(`should throw an error if invoked without a valid buildMetadata.container.default.buildSecrets (value=${typeof buildSecrets})`, function () {
+                        const definition = buildProjectDefinition({
+                            'buildMetadata.container.default.buildSecrets':
+                                buildSecrets,
+                        });
+                        const wrapper = () => new Project(definition);
+                        const error =
+                            /Schema validation failed \[.*buildSecrets.*\]/;
+
+                        expect(wrapper).to.throw(error);
+                    });
+                });
+
                 it('should throw an error if unsupported additional parameters are specified', function () {
                     const definition = buildProjectDefinition();
                     definition.buildMetadata.container.default.foo = 'bar';
@@ -339,33 +367,112 @@ describe('[Project]', function () {
                     expect(wrapper).to.throw(error);
                 });
 
-                ['$?!', ''].forEach((buildArg) => {
-                    it(`should throw an error if the build arg name is invalid`, function () {
-                        const definition = buildProjectDefinition({
-                            'buildMetadata.container.default.buildArgs': {
-                                [`${buildArg}`]: 'foo',
-                            },
-                        });
-                        const wrapper = () => new Project(definition);
-                        const error =
-                            /Schema validation failed \[.*additional properties.*\]/;
+                describe('[buildArgs]', function () {
+                    ['$?!', ''].forEach((buildArg) => {
+                        it(`should throw an error if the build arg name is invalid`, function () {
+                            const definition = buildProjectDefinition({
+                                'buildMetadata.container.default.buildArgs': {
+                                    [`${buildArg}`]: 'foo',
+                                },
+                            });
+                            const wrapper = () => new Project(definition);
+                            const error =
+                                /Schema validation failed \[.*additional properties.*\]/;
 
-                        expect(wrapper).to.throw(error);
+                            expect(wrapper).to.throw(error);
+                        });
+                    });
+
+                    getAllButString().forEach((buildArgValue) => {
+                        it(`should throw an error if invoked without a valid buildMetadata.container.default.buildArgs[buildArgValue] (value=${typeof buildArgValue})`, function () {
+                            const definition = buildProjectDefinition({
+                                'buildMetadata.container.default.buildArgs': {
+                                    foo: buildArgValue,
+                                },
+                            });
+                            const wrapper = () => new Project(definition);
+                            const error =
+                                /Schema validation failed \[.*buildArgs.*\]/;
+
+                            expect(wrapper).to.throw(error);
+                        });
                     });
                 });
 
-                getAllButString().forEach((buildArgValue) => {
-                    it(`should throw an error if invoked without a valid buildMetadata.container.default.buildArgs[buildArgValue] (value=${typeof buildArgValue})`, function () {
-                        const definition = buildProjectDefinition({
-                            'buildMetadata.container.default.buildArgs': {
-                                foo: buildArgValue,
-                            },
-                        });
-                        const wrapper = () => new Project(definition);
-                        const error =
-                            /Schema validation failed \[.*buildArgs.*\]/;
+                describe('[buildSecrets]', function () {
+                    ['$?!', ''].forEach((buildSecret) => {
+                        it(`should throw an error if the build secret arg name is invalid`, function () {
+                            const definition = buildProjectDefinition({
+                                'buildMetadata.container.default.buildSecrets':
+                                    {
+                                        [`${buildSecret}`]: {
+                                            type: 'file',
+                                            src: './my-file',
+                                        },
+                                    },
+                            });
+                            const wrapper = () => new Project(definition);
+                            const error =
+                                /Schema validation failed \[.*additional properties.*\]/;
 
-                        expect(wrapper).to.throw(error);
+                            expect(wrapper).to.throw(error);
+                        });
+                    });
+
+                    getAllButObject().forEach((buildSecretValue) => {
+                        it(`should throw an error if invoked without a valid buildMetadata.container.default.buildSecrets[buildSecretValue] (value=${typeof buildSecretValue})`, function () {
+                            const definition = buildProjectDefinition({
+                                'buildMetadata.container.default.buildSecrets':
+                                    {
+                                        foo: buildSecretValue,
+                                    },
+                            });
+                            const wrapper = () => new Project(definition);
+                            const error =
+                                /Schema validation failed \[.*buildSecrets.*\]/;
+
+                            expect(wrapper).to.throw(error);
+                        });
+                    });
+
+                    getAllButString('').forEach((type) => {
+                        it(`should throw an error if invoked without a valid buildMetadata.container.default.buildSecrets[buildSecretValue].type (value=${typeof type})`, function () {
+                            const src = 'MY_SECRET';
+                            const definition = buildProjectDefinition({
+                                'buildMetadata.container.default.buildSecrets':
+                                    {
+                                        foo: {
+                                            type,
+                                            src,
+                                        },
+                                    },
+                            });
+                            const wrapper = () => new Project(definition);
+                            const error =
+                                /Schema validation failed \[.*buildSecrets.*type.*\]/;
+
+                            expect(wrapper).to.throw(error);
+                        });
+                    });
+
+                    getAllButString('').forEach((src) => {
+                        it(`should throw an error if invoked without a valid buildMetadata.container.default.buildSecrets[buildSecretValue].src (value=${typeof src})`, function () {
+                            const type = 'env';
+                            const definition = buildProjectDefinition({
+                                'buildMetadata.container.default.buildSecrets':
+                                    {
+                                        foo: {
+                                            type,
+                                            src,
+                                        },
+                                    },
+                            });
+                            const wrapper = () => new Project(definition);
+                            const error =
+                                /Schema validation failed \[.*buildSecrets.*src.*\]/;
+
+                            expect(wrapper).to.throw(error);
+                        });
                     });
                 });
             });

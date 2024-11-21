@@ -88,12 +88,15 @@ export class Project {
 
         this._containerTargets = Object.keys(this._container).reduce(
             (result, key) => {
-                const { repo, buildFile, buildArgs } = this._container[key];
+                const { repo, buildFile, buildArgs, buildSecrets } =
+                    this._container[key];
+
                 result[key] = {
                     name: key,
                     repo,
                     buildFile,
                     buildArgs,
+                    buildSecrets,
                 };
                 return result;
             },

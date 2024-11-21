@@ -67,7 +67,7 @@ export class PackageContainerTaskBuilder extends TaskBuilder {
 
         const repo =
             typeof this._repo === 'undefined' ? definition.repo : this._repo;
-        const { buildFile, buildArgs } = definition;
+        const { buildFile, buildArgs, buildSecrets } = definition;
 
         const dockerBin = 'docker';
         const args = [
@@ -92,6 +92,12 @@ export class PackageContainerTaskBuilder extends TaskBuilder {
         Object.keys(buildArgs).forEach((key) => {
             args.push('--build-arg');
             args.push(`${key}=${buildArgs[key]}`);
+        });
+
+        Object.keys(buildSecrets).forEach((key) => {
+            const { type, src } = buildSecrets[key];
+            args.push('--secret');
+            args.push(`id=${key},src=${src},type=${type}`);
         });
 
         args.push('.');

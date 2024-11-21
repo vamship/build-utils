@@ -56,12 +56,24 @@ export function buildProjectDefinition(overrides) {
                     buildArgs: {
                         arg1: 'value1',
                     },
+                    buildSecrets: {
+                        secret1: {
+                            type: 'env',
+                            src: 'MY_SECRET',
+                        },
+                    },
                 },
                 myBuildArm: {
                     repo: 'my-repo-arm',
                     buildFile: 'BuildFile-1-arm',
                     buildArgs: {
                         arg1: 'value1-arm',
+                    },
+                    buildSecrets: {
+                        secret1: {
+                            type: 'env',
+                            src: 'MY_SECRET',
+                        },
                     },
                 },
             },

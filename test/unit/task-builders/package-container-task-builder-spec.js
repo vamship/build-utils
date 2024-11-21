@@ -126,10 +126,10 @@ describe('[PackageContainerTaskBuilder]', function () {
     });
 
     describe('[task]', function () {
-        const target = 'customTarget';
-        const repo = 'custom-repo';
-        const description = 'Custom project description';
-        const buildFile = 'custom-build-file';
+        const BUILD_TARGET = 'customTarget';
+        const CONTAINER_REPO = 'custom-repo';
+        const PROJECT_DESCRIPTION = 'Custom project description';
+        const BUILD_FILE = 'custom-build-file';
         const STD_ARG_COUNT = 17;
 
         async function _createTask(target, repo, definitionOverrides) {
@@ -150,14 +150,16 @@ describe('[PackageContainerTaskBuilder]', function () {
 
         ['overridden-repo', undefined].forEach((repoOverride) => {
             const expectedRepo =
-                typeof repoOverride === 'undefined' ? repo : repoOverride;
+                typeof repoOverride === 'undefined'
+                    ? CONTAINER_REPO
+                    : repoOverride;
 
-            getAllProjectOverrides().forEach(({ title, overrides }) => {
+            getAllProjectOverrides(1).forEach(({ title, overrides }) => {
                 const language = overrides['buildMetadata.language'];
                 const jsRootDir = language == 'js' ? '' : `working${_path.sep}`;
                 overrides = {
                     ...overrides,
-                    description,
+                    description: PROJECT_DESCRIPTION,
                     'buildMetadata.container': {
                         default: {
                             repo: 'my-repo',
@@ -165,11 +167,18 @@ describe('[PackageContainerTaskBuilder]', function () {
                             buildArgs: {
                                 arg1: 'value1',
                             },
+                            buildSecrets: {
+                                mySecret: {
+                                    type: 'file',
+                                    src: 'secret.txt',
+                                },
+                            },
                         },
-                        [target]: {
-                            repo,
-                            buildFile,
+                        [BUILD_TARGET]: {
+                            repo: CONTAINER_REPO,
+                            buildFile: BUILD_FILE,
                             buildArgs: {},
+                            buildSecrets: {},
                         },
                     },
                 };
@@ -182,7 +191,7 @@ describe('[PackageContainerTaskBuilder]', function () {
                         'build',
                         '--rm',
                         '--file',
-                        buildFile,
+                        BUILD_FILE,
                         '--tag',
                         `${expectedRepo}:latest`,
                         '--build-arg',
@@ -190,7 +199,7 @@ describe('[PackageContainerTaskBuilder]', function () {
                         '--build-arg',
                         `APP_VERSION=${project.version}`,
                         '--build-arg',
-                        `APP_DESCRIPTION='${description}'`,
+                        `APP_DESCRIPTION='${PROJECT_DESCRIPTION}'`,
                         '--build-arg',
                         `CONFIG_FILE_NAME=${project.configFileName}`,
                         '--build-arg',
@@ -215,9 +224,13 @@ describe('[PackageContainerTaskBuilder]', function () {
                 }
 
                 describe(`Verify container image build - (${title})`, function () {
-                    it(`should invoke docker to package the project (no build args)`, async function () {
+                    it(`should invoke docker to package the project (no build args/build secrets)`, async function () {
                         const { execaModuleMock, project, task } =
-                            await _createTask(target, repoOverride, overrides);
+                            await _createTask(
+                                BUILD_TARGET,
+                                repoOverride,
+                                overrides,
+                            );
 
                         const execaMock = execaModuleMock.execa;
                         const thenMock = execaModuleMock.then;
@@ -276,12 +289,14 @@ describe('[PackageContainerTaskBuilder]', function () {
                                 execaModuleMock: { execa: execaMock },
                                 task,
                                 project,
-                            } = await _createTask(target, repoOverride, {
+                            } = await _createTask(BUILD_TARGET, repoOverride, {
                                 ...overrides,
-                                [`buildMetadata.container.${target}.buildArgs`]:
+                                [`buildMetadata.container.${BUILD_TARGET}.buildArgs`]:
                                     buildArgs,
+                                [`buildMetadata.container.${BUILD_TARGET}.buildSecrets`]:
+                                    {},
                             });
-                            const buildArgCount =
+                            const totalArgCount =
                                 STD_ARG_COUNT + customArgCount;
                             const dockerBin = 'docker';
 
@@ -296,7 +311,7 @@ describe('[PackageContainerTaskBuilder]', function () {
 
                             expect(args[1])
                                 .to.be.an('array')
-                                .that.has.lengthOf(buildArgCount);
+                                .that.has.lengthOf(totalArgCount);
 
                             _verifyCommonBuildArgs(project, args[1]);
 
@@ -311,6 +326,75 @@ describe('[PackageContainerTaskBuilder]', function () {
 
                                 expect(args[1][offsetIndex + 1]).to.equal(
                                     `${expectedArg}=${expectedValue}`,
+                                );
+                            });
+
+                            expect(args[2]).to.deep.equal({
+                                stdio: 'inherit',
+                                cwd: _path.join(
+                                    project.rootDir.absolutePath,
+                                    jsRootDir,
+                                ),
+                            });
+                        });
+                    });
+
+                    [
+                        { secret1: { type: 'env', src: 'SECRET_1' } },
+                        {
+                            secret1: { type: 'file', src: './secrets.txt' },
+                            secret2: { type: 'env', src: 'SECRET_2' },
+                        },
+                    ].forEach((buildSecrets) => {
+                        const customArgCount =
+                            Object.keys(buildSecrets).length * 2;
+                        const buildSecretList = Object.entries(buildSecrets);
+
+                        it(`should invoke docker to package the project (build secret count = ${
+                            customArgCount / 2
+                        })`, async () => {
+                            const {
+                                execaModuleMock: { execa: execaMock },
+                                task,
+                                project,
+                            } = await _createTask(BUILD_TARGET, repoOverride, {
+                                ...overrides,
+                                [`buildMetadata.container.${BUILD_TARGET}.buildArgs`]:
+                                    {},
+                                [`buildMetadata.container.${BUILD_TARGET}.buildSecrets`]:
+                                    buildSecrets,
+                            });
+                            const totalArgCount =
+                                STD_ARG_COUNT + customArgCount;
+                            const dockerBin = 'docker';
+
+                            expect(execaMock).to.not.have.been.called;
+
+                            task();
+
+                            expect(execaMock).to.have.been.calledOnce;
+                            const args = execaMock.getCall(0).args;
+
+                            expect(args[0]).to.equal(dockerBin);
+
+                            expect(args[1])
+                                .to.be.an('array')
+                                .that.has.lengthOf(totalArgCount);
+
+                            _verifyCommonBuildArgs(project, args[1]);
+
+                            buildSecretList.forEach((arg, index) => {
+                                const [expectedArg, expectedValue] = arg;
+                                const { type, src } = expectedValue;
+                                const offsetIndex =
+                                    index * 2 + STD_ARG_COUNT - 1;
+
+                                expect(args[1][offsetIndex]).to.equal(
+                                    '--secret',
+                                );
+
+                                expect(args[1][offsetIndex + 1]).to.equal(
+                                    `id=${expectedArg},src=${src},type=${type}`,
                                 );
                             });
 
