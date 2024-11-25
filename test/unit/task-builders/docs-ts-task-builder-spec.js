@@ -66,6 +66,7 @@ describe('[DocsTsTaskBuilder]', function () {
                 it('should pipe the source files to the document generator to extract docs', async function () {
                     const { execaModuleMock, project, task } =
                         await _createTask(overrides);
+                    const files = createSourceList(project, overrides);
 
                     const execaMock = execaModuleMock.execa;
                     const thenMock = execaModuleMock.then;
@@ -77,8 +78,9 @@ describe('[DocsTsTaskBuilder]', function () {
                             'docs',
                             project.version,
                         ),
-                        _path.join(project.rootDir.absolutePath, 'src') +
-                            _path.sep,
+                        files[0],
+                        '--entryPointStrategy',
+                        'resolve',
                     ];
 
                     expect(execaMock).to.not.have.been.called;

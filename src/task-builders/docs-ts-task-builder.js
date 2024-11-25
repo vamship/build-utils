@@ -35,12 +35,16 @@ export class DocsTsTaskBuilder extends TaskBuilder {
 
         const { rootDir } = project;
         const docsDir = rootDir.getChild('docs').getFilePath(project.version);
-        const srcDir = rootDir.getChild('src');
+        const srcPath = rootDir.getChild('src').getAllFilesGlob('ts');
 
         const task = () =>
-            _execa('typedoc', ['--out', docsDir, srcDir.absolutePath], {
-                stdio: 'inherit',
-            }).then(undefined, (err) => {
+            _execa(
+                'typedoc',
+                ['--out', docsDir, srcPath, '--entryPointStrategy', 'resolve'],
+                {
+                    stdio: 'inherit',
+                },
+            ).then(undefined, (err) => {
                 /*
                  * Do nothing. This handler prevents the gulp task from
                  * crashing with an unhandled error.
