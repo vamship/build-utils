@@ -80,19 +80,19 @@ export class PublishTaskBuilder extends TaskBuilder {
         }
         // Type container
         else if (type === 'container') {
-            return [new PublishContainerTaskBuilder('default')];
+            return [new PublishContainerTaskBuilder('default', project.version)];
         }
         // Type cli
         else if (type === 'cli') {
             if (containerTargetList.length > 0) {
-                return [new PublishContainerTaskBuilder('default')];
+                return [new PublishContainerTaskBuilder('default', project.version)];
             } else {
                 return [new PublishNpmTaskBuilder()];
             }
         }
         // Type api
         else if (type === 'api') {
-            return [new PublishContainerTaskBuilder('default')];
+            return [new PublishContainerTaskBuilder('default', project.version)];
         }
         // Type ui (and potentially others that are not supported)
         else {
