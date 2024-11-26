@@ -44,13 +44,9 @@ export class CliTaskFactory extends TaskFactory {
         const additionalTaskList = (target) => {
             return [
                 new PackageContainerTaskBuilder(target),
-                new PublishContainerTaskBuilder(target),
+                new PublishContainerTaskBuilder(target, this._project.version),
             ];
         };
-        const additionalTasks = generateAdditionalContainerTasks(
-            this._project,
-            additionalTaskList,
-        );
 
         return [
             new CleanTaskBuilder(),
@@ -63,6 +59,12 @@ export class CliTaskFactory extends TaskFactory {
             new BuildTaskBuilder(this._project),
             new PackageTaskBuilder(this._project),
             new PublishTaskBuilder(this._project),
-        ].concat(additionalTasks);
+            new PublishContainerTaskBuilder('default'),
+        ].concat(generateAdditionalContainerTasks(
+            this._project,
+            additionalTaskList,
+        )); // Note: Instantiating the additional container tasks in a different
+            // order will break tests. This is less than ideal, but it will have
+            // to do for now.
     }
 }

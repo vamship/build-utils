@@ -209,11 +209,14 @@ export function getAdditionalContainerBuilders(project) {
     // > 1 since default container
     if (containerTargets.length > 1) {
         containerTargets
-            .filter((x) => x !== 'default')
+            .filter((target) => target !== 'default')
             .forEach((target) => {
                 const specificTargetBuilders = [
                     { name: 'package-container', ctorArgs: [target] },
-                    { name: 'publish-container', ctorArgs: [target] },
+                    {
+                        name: 'publish-container',
+                        ctorArgs: [target, project.version],
+                    },
                 ];
                 builders.push(...specificTargetBuilders);
             });
