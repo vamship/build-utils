@@ -64,7 +64,7 @@ describe('[PublishContainerTaskBuilder]', function () {
                 _importModule,
                 `publish-container${
                     target === 'default' ? '' : '-' + target // Specifying a non default container creates a named task
-                }`,
+                }-${tag || 'latest'}`,
                 `Publish container image for ${target}:${tag || 'latest'}`,
                 [target, tag],
             );
@@ -185,6 +185,8 @@ describe('[PublishContainerTaskBuilder]', function () {
                             execaMock.resetHistory();
                             thenMock.resetHistory();
 
+                            expect(task.displayName).to.equal(`tag-default-${semTag}`);
+
                             task();
 
                             expect(execaMock).to.have.been.calledOnce;
@@ -263,6 +265,8 @@ describe('[PublishContainerTaskBuilder]', function () {
 
                             execaMock.resetHistory();
                             thenMock.resetHistory();
+
+                            expect(task.displayName).to.equal(`push-default-${semTag}`);
 
                             task();
 

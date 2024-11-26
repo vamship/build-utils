@@ -31,7 +31,7 @@ export class PublishContainerTaskBuilder extends TaskBuilder {
         super(
             // When specifying the container target, if it is not called default, this
             // will create a named task
-            `publish-container${target === 'default' ? '' : '-' + target}`,
+            `publish-container${target === 'default' ? '' : '-' + target}-${tag}`,
             `Publish container image for ${target}:${tag}`,
         );
 
@@ -71,6 +71,7 @@ export class PublishContainerTaskBuilder extends TaskBuilder {
                      * crashing with an unhandled error.
                      */
                 });
+            tagTask.displayName = `tag-${definition.name}-${tag}`;
             return tagTask;
         });
         const pushTaskList = semverComponents.map((tag) => {
@@ -84,6 +85,7 @@ export class PublishContainerTaskBuilder extends TaskBuilder {
                      * crashing with an unhandled error.
                      */
                 });
+            pushTask.displayName = `push-${definition.name}-${tag}`;
             return pushTask;
         });
 
