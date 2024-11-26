@@ -185,7 +185,9 @@ describe('[PublishContainerTaskBuilder]', function () {
                             execaMock.resetHistory();
                             thenMock.resetHistory();
 
-                            expect(task.displayName).to.equal(`tag-default-${semTag}`);
+                            expect(task.displayName).to.equal(
+                                `tag-default-${semTag}`,
+                            );
 
                             task();
 
@@ -266,7 +268,9 @@ describe('[PublishContainerTaskBuilder]', function () {
                             execaMock.resetHistory();
                             thenMock.resetHistory();
 
-                            expect(task.displayName).to.equal(`push-default-${semTag}`);
+                            expect(task.displayName).to.equal(
+                                `push-default-${semTag}`,
+                            );
 
                             task();
 

@@ -92,19 +92,28 @@ describe('[PublishTaskBuilder]', function () {
         }
         // Type container
         else if (type === 'container') {
-            return [{ name: 'publish-container', ctorArgs: ['default', version] }];
+            return [
+                { name: 'publish-container', ctorArgs: ['default', version] },
+            ];
         }
         // Type cli
         else if (type === 'cli') {
             if (containerTargetList.length > 0) {
-                return [{ name: 'publish-container', ctorArgs: ['default', version] }];
+                return [
+                    {
+                        name: 'publish-container',
+                        ctorArgs: ['default', version],
+                    },
+                ];
             } else {
                 return [{ name: 'publish-npm', ctorArgs: [] }];
             }
         }
         // Type api
         else if (type === 'api') {
-            return [{ name: 'publish-container', ctorArgs: ['default', version] }];
+            return [
+                { name: 'publish-container', ctorArgs: ['default', version] },
+            ];
         }
         // Type undefined or not supported
         return [{ name: 'not-supported', ctorArgs: [] }];

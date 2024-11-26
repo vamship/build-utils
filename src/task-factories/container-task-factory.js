@@ -56,11 +56,10 @@ export class ContainerTaskFactory extends TaskFactory {
             new PackageTaskBuilder(this._project),
             new PublishTaskBuilder(this._project),
             new PublishContainerTaskBuilder('default'),
-        ].concat(generateAdditionalContainerTasks(
-            this._project,
-            additionalTaskList,
-        )); // Note: Instantiating the additional container tasks in a different
-            // order will break tests. This is less than ideal, but it will have
-            // to do for now.
+        ].concat(
+            generateAdditionalContainerTasks(this._project, additionalTaskList),
+        ); // Note: Instantiating the additional container tasks in a different
+        // order will break tests. This is less than ideal, but it will have
+        // to do for now.
     }
 }
