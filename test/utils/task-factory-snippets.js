@@ -147,20 +147,27 @@ export function injectTaskBuilderCompositionTests(
                         );
 
                         if (matchingBuilders.length > 0) {
-                            expect(ctor, failMessage).to.have.been.called;
-                            expect(ctor.callCount, failMessage).to.equal(
-                                matchingBuilders.length,
-                            );
+                            expect(
+                                ctor,
+                                `Builder ctor invocation: ${failMessage}`,
+                            ).to.have.been.called;
+                            expect(
+                                ctor.callCount,
+                                `Builder ctor call count: ${failMessage}`,
+                            ).to.equal(matchingBuilders.length);
 
                             ctor.args.forEach((args, index) => {
                                 const { ctorArgs } = matchingBuilders[index];
                                 const call = ctor.getCall(index);
 
-                                expect(args, failMessage).to.deep.equal(
-                                    ctorArgs,
-                                );
-                                expect(call, failMessage).to.have.been
-                                    .calledWithNew;
+                                expect(
+                                    args,
+                                    `Builder ctor args: ${failMessage}`,
+                                ).to.deep.equal(ctorArgs);
+                                expect(
+                                    call,
+                                    `Builder ctor called with new: ${failMessage}`,
+                                ).to.have.been.calledWithNew;
                             });
                         } else {
                             expect(ctor, failMessage).to.not.have.been.called;

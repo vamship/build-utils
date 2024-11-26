@@ -56,6 +56,7 @@ describe('[ContainerTaskFactory]', function () {
             { name: 'docs', ctorArgs: [project] },
             { name: 'package', ctorArgs: [project] },
             { name: 'publish', ctorArgs: [project] },
+            { name: 'publish-container', ctorArgs: ['default'] },
         ].concat(additionalBuilders);
 
         return builders;
