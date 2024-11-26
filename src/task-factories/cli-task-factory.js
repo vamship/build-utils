@@ -48,6 +48,8 @@ export class CliTaskFactory extends TaskFactory {
             ];
         };
 
+        const hasContainer = this._project.getContainerTargets().length > 0;
+
         return [
             new CleanTaskBuilder(),
             new FormatTaskBuilder(),
@@ -59,12 +61,19 @@ export class CliTaskFactory extends TaskFactory {
             new BuildTaskBuilder(this._project),
             new PackageTaskBuilder(this._project),
             new PublishTaskBuilder(this._project),
-            new PublishContainerTaskBuilder('default'),
-        ].concat(generateAdditionalContainerTasks(
-            this._project,
-            additionalTaskList,
-        )); // Note: Instantiating the additional container tasks in a different
+            hasContainer
+                ? new PublishContainerTaskBuilder('default')
+                : undefined,
+            // Note: Instantiating the additional container tasks in a different
             // order will break tests. This is less than ideal, but it will have
             // to do for now.
+        ]
+            .concat(
+                generateAdditionalContainerTasks(
+                    this._project,
+                    additionalTaskList,
+                ),
+            )
+            .filter(Boolean);
     }
 }

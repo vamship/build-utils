@@ -50,6 +50,7 @@ describe('[CliTaskFactory]', function () {
 
     function _getExpectedTaskBuilders(project) {
         const additionalBuilders = getAdditionalContainerBuilders(project);
+        const hasContainer = project.getContainerTargets().length > 0;
         const builders = [
             { name: 'clean', ctorArgs: [] },
             { name: 'format', ctorArgs: [] },
@@ -60,8 +61,12 @@ describe('[CliTaskFactory]', function () {
             { name: 'build', ctorArgs: [project] },
             { name: 'package', ctorArgs: [project] },
             { name: 'publish', ctorArgs: [project] },
-            { name: 'publish-container', ctorArgs: ['default'] },
-        ].concat(additionalBuilders);
+            hasContainer
+                ? { name: 'publish-container', ctorArgs: ['default'] }
+                : undefined,
+        ]
+            .concat(additionalBuilders)
+            .filter(Boolean);
 
         return builders;
     }
