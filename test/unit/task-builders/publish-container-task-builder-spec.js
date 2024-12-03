@@ -152,13 +152,16 @@ describe('[PublishContainerTaskBuilder]', function () {
                 describe(`Verify task - publish to container registry - (${title})`, function () {
                     it(`should use the docker cli to tag the container image (tag=${tag})`, async function () {
                         const target = 'default';
-                        const { execaModuleMock, gulpMock } = await _createTask(
-                            {
-                                ...overrides,
-                            },
-                            target,
-                            tag,
-                        );
+                        const { execaModuleMock, gulpMock, project } =
+                            await _createTask(
+                                {
+                                    ...overrides,
+                                },
+                                target,
+                                tag,
+                            );
+                        const repo =
+                            project.getContainerDefinition(target).repo;
                         const execaMock = execaModuleMock.execa;
                         const thenMock = execaModuleMock.then;
 
@@ -178,8 +181,8 @@ describe('[PublishContainerTaskBuilder]', function () {
                             const dockerBin = 'docker';
                             const expectedArgs = [
                                 'tag',
-                                target,
-                                `${target}:${semTag}`,
+                                repo,
+                                `${repo}:${semTag}`,
                             ];
 
                             execaMock.resetHistory();
@@ -232,13 +235,16 @@ describe('[PublishContainerTaskBuilder]', function () {
 
                     it(`should use the docker cli to publish the image to the cloud (tag=${tag})`, async function () {
                         const target = 'default';
-                        const { execaModuleMock, gulpMock } = await _createTask(
-                            {
-                                ...overrides,
-                            },
-                            target,
-                            tag,
-                        );
+                        const { execaModuleMock, gulpMock, project } =
+                            await _createTask(
+                                {
+                                    ...overrides,
+                                },
+                                target,
+                                tag,
+                            );
+                        const repo =
+                            project.getContainerDefinition(target).repo;
                         const execaMock = execaModuleMock.execa;
                         const thenMock = execaModuleMock.then;
 
@@ -260,10 +266,7 @@ describe('[PublishContainerTaskBuilder]', function () {
                                 ];
 
                             const dockerBin = 'docker';
-                            const expectedArgs = [
-                                'push',
-                                `${target}:${semTag}`,
-                            ];
+                            const expectedArgs = ['push', `${repo}:${semTag}`];
 
                             execaMock.resetHistory();
                             thenMock.resetHistory();

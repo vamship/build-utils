@@ -61,7 +61,7 @@ export class PublishContainerTaskBuilder extends TaskBuilder {
                 // Per docker docs `docker tag SOURCE_IMAGE[:TAG] TARGET_IMAGE[:TAG]`
                 _execa(
                     'docker',
-                    ['tag', definition.name, `${definition.name}:${tag}`],
+                    ['tag', definition.repo, `${definition.repo}:${tag}`],
                     {
                         stdio: 'inherit',
                     },
@@ -76,8 +76,8 @@ export class PublishContainerTaskBuilder extends TaskBuilder {
         });
         const pushTaskList = semverComponents.map((tag) => {
             const pushTask = () =>
-                // Per docker docs `docker push [OPTIONS] NAME[:TAG]`
-                _execa('docker', ['push', `${definition.name}:${tag}`], {
+                // Per docker docs `docker push [OPTIONS] REPO[:TAG]`
+                _execa('docker', ['push', `${definition.repo}:${tag}`], {
                     stdio: 'inherit',
                 }).then(undefined, (err) => {
                     /*
