@@ -16,7 +16,7 @@ export class TestTaskBuilder extends TaskBuilder {
      * "unit" or "api".
      */
     constructor(testType) {
-        if (['unit', 'api'].indexOf(testType) < 0) {
+        if (['unit', 'api', 'int'].indexOf(testType) < 0) {
             throw new Error('Invalid testType (arg #1)');
         }
         super(`test-${testType}`, `Execute ${testType} tests`);
