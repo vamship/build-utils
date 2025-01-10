@@ -57,6 +57,7 @@ describe('[CliTaskFactory]', function () {
             { name: 'lint', ctorArgs: [] },
             { name: 'lint-fix', ctorArgs: [] },
             { name: 'test', ctorArgs: ['unit'] },
+            { name: 'test', ctorArgs: ['int'] },
             { name: 'docs', ctorArgs: [project] },
             { name: 'build', ctorArgs: [project] },
             { name: 'package', ctorArgs: [project] },
