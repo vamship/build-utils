@@ -56,6 +56,7 @@ export class CliTaskFactory extends TaskFactory {
             new LintTaskBuilder(),
             new LintFixTaskBuilder(),
             new TestTaskBuilder('unit'),
+            new TestTaskBuilder('int'),
 
             new DocsTaskBuilder(this._project),
             new BuildTaskBuilder(this._project),

@@ -108,6 +108,7 @@ export class Project {
             test: {
                 unit: null,
                 api: null,
+                int: null,
             },
             infra: null,
             scripts: null,
@@ -116,6 +117,7 @@ export class Project {
                 test: {
                     unit: null,
                     api: null,
+                    int: null,
                 },
                 infra: null,
                 node_modules: null,
