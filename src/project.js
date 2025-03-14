@@ -105,7 +105,7 @@ export class Project {
             {},
         );
 
-        this._rootDir = Directory.createTree('./', {
+        const rootDir = {
             src: null,
             test: {
                 unit: null,
@@ -132,7 +132,14 @@ export class Project {
             '.tscache': null,
             logs: null,
             'cdk.out': null,
-        });
+        };
+
+        for (const dir of this._staticDirs) {
+            rootDir[dir] = null;
+            rootDir.working[dir] = null;
+        }
+
+        this._rootDir = Directory.createTree('./', rootDir);
         this._banner = `${_colors.cyan(this._name)}@${_colors.green(
             this._version,
         )} (${_colors.blue(this._type)} - ${_colors.yellow(this._language)})`;

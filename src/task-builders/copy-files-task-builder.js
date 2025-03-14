@@ -36,7 +36,7 @@ export class CopyFilesTaskBuilder extends TaskBuilder {
         }
 
         const { rootDir } = project;
-        const dirs = ['src', 'test', 'scripts'].concat(project.getStaticDirs());
+        const dirs = ['src', 'test', 'scripts'];
         const extensions = ['json'].concat(project.getStaticFilePatterns());
         const containerBuildFiles = project
             .getContainerTargets()
@@ -69,9 +69,16 @@ export class CopyFilesTaskBuilder extends TaskBuilder {
             .reduce((result, arr) => result.concat(arr), [])
             .concat(extras.map((item) => rootDir.getFileGlob(item)));
 
+        const staticPaths = project.getStaticDirs()
+            .map((dir) => rootDir.getChild(dir))
+            .filter((dir) => dir.exists())
+            .map(dir => dir._absolutePath + '**');
+
+        const finalPaths = paths.concat(staticPaths);
+
         const task = () =>
             _gulp
-                .src(paths, {
+                .src(finalPaths, {
                     allowEmpty: true,
                     base: rootDir.globPath,
                 })
