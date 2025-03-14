@@ -45,6 +45,7 @@ export class Project {
                 type,
                 language,
                 requiredEnv,
+                staticDirs,
                 staticFilePatterns,
                 aws,
                 container,
@@ -75,6 +76,7 @@ export class Project {
         this._type = type;
         this._language = language;
         this._staticFilePatterns = staticFilePatterns || [];
+        this._staticDirs = staticDirs || [];
         this._requiredEnv = requiredEnv || [];
         this._aws = aws || { stacks: {} };
         this._cdkTargets = Object.keys(this._aws.stacks).reduce(
@@ -235,6 +237,16 @@ export class Project {
      */
     getStaticFilePatterns() {
         return this._staticFilePatterns.concat([]);
+    }
+
+    /**
+     * Returns a list of static file directories configured for the project.
+     *
+     * @returns {Array} An array of strings used to identify static files
+     * included in the build.
+     */
+    getStaticDirs() {
+        return this._staticDirs.concat([]);
     }
 
     /**
