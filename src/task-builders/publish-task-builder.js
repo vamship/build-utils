@@ -78,8 +78,8 @@ export class PublishTaskBuilder extends TaskBuilder {
                 ];
             }
         }
-        // Type container
-        else if (type === 'container') {
+        // Type container or api or ui
+        else if (type === 'container' || type === 'api' || type === 'ui') {
             return [
                 new PublishContainerTaskBuilder('default', project.version),
             ];
@@ -93,12 +93,6 @@ export class PublishTaskBuilder extends TaskBuilder {
             } else {
                 return [new PublishNpmTaskBuilder()];
             }
-        }
-        // Type api
-        else if (type === 'api') {
-            return [
-                new PublishContainerTaskBuilder('default', project.version),
-            ];
         }
         // Type ui (and potentially others that are not supported)
         else {

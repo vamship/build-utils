@@ -82,7 +82,7 @@ describe('[CopyFilesTaskBuilder]', function () {
                     (key) => container[key].buildFile || 'Dockerfile',
                 ),
             );
-            const dirs = ['src', 'test', 'scripts'];
+            const dirs = ['src', 'test', 'scripts', '_scripts'];
             const extensions = ['json'].concat(staticFilePatterns);
             const rootDir = project.rootDir.absolutePath;
 

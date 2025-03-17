@@ -581,6 +581,7 @@ describe('[Project]', function () {
                     'test/int/',
                     'infra/',
                     'scripts/',
+                    '_scripts/',
                     'working/',
                     'working/src/',
                     'working/test/',

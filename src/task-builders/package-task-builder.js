@@ -64,8 +64,8 @@ export class PackageTaskBuilder extends TaskBuilder {
         else if (type === 'aws-microservice') {
             return [new PackageAwsTaskBuilder()];
         }
-        // Type container
-        else if (type === 'container') {
+        // Type container or api or ui
+        else if (type === 'container' || type === 'api' || type === 'ui') {
             return [new PackageContainerTaskBuilder('default')];
         }
         // Type cli
@@ -75,10 +75,6 @@ export class PackageTaskBuilder extends TaskBuilder {
             } else {
                 return [new PackageNpmTaskBuilder()];
             }
-        }
-        // Type api
-        else if (type === 'api') {
-            return [new PackageContainerTaskBuilder('default')];
         }
         // Type ui (and potentially others that are not supported)
         else {
