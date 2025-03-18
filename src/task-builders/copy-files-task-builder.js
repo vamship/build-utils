@@ -36,7 +36,7 @@ export class CopyFilesTaskBuilder extends TaskBuilder {
         }
 
         const { rootDir } = project;
-        const dirs = ['src', 'test', 'scripts', '_scripts'];
+        const dirs = ['src', 'test', 'scripts'];
         const extensions = ['json'].concat(project.getStaticFilePatterns());
         const containerBuildFiles = project
             .getContainerTargets()
