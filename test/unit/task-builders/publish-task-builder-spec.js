@@ -86,12 +86,8 @@ describe('[PublishTaskBuilder]', function () {
                 ];
             }
         }
-        // Type ui
-        else if (type === 'ui') {
-            return [{ name: 'not-supported', ctorArgs: [] }];
-        }
-        // Type container
-        else if (type === 'container') {
+        // Type container or api or ui
+        else if (type === 'container' || type === 'api' || type === 'ui') {
             return [
                 { name: 'publish-container', ctorArgs: ['default', version] },
             ];
@@ -108,12 +104,6 @@ describe('[PublishTaskBuilder]', function () {
             } else {
                 return [{ name: 'publish-npm', ctorArgs: [] }];
             }
-        }
-        // Type api
-        else if (type === 'api') {
-            return [
-                { name: 'publish-container', ctorArgs: ['default', version] },
-            ];
         }
         // Type undefined or not supported
         return [{ name: 'not-supported', ctorArgs: [] }];

@@ -66,12 +66,8 @@ describe('[PackageTaskBuilder]', function () {
         else if (type === 'aws-microservice') {
             return [{ name: 'package-aws', ctorArgs: [] }];
         }
-        // Type ui
-        else if (type === 'ui') {
-            return [{ name: 'not-supported', ctorArgs: [] }];
-        }
-        // Type container
-        else if (type === 'container') {
+        // Type container or api or ui
+        else if (type === 'container' || type === 'api' || type === 'ui') {
             return [{ name: 'package-container', ctorArgs: ['default'] }];
         }
         // Type cli
@@ -81,10 +77,6 @@ describe('[PackageTaskBuilder]', function () {
             } else {
                 return [{ name: 'package-npm', ctorArgs: [] }];
             }
-        }
-        // Type api
-        else if (type === 'api') {
-            return [{ name: 'package-container', ctorArgs: ['default'] }];
         }
         // Type undefined or not supported
         return [{ name: 'not-supported', ctorArgs: [] }];
