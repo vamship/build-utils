@@ -93,10 +93,6 @@ describe('[CopyFilesTaskBuilder]', function () {
             return generateGlobPatterns(rootDir, dirs, extensions).concat(
                 extras.map((file) => _path.join(rootDir, file)),
             );
-
-            // foo.concat([rootDir + '/foo-dir/**/*', rootDir +'/bar-dir/**/*'])
-
-            return foo;
         }
 
         // List of all projects - they can all run without containers
