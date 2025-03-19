@@ -93,6 +93,10 @@ describe('[CopyFilesTaskBuilder]', function () {
             return generateGlobPatterns(rootDir, dirs, extensions).concat(
                 extras.map((file) => _path.join(rootDir, file)),
             );
+
+            // foo.concat([rootDir + '/foo-dir/**/*', rootDir +'/bar-dir/**/*'])
+
+            return foo;
         }
 
         // List of all projects - they can all run without containers
@@ -171,6 +175,34 @@ describe('[CopyFilesTaskBuilder]', function () {
                     const { gulpMock, task, project } =
                         await _createTask(overrides);
                     const files = createSourceList(project, overrides);
+
+                    expect(gulpMock.src).to.not.have.been.called;
+
+                    task();
+
+                    expect(gulpMock.src).to.have.been.calledOnce;
+                    expect(gulpMock.callSequence[0]).to.equal('src');
+                    expect(gulpMock.src.args[0]).to.have.length(2);
+                    expect(gulpMock.src.args[0][0]).to.have.members(files);
+                    expect(gulpMock.src.args[0][1]).to.deep.equal({
+                        allowEmpty: true,
+                        base: project.rootDir.globPath,
+                    });
+                });
+
+                it('should include static dirs from project configuration', async function () {
+                    const staticFilePatterns = ['foo-dir', 'bar-dir'];
+                    overrides = {
+                        ...overrides,
+                        'buildMetadata.staticDirs': staticFilePatterns,
+                    };
+                    const { gulpMock, task, project } =
+                        await _createTask(overrides);
+                    const files = createSourceList(project, overrides)
+                        .concat([
+                            _path.join(project.rootDir.absolutePath, 'foo-dir', '**', '*'),
+                            _path.join(project.rootDir.absolutePath, 'bar-dir', '**', '*')
+                        ]);
 
                     expect(gulpMock.src).to.not.have.been.called;
 
