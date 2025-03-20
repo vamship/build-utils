@@ -194,11 +194,20 @@ describe('[CopyFilesTaskBuilder]', function () {
                     };
                     const { gulpMock, task, project } =
                         await _createTask(overrides);
-                    const files = createSourceList(project, overrides)
-                        .concat([
-                            _path.join(project.rootDir.absolutePath, 'foo-dir', '**', '*'),
-                            _path.join(project.rootDir.absolutePath, 'bar-dir', '**', '*')
-                        ]);
+                    const files = createSourceList(project, overrides).concat([
+                        _path.join(
+                            project.rootDir.absolutePath,
+                            'foo-dir',
+                            '**',
+                            '*',
+                        ),
+                        _path.join(
+                            project.rootDir.absolutePath,
+                            'bar-dir',
+                            '**',
+                            '*',
+                        ),
+                    ]);
 
                     expect(gulpMock.src).to.not.have.been.called;
 

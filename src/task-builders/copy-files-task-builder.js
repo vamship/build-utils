@@ -69,10 +69,11 @@ export class CopyFilesTaskBuilder extends TaskBuilder {
             .reduce((result, arr) => result.concat(arr), [])
             .concat(extras.map((item) => rootDir.getFileGlob(item)));
 
-        const staticPaths = project.getStaticDirs()
+        const staticPaths = project
+            .getStaticDirs()
             .map((dir) => rootDir.getChild(dir))
             .filter((dir) => dir.exists())
-            .map(dir =>  dir.getAllFilesGlob());
+            .map((dir) => dir.getAllFilesGlob());
 
         const finalPaths = paths.concat(staticPaths);
 
