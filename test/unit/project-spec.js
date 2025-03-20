@@ -623,6 +623,41 @@ describe('[Project]', function () {
         });
     });
 
+    describe('getDirs()', function () {
+        it('should return an empty array if the definition does not contain static file patterns', function () {
+            const definition = buildProjectDefinition({
+                'buildMetadata.staticDirs': undefined,
+            });
+            const project = new Project(definition);
+
+            expect(project.getStaticDirs()).to.deep.equal([]);
+        });
+
+        it('should return the values specified in the project definition', function () {
+            const values = ['foo-dir', 'bar-dir'];
+            const definition = buildProjectDefinition({
+                'buildMetadata.staticDirs': values,
+            });
+            const project = new Project(definition);
+
+            expect(project.getStaticDirs()).to.deep.equal(values);
+        });
+
+        it('should return a copy of the values, not a reference', function () {
+            const values = ['foo-dir', 'bar-dir'];
+            const definition = buildProjectDefinition({
+                'buildMetadata.staticDirs': values,
+            });
+            const project = new Project(definition);
+
+            const oldValues = project.getStaticDirs();
+            oldValues.pop();
+
+            const newValues = project.getStaticDirs();
+            expect(newValues).to.not.equal(oldValues);
+        });
+    });
+
     describe('getStaticFilePatterns()', function () {
         it('should return an empty array if the definition does not contain static file patterns', function () {
             const definition = buildProjectDefinition({

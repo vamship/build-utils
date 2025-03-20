@@ -158,6 +158,12 @@ export default {
                  * process without any compilation/modification.
                  */
                 staticFilePatterns: { type: 'array' },
+
+                /**
+                 * Any static directories that should be copied over during the build
+                 * process without any compilation/modification.
+                 */
+                staticDirs: { type: 'array' },
             },
             required: ['type', 'language'],
         },
