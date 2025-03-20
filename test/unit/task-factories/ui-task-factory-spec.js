@@ -15,6 +15,7 @@ import {
     injectFactoryInitTests,
     injectUnsupportedTasksTests,
     injectTaskBuilderCompositionTests,
+    getAdditionalContainerBuilders,
 } from '../../utils/task-factory-snippets.js';
 
 describe('[UiTaskFactory]', function () {
@@ -26,6 +27,10 @@ describe('[UiTaskFactory]', function () {
         'test-ui',
         'docs',
         'build',
+        'package',
+        'publish',
+        'package-container',
+        'publish-container',
     ];
     const importDefinitions = createTaskBuilderImportDefinitions(_builderNames);
 
@@ -44,6 +49,7 @@ describe('[UiTaskFactory]', function () {
     );
 
     function _getExpectedTaskBuilders(project) {
+        const additionalBuilders = getAdditionalContainerBuilders(project);
         const builders = [
             { name: 'clean', ctorArgs: [] },
             { name: 'format', ctorArgs: [] },
@@ -52,7 +58,10 @@ describe('[UiTaskFactory]', function () {
             { name: 'test-ui', ctorArgs: [] },
             { name: 'docs', ctorArgs: [project] },
             { name: 'build', ctorArgs: [project] },
-        ];
+            { name: 'package', ctorArgs: [project] },
+            { name: 'publish', ctorArgs: [project] },
+            { name: 'publish-container', ctorArgs: ['default'] },
+        ].concat(additionalBuilders);
 
         return builders;
     }

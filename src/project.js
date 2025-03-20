@@ -63,7 +63,7 @@ export class Project {
             );
         }
 
-        if (aws && aws.stacks && Object.keys(aws.stacks).length <= 0) {
+        if (aws?.stacks && Object.keys(aws.stacks).length <= 0) {
             throw new Error(`No AWS stacks defined`);
         }
 

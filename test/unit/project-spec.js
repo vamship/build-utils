@@ -404,12 +404,12 @@ describe('[Project]', function () {
                         it(`should throw an error if the build secret arg name is invalid`, function () {
                             const definition = buildProjectDefinition({
                                 'buildMetadata.container.default.buildSecrets':
-                                    {
-                                        [`${buildSecret}`]: {
-                                            type: 'file',
-                                            src: './my-file',
-                                        },
+                                {
+                                    [`${buildSecret}`]: {
+                                        type: 'file',
+                                        src: './my-file',
                                     },
+                                },
                             });
                             const wrapper = () => new Project(definition);
                             const error =
@@ -423,9 +423,9 @@ describe('[Project]', function () {
                         it(`should throw an error if invoked without a valid buildMetadata.container.default.buildSecrets[buildSecretValue] (value=${typeof buildSecretValue})`, function () {
                             const definition = buildProjectDefinition({
                                 'buildMetadata.container.default.buildSecrets':
-                                    {
-                                        foo: buildSecretValue,
-                                    },
+                                {
+                                    foo: buildSecretValue,
+                                },
                             });
                             const wrapper = () => new Project(definition);
                             const error =
@@ -440,12 +440,12 @@ describe('[Project]', function () {
                             const src = 'MY_SECRET';
                             const definition = buildProjectDefinition({
                                 'buildMetadata.container.default.buildSecrets':
-                                    {
-                                        foo: {
-                                            type,
-                                            src,
-                                        },
+                                {
+                                    foo: {
+                                        type,
+                                        src,
                                     },
+                                },
                             });
                             const wrapper = () => new Project(definition);
                             const error =
@@ -460,12 +460,12 @@ describe('[Project]', function () {
                             const type = 'env';
                             const definition = buildProjectDefinition({
                                 'buildMetadata.container.default.buildSecrets':
-                                    {
-                                        foo: {
-                                            type,
-                                            src,
-                                        },
+                                {
+                                    foo: {
+                                        type,
+                                        src,
                                     },
+                                },
                             });
                             const wrapper = () => new Project(definition);
                             const error =
