@@ -1,6 +1,6 @@
-import _chai from 'chai';
+import { use as _chaiUse } from 'chai';
 import _sinonChai from 'sinon-chai';
-_chai.use(_sinonChai);
+_chaiUse(_sinonChai);
 
 import _path from 'path';
 

@@ -1,6 +1,6 @@
-import _chai, { expect } from 'chai';
+import { use as _chaiUse, expect } from 'chai';
 import _sinonChai from 'sinon-chai';
-_chai.use(_sinonChai);
+_chaiUse(_sinonChai);
 
 import _path from 'path';
 import { camelCase as _camelCase } from 'change-case';

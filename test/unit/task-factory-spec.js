@@ -1,6 +1,6 @@
-import _chai, { expect } from 'chai';
+import { use as _chaiUse, expect } from 'chai';
 import _sinonChai from 'sinon-chai';
-_chai.use(_sinonChai);
+_chaiUse(_sinonChai);
 
 import { Project } from '../../src/project.js';
 import { getAllButObject } from '../utils/data-generator.js';
