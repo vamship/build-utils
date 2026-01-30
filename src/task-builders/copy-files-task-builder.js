@@ -74,6 +74,7 @@ export class CopyFilesTaskBuilder extends TaskBuilder {
                 .src(paths, {
                     allowEmpty: true,
                     base: rootDir.globPath,
+                    encoding: false,
                 })
                 .pipe(_gulp.dest(rootDir.getChild('working').absolutePath));
 
