@@ -222,6 +222,7 @@ describe('[CopyFilesTaskBuilder]', function () {
                     expect(gulpMock.src.args[0][1]).to.deep.equal({
                         allowEmpty: true,
                         base: project.rootDir.globPath,
+                        encoding: false,
                     });
                 });
 
